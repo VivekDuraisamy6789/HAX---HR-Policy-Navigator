@@ -1,0 +1,567 @@
+[
+  {
+    "id": "Q01-01",
+    "theme": "Health benefits eligibility",
+    "question": "Are US-based full-time teammates eligible for health benefits on their date of hire?",
+    "gold_answer": "Sourcegraph provides health benefits for US-based full-time employees and their eligible dependents. Benefits are effective on the date of hire, and US-based new hires have 30 days from their start date to enroll. Coverage can be waived if a teammate declines it, and plan changes outside open enrollment are allowed only after a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q01-02",
+    "theme": "Health benefits eligibility",
+    "question": "Do dependents qualify for Sourcegraph health benefits?",
+    "gold_answer": "Sourcegraph provides health benefits for US-based full-time employees and their eligible dependents. Benefits are effective on the date of hire, and US-based new hires have 30 days from their start date to enroll. Coverage can be waived if a teammate declines it, and plan changes outside open enrollment are allowed only after a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q01-03",
+    "theme": "Health benefits eligibility",
+    "question": "What is the deadline for US new hires to enroll in insurance after joining?",
+    "gold_answer": "Sourcegraph provides health benefits for US-based full-time employees and their eligible dependents. Benefits are effective on the date of hire, and US-based new hires have 30 days from their start date to enroll. Coverage can be waived if a teammate declines it, and plan changes outside open enrollment are allowed only after a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q01-04",
+    "theme": "Health benefits eligibility",
+    "question": "Can a teammate waive health coverage during the initial enrollment window?",
+    "gold_answer": "Sourcegraph provides health benefits for US-based full-time employees and their eligible dependents. Benefits are effective on the date of hire, and US-based new hires have 30 days from their start date to enroll. Coverage can be waived if a teammate declines it, and plan changes outside open enrollment are allowed only after a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q01-05",
+    "theme": "Health benefits eligibility",
+    "question": "When can a teammate change benefits outside of open enrollment?",
+    "gold_answer": "Sourcegraph provides health benefits for US-based full-time employees and their eligible dependents. Benefits are effective on the date of hire, and US-based new hires have 30 days from their start date to enroll. Coverage can be waived if a teammate declines it, and plan changes outside open enrollment are allowed only after a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q02-01",
+    "theme": "Open enrollment",
+    "question": "What is open enrollment for benefits?",
+    "gold_answer": "Open enrollment is the annual period for reviewing and changing benefit elections, adding or removing dependents, and reviewing costs. Sourcegraph's 2024 open enrollment ran from 2023-11-20 to 2023-12-01, and changes became effective as of 2024-01-01. Outside of open enrollment, changes are only permitted for a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q02-02",
+    "theme": "Open enrollment",
+    "question": "When did the 2024 US benefits open enrollment take place?",
+    "gold_answer": "Open enrollment is the annual period for reviewing and changing benefit elections, adding or removing dependents, and reviewing costs. Sourcegraph's 2024 open enrollment ran from 2023-11-20 to 2023-12-01, and changes became effective as of 2024-01-01. Outside of open enrollment, changes are only permitted for a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q02-03",
+    "theme": "Open enrollment",
+    "question": "How do teammates review or update their current benefits selections?",
+    "gold_answer": "Open enrollment is the annual period for reviewing and changing benefit elections, adding or removing dependents, and reviewing costs. Sourcegraph's 2024 open enrollment ran from 2023-11-20 to 2023-12-01, and changes became effective as of 2024-01-01. Outside of open enrollment, changes are only permitted for a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q02-04",
+    "theme": "Open enrollment",
+    "question": "Are plan changes effective immediately or only on a fixed date?",
+    "gold_answer": "Open enrollment is the annual period for reviewing and changing benefit elections, adding or removing dependents, and reviewing costs. Sourcegraph's 2024 open enrollment ran from 2023-11-20 to 2023-12-01, and changes became effective as of 2024-01-01. Outside of open enrollment, changes are only permitted for a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q02-05",
+    "theme": "Open enrollment",
+    "question": "Can employees make insurance changes outside open enrollment for any reason?",
+    "gold_answer": "Open enrollment is the annual period for reviewing and changing benefit elections, adding or removing dependents, and reviewing costs. Sourcegraph's 2024 open enrollment ran from 2023-11-20 to 2023-12-01, and changes became effective as of 2024-01-01. Outside of open enrollment, changes are only permitted for a qualifying life event.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q03-01",
+    "theme": "Travel and insurance",
+    "question": "Does the health benefit cover teammates while traveling internationally for fun?",
+    "gold_answer": "The regular health benefits do not cover international leisure travel. For business travel on behalf of Sourcegraph, the company has a corporate policy providing travel assistance and medical coverage. For vacation travel, teammates are advised to purchase separate travel insurance, such as GeoBlue.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q03-02",
+    "theme": "Travel and insurance",
+    "question": "What coverage exists when a teammate travels for work on behalf of Sourcegraph?",
+    "gold_answer": "The regular health benefits do not cover international leisure travel. For business travel on behalf of Sourcegraph, the company has a corporate policy providing travel assistance and medical coverage. For vacation travel, teammates are advised to purchase separate travel insurance, such as GeoBlue.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q03-03",
+    "theme": "Travel and insurance",
+    "question": "Are international leisure trips covered by the regular US health plans?",
+    "gold_answer": "The regular health benefits do not cover international leisure travel. For business travel on behalf of Sourcegraph, the company has a corporate policy providing travel assistance and medical coverage. For vacation travel, teammates are advised to purchase separate travel insurance, such as GeoBlue.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q03-04",
+    "theme": "Travel and insurance",
+    "question": "What should a teammate do when traveling for vacation and wanting insurance?",
+    "gold_answer": "The regular health benefits do not cover international leisure travel. For business travel on behalf of Sourcegraph, the company has a corporate policy providing travel assistance and medical coverage. For vacation travel, teammates are advised to purchase separate travel insurance, such as GeoBlue.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q03-05",
+    "theme": "Travel and insurance",
+    "question": "Who provides the corporate travel insurance for business travel?",
+    "gold_answer": "The regular health benefits do not cover international leisure travel. For business travel on behalf of Sourcegraph, the company has a corporate policy providing travel assistance and medical coverage. For vacation travel, teammates are advised to purchase separate travel insurance, such as GeoBlue.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q04-01",
+    "theme": "Remote work",
+    "question": "Is Sourcegraph a remote-first company?",
+    "gold_answer": "Sourcegraph is an all-remote company and teammates are encouraged to work remotely. There is no requirement to ask permission for a brief step away, and the company tries to limit synchronous meetings while allowing flexibility across time zones. There is no expectation of weekend responsiveness except for rare situations with explicit notice, and the company supports remote cohesion through async communication, 1:1s, and watercooler routines.",
+    "expected_sources": [
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q04-02",
+    "theme": "Remote work",
+    "question": "Does a teammate need permission to step away during the workday?",
+    "gold_answer": "Sourcegraph is an all-remote company and teammates are encouraged to work remotely. There is no requirement to ask permission for a brief step away, and the company tries to limit synchronous meetings while allowing flexibility across time zones. There is no expectation of weekend responsiveness except for rare situations with explicit notice, and the company supports remote cohesion through async communication, 1:1s, and watercooler routines.",
+    "expected_sources": [
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q04-03",
+    "theme": "Remote work",
+    "question": "How does Sourcegraph support team cohesion in an all-remote culture?",
+    "gold_answer": "Sourcegraph is an all-remote company and teammates are encouraged to work remotely. There is no requirement to ask permission for a brief step away, and the company tries to limit synchronous meetings while allowing flexibility across time zones. There is no expectation of weekend responsiveness except for rare situations with explicit notice, and the company supports remote cohesion through async communication, 1:1s, and watercooler routines.",
+    "expected_sources": [
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q04-04",
+    "theme": "Remote work",
+    "question": "Is there an expectation to work weekends or after hours?",
+    "gold_answer": "Sourcegraph is an all-remote company and teammates are encouraged to work remotely. There is no requirement to ask permission for a brief step away, and the company tries to limit synchronous meetings while allowing flexibility across time zones. There is no expectation of weekend responsiveness except for rare situations with explicit notice, and the company supports remote cohesion through async communication, 1:1s, and watercooler routines.",
+    "expected_sources": [
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q04-05",
+    "theme": "Remote work",
+    "question": "What tools help remote coworkers build informal connections?",
+    "gold_answer": "Sourcegraph is an all-remote company and teammates are encouraged to work remotely. There is no requirement to ask permission for a brief step away, and the company tries to limit synchronous meetings while allowing flexibility across time zones. There is no expectation of weekend responsiveness except for rare situations with explicit notice, and the company supports remote cohesion through async communication, 1:1s, and watercooler routines.",
+    "expected_sources": [
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q05-01",
+    "theme": "Holidays and PTO",
+    "question": "How does Sourcegraph handle local holidays across different countries?",
+    "gold_answer": "Sourcegraph respects local holidays and does not require teammates to enumerate holidays by country because holidays are covered as part of the unlimited PTO policy. Teammates should add their local holidays to their calendar and notify their manager and teammates in advance. Certain company meetings and onboarding sessions are rescheduled if they fall on selected observed holidays, and there is a company blackout between December 23 and January 1.",
+    "expected_sources": [
+      "company-info-and-process/working-at-sourcegraph/holidays.md"
+    ]
+  },
+  {
+    "id": "Q05-02",
+    "theme": "Holidays and PTO",
+    "question": "Do teammates have to list each country holiday individually?",
+    "gold_answer": "Sourcegraph respects local holidays and does not require teammates to enumerate holidays by country because holidays are covered as part of the unlimited PTO policy. Teammates should add their local holidays to their calendar and notify their manager and teammates in advance. Certain company meetings and onboarding sessions are rescheduled if they fall on selected observed holidays, and there is a company blackout between December 23 and January 1.",
+    "expected_sources": [
+      "company-info-and-process/working-at-sourcegraph/holidays.md"
+    ]
+  },
+  {
+    "id": "Q05-03",
+    "theme": "Holidays and PTO",
+    "question": "Are company meetings rescheduled around certain US holidays?",
+    "gold_answer": "Sourcegraph respects local holidays and does not require teammates to enumerate holidays by country because holidays are covered as part of the unlimited PTO policy. Teammates should add their local holidays to their calendar and notify their manager and teammates in advance. Certain company meetings and onboarding sessions are rescheduled if they fall on selected observed holidays, and there is a company blackout between December 23 and January 1.",
+    "expected_sources": [
+      "company-info-and-process/working-at-sourcegraph/holidays.md"
+    ]
+  },
+  {
+    "id": "Q05-04",
+    "theme": "Holidays and PTO",
+    "question": "Does the company observe a holiday blackout period in late December?",
+    "gold_answer": "Sourcegraph respects local holidays and does not require teammates to enumerate holidays by country because holidays are covered as part of the unlimited PTO policy. Teammates should add their local holidays to their calendar and notify their manager and teammates in advance. Certain company meetings and onboarding sessions are rescheduled if they fall on selected observed holidays, and there is a company blackout between December 23 and January 1.",
+    "expected_sources": [
+      "company-info-and-process/working-at-sourcegraph/holidays.md"
+    ]
+  },
+  {
+    "id": "Q05-05",
+    "theme": "Holidays and PTO",
+    "question": "How should teammates communicate their holiday dates?",
+    "gold_answer": "Sourcegraph respects local holidays and does not require teammates to enumerate holidays by country because holidays are covered as part of the unlimited PTO policy. Teammates should add their local holidays to their calendar and notify their manager and teammates in advance. Certain company meetings and onboarding sessions are rescheduled if they fall on selected observed holidays, and there is a company blackout between December 23 and January 1.",
+    "expected_sources": [
+      "company-info-and-process/working-at-sourcegraph/holidays.md"
+    ]
+  },
+  {
+    "id": "Q06-01",
+    "theme": "Respectful workplace",
+    "question": "What is the purpose of the respectful workplace policy?",
+    "gold_answer": "The respectful workplace policy exists to ensure that everyone at Sourcegraph and those who interact with teammates feels welcomed and included. It applies to all teammates globally, including contractors, and also covers interactions with third parties such as vendors, applicants, and partners. The policy prohibits harassment, discrimination, and bullying and treats allegations seriously.",
+    "expected_sources": [
+      "company-info-and-process/respectful-workplace-policy.md"
+    ]
+  },
+  {
+    "id": "Q06-02",
+    "theme": "Respectful workplace",
+    "question": "Who does the respectful workplace policy apply to?",
+    "gold_answer": "The respectful workplace policy exists to ensure that everyone at Sourcegraph and those who interact with teammates feels welcomed and included. It applies to all teammates globally, including contractors, and also covers interactions with third parties such as vendors, applicants, and partners. The policy prohibits harassment, discrimination, and bullying and treats allegations seriously.",
+    "expected_sources": [
+      "company-info-and-process/respectful-workplace-policy.md"
+    ]
+  },
+  {
+    "id": "Q06-03",
+    "theme": "Respectful workplace",
+    "question": "What kind of behavior is prohibited?",
+    "gold_answer": "The respectful workplace policy exists to ensure that everyone at Sourcegraph and those who interact with teammates feels welcomed and included. It applies to all teammates globally, including contractors, and also covers interactions with third parties such as vendors, applicants, and partners. The policy prohibits harassment, discrimination, and bullying and treats allegations seriously.",
+    "expected_sources": [
+      "company-info-and-process/respectful-workplace-policy.md"
+    ]
+  },
+  {
+    "id": "Q06-04",
+    "theme": "Respectful workplace",
+    "question": "Does the policy cover interactions with external vendors and partners?",
+    "gold_answer": "The respectful workplace policy exists to ensure that everyone at Sourcegraph and those who interact with teammates feels welcomed and included. It applies to all teammates globally, including contractors, and also covers interactions with third parties such as vendors, applicants, and partners. The policy prohibits harassment, discrimination, and bullying and treats allegations seriously.",
+    "expected_sources": [
+      "company-info-and-process/respectful-workplace-policy.md"
+    ]
+  },
+  {
+    "id": "Q06-05",
+    "theme": "Respectful workplace",
+    "question": "What should a teammate do if they feel disrespected at work?",
+    "gold_answer": "The respectful workplace policy exists to ensure that everyone at Sourcegraph and those who interact with teammates feels welcomed and included. It applies to all teammates globally, including contractors, and also covers interactions with third parties such as vendors, applicants, and partners. The policy prohibits harassment, discrimination, and bullying and treats allegations seriously.",
+    "expected_sources": [
+      "company-info-and-process/respectful-workplace-policy.md"
+    ]
+  },
+  {
+    "id": "Q07-01",
+    "theme": "Leave and absence",
+    "question": "What kind of leave guidance is documented in the policy corpus?",
+    "gold_answer": "The documents note that Sourcegraph does not offer short-term or long-term disability at the time of writing and direct teammates to the medical leave of absence policy. Leave and accommodation decisions require a human review, not a machine authorization, and the assistant should avoid acting as the sole decision-maker.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/leave-of-absence.md",
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q07-02",
+    "theme": "Leave and absence",
+    "question": "Does Sourcegraph offer short-term and long-term disability?",
+    "gold_answer": "The documents note that Sourcegraph does not offer short-term or long-term disability at the time of writing and direct teammates to the medical leave of absence policy. Leave and accommodation decisions require a human review, not a machine authorization, and the assistant should avoid acting as the sole decision-maker.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/leave-of-absence.md",
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q07-03",
+    "theme": "Leave and absence",
+    "question": "Where can a teammate find medical leave guidance?",
+    "gold_answer": "The documents note that Sourcegraph does not offer short-term or long-term disability at the time of writing and direct teammates to the medical leave of absence policy. Leave and accommodation decisions require a human review, not a machine authorization, and the assistant should avoid acting as the sole decision-maker.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/leave-of-absence.md",
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q07-04",
+    "theme": "Leave and absence",
+    "question": "Can leave decisions be made solely by an AI assistant?",
+    "gold_answer": "The documents note that Sourcegraph does not offer short-term or long-term disability at the time of writing and direct teammates to the medical leave of absence policy. Leave and accommodation decisions require a human review, not a machine authorization, and the assistant should avoid acting as the sole decision-maker.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/leave-of-absence.md",
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q07-05",
+    "theme": "Leave and absence",
+    "question": "What should a teammate do if they need formal leave support?",
+    "gold_answer": "The documents note that Sourcegraph does not offer short-term or long-term disability at the time of writing and direct teammates to the medical leave of absence policy. Leave and accommodation decisions require a human review, not a machine authorization, and the assistant should avoid acting as the sole decision-maker.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/leave-of-absence.md",
+      "benefits-pay-perks/benefits-perks/benefits.md"
+    ]
+  },
+  {
+    "id": "Q08-01",
+    "theme": "Equality and inclusion",
+    "question": "What is Sourcegraph's general approach to equal opportunity?",
+    "gold_answer": "Sourcegraph states it is committed to equal opportunity and an environment free from harassment and discrimination. The policy documents also call out paid time off arrangements that account for well-being, religious observance, life events, and holidays, and the company emphasizes inclusion for LGBTQIA+ teammates and employees broadly.",
+    "expected_sources": [
+      "company-info-and-process/equality-of-opportunity.md",
+      "company-info-and-process/queer.md"
+    ]
+  },
+  {
+    "id": "Q08-02",
+    "theme": "Equality and inclusion",
+    "question": "Does the company provide paid time off for a range of reasons?",
+    "gold_answer": "Sourcegraph states it is committed to equal opportunity and an environment free from harassment and discrimination. The policy documents also call out paid time off arrangements that account for well-being, religious observance, life events, and holidays, and the company emphasizes inclusion for LGBTQIA+ teammates and employees broadly.",
+    "expected_sources": [
+      "company-info-and-process/equality-of-opportunity.md",
+      "company-info-and-process/queer.md"
+    ]
+  },
+  {
+    "id": "Q08-03",
+    "theme": "Equality and inclusion",
+    "question": "What values are emphasized around workplace equality?",
+    "gold_answer": "Sourcegraph states it is committed to equal opportunity and an environment free from harassment and discrimination. The policy documents also call out paid time off arrangements that account for well-being, religious observance, life events, and holidays, and the company emphasizes inclusion for LGBTQIA+ teammates and employees broadly.",
+    "expected_sources": [
+      "company-info-and-process/equality-of-opportunity.md",
+      "company-info-and-process/queer.md"
+    ]
+  },
+  {
+    "id": "Q08-04",
+    "theme": "Equality and inclusion",
+    "question": "Does Sourcegraph commit to an inclusive environment?",
+    "gold_answer": "Sourcegraph states it is committed to equal opportunity and an environment free from harassment and discrimination. The policy documents also call out paid time off arrangements that account for well-being, religious observance, life events, and holidays, and the company emphasizes inclusion for LGBTQIA+ teammates and employees broadly.",
+    "expected_sources": [
+      "company-info-and-process/equality-of-opportunity.md",
+      "company-info-and-process/queer.md"
+    ]
+  },
+  {
+    "id": "Q08-05",
+    "theme": "Equality and inclusion",
+    "question": "How should the company treat LGBTQIA+ teammates?",
+    "gold_answer": "Sourcegraph states it is committed to equal opportunity and an environment free from harassment and discrimination. The policy documents also call out paid time off arrangements that account for well-being, religious observance, life events, and holidays, and the company emphasizes inclusion for LGBTQIA+ teammates and employees broadly.",
+    "expected_sources": [
+      "company-info-and-process/equality-of-opportunity.md",
+      "company-info-and-process/queer.md"
+    ]
+  },
+  {
+    "id": "Q09-01",
+    "theme": "Company communication norms",
+    "question": "What communication style does Sourcegraph prefer for remote teams?",
+    "gold_answer": "Sourcegraph emphasizes async, written communication because the company is all-remote and distributed across time zones. Written communication is effective when writers anticipate questions and lead with positivity, and the company explicitly encourages thoughtful, written documentation to replace spontaneous in-person cues.",
+    "expected_sources": [
+      "company-info-and-process/communication/asynchronous-communication.md",
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q09-02",
+    "theme": "Company communication norms",
+    "question": "Why is written communication especially important at an all-remote company?",
+    "gold_answer": "Sourcegraph emphasizes async, written communication because the company is all-remote and distributed across time zones. Written communication is effective when writers anticipate questions and lead with positivity, and the company explicitly encourages thoughtful, written documentation to replace spontaneous in-person cues.",
+    "expected_sources": [
+      "company-info-and-process/communication/asynchronous-communication.md",
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q09-03",
+    "theme": "Company communication norms",
+    "question": "What is the best practice for async communication?",
+    "gold_answer": "Sourcegraph emphasizes async, written communication because the company is all-remote and distributed across time zones. Written communication is effective when writers anticipate questions and lead with positivity, and the company explicitly encourages thoughtful, written documentation to replace spontaneous in-person cues.",
+    "expected_sources": [
+      "company-info-and-process/communication/asynchronous-communication.md",
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q09-04",
+    "theme": "Company communication norms",
+    "question": "How can teammates reduce friction when writing messages across time zones?",
+    "gold_answer": "Sourcegraph emphasizes async, written communication because the company is all-remote and distributed across time zones. Written communication is effective when writers anticipate questions and lead with positivity, and the company explicitly encourages thoughtful, written documentation to replace spontaneous in-person cues.",
+    "expected_sources": [
+      "company-info-and-process/communication/asynchronous-communication.md",
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q09-05",
+    "theme": "Company communication norms",
+    "question": "What should writers do to make async communication less cold?",
+    "gold_answer": "Sourcegraph emphasizes async, written communication because the company is all-remote and distributed across time zones. Written communication is effective when writers anticipate questions and lead with positivity, and the company explicitly encourages thoughtful, written documentation to replace spontaneous in-person cues.",
+    "expected_sources": [
+      "company-info-and-process/communication/asynchronous-communication.md",
+      "company-info-and-process/remote/index.md"
+    ]
+  },
+  {
+    "id": "Q10-01",
+    "theme": "Onboarding and setup",
+    "question": "What should a new teammate do when they have not received a Rippling invite?",
+    "gold_answer": "New teammates use Rippling to access pay stubs, tax forms, and benefits information, and they should contact the People Team if the invitation is missing. Company devices are subject to privacy expectations, and personal usage is fine only when it does not interfere with work or violate policy. Sourcegraph also relies on systems such as Okta and device management for secure onboarding.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  },
+  {
+    "id": "Q10-02",
+    "theme": "Onboarding and setup",
+    "question": "Where do new teammates get their payroll and tax information?",
+    "gold_answer": "New teammates use Rippling to access pay stubs, tax forms, and benefits information, and they should contact the People Team if the invitation is missing. Company devices are subject to privacy expectations, and personal usage is fine only when it does not interfere with work or violate policy. Sourcegraph also relies on systems such as Okta and device management for secure onboarding.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  },
+  {
+    "id": "Q10-03",
+    "theme": "Onboarding and setup",
+    "question": "What systems are used for job onboarding and device access?",
+    "gold_answer": "New teammates use Rippling to access pay stubs, tax forms, and benefits information, and they should contact the People Team if the invitation is missing. Company devices are subject to privacy expectations, and personal usage is fine only when it does not interfere with work or violate policy. Sourcegraph also relies on systems such as Okta and device management for secure onboarding.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  },
+  {
+    "id": "Q10-04",
+    "theme": "Onboarding and setup",
+    "question": "Can a teammate use work devices for personal reasons?",
+    "gold_answer": "New teammates use Rippling to access pay stubs, tax forms, and benefits information, and they should contact the People Team if the invitation is missing. Company devices are subject to privacy expectations, and personal usage is fine only when it does not interfere with work or violate policy. Sourcegraph also relies on systems such as Okta and device management for secure onboarding.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  },
+  {
+    "id": "Q10-05",
+    "theme": "Onboarding and setup",
+    "question": "What is the policy for privacy on company devices?",
+    "gold_answer": "New teammates use Rippling to access pay stubs, tax forms, and benefits information, and they should contact the People Team if the invitation is missing. Company devices are subject to privacy expectations, and personal usage is fine only when it does not interfere with work or violate policy. Sourcegraph also relies on systems such as Okta and device management for secure onboarding.",
+    "expected_sources": [
+      "benefits-pay-perks/benefits-perks/benefits.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  },
+  {
+    "id": "Q11-01",
+    "theme": "Security and vendor reviews",
+    "question": "What is the general process for reviewing a new vendor in security?",
+    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
+    "expected_sources": [
+      "departments/security/security-support-rotation.md"
+    ]
+  },
+  {
+    "id": "Q11-02",
+    "theme": "Security and vendor reviews",
+    "question": "Who requests vendor reviews?",
+    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
+    "expected_sources": [
+      "departments/security/security-support-rotation.md"
+    ]
+  },
+  {
+    "id": "Q11-03",
+    "theme": "Security and vendor reviews",
+    "question": "What kinds of vendor data issues are considered?",
+    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
+    "expected_sources": [
+      "departments/security/security-support-rotation.md"
+    ]
+  },
+  {
+    "id": "Q11-04",
+    "theme": "Security and vendor reviews",
+    "question": "Does the security policy require a formal checklist?",
+    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
+    "expected_sources": [
+      "departments/security/security-support-rotation.md"
+    ]
+  },
+  {
+    "id": "Q11-05",
+    "theme": "Security and vendor reviews",
+    "question": "Can a teammate approve a vendor without a review?",
+    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
+    "expected_sources": [
+      "departments/security/security-support-rotation.md"
+    ]
+  },
+  {
+    "id": "Q12-01",
+    "theme": "Data privacy and acceptable use",
+    "question": "What is the general privacy expectation for company devices?",
+    "gold_answer": "The policy documents say that privacy is a core principle at Sourcegraph and that acceptable use must not interfere with work or violate laws. Personal use of company devices is allowed only if it does not disrupt work, create policy violations, or create operational or legal risk.",
+    "expected_sources": [
+      "company-info-and-process/policies/acceptable-use-policy.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  },
+  {
+    "id": "Q12-02",
+    "theme": "Data privacy and acceptable use",
+    "question": "Is personal use of company equipment allowed?",
+    "gold_answer": "The policy documents say that privacy is a core principle at Sourcegraph and that acceptable use must not interfere with work or violate laws. Personal use of company devices is allowed only if it does not disrupt work, create policy violations, or create operational or legal risk.",
+    "expected_sources": [
+      "company-info-and-process/policies/acceptable-use-policy.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  },
+  {
+    "id": "Q12-03",
+    "theme": "Data privacy and acceptable use",
+    "question": "What does the acceptable use policy cover?",
+    "gold_answer": "The policy documents say that privacy is a core principle at Sourcegraph and that acceptable use must not interfere with work or violate laws. Personal use of company devices is allowed only if it does not disrupt work, create policy violations, or create operational or legal risk.",
+    "expected_sources": [
+      "company-info-and-process/policies/acceptable-use-policy.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  },
+  {
+    "id": "Q12-04",
+    "theme": "Data privacy and acceptable use",
+    "question": "Can employees use company devices for unrelated personal tasks?",
+    "gold_answer": "The policy documents say that privacy is a core principle at Sourcegraph and that acceptable use must not interfere with work or violate laws. Personal use of company devices is allowed only if it does not disrupt work, create policy violations, or create operational or legal risk.",
+    "expected_sources": [
+      "company-info-and-process/policies/acceptable-use-policy.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  },
+  {
+    "id": "Q12-05",
+    "theme": "Data privacy and acceptable use",
+    "question": "When would personal device use become prohibited?",
+    "gold_answer": "The policy documents say that privacy is a core principle at Sourcegraph and that acceptable use must not interfere with work or violate laws. Personal use of company devices is allowed only if it does not disrupt work, create policy violations, or create operational or legal risk.",
+    "expected_sources": [
+      "company-info-and-process/policies/acceptable-use-policy.md",
+      "departments/tech-ops/process/team_device_usage_privacy.md"
+    ]
+  }
+]
