@@ -1,73 +1,28 @@
-# Multi-Agent HR Policy Navigator Design
+# Agent design
 
-## Architecture
+## Control flow (`agent.py`)
+1. **Guard** – `screen_query` (regex intent patterns) → refuse / ticket without spending tokens. PII redacted first.
+2. **Planner** – one schema-validated LLM call: `intent ∈ {policy_lookup, multi_part, needs_clarification, out_of_scope, consequential_action}`, standalone `rewritten_query` (resolves follow-ups from session memory), ≤3 `sub_queries`. If JSON fails after repairs → heuristic plan (the system degrades, it does not fail).
+3. **Executor** – loop over (sub-)queries calling `search_policy`. Guards: `max_steps`; duplicate-call detection on the normalised query (infinite-loop guard); one reformulation when the top reranked score < 0.22; one simplified retry on tool error. Evidence is numbered S1..S8, de-duplicated, and every chunk is passed through `sanitize_chunk` (indirect-injection defence).
+4. **Generator** – strategies: `baseline` (zero-shot, no planner/critic), `structured` (2 few-shot turns + schema), `selfconsistency` (3 samples @T=0.7, "reasoning" field, vote on answerability then source agreement then claim support), `decomposition` (answer each sub-question, then compose from notes).
+5. **Critic** – per claim: source ids exist; ≥60 % of claim content tokens occur in cited text; every number in the claim occurs in the evidence. Failure → one revision using `read_section` to expand context, keep the better attempt; remaining unsupported claims are dropped; nothing left → abstain.
+6. **State** – `SessionStore` JSON per session (last 6 turns, last sources); `handoffs.jsonl` review queue.
 
-The system uses a planner → executor → critic loop with a retrieval-first toolchain.
+## Why these choices (small-model specifics)
+* **Cite by id (`S2`), not path** – 8B models mangle long paths; ids are validated mechanically and mapped to paths afterwards.
+* **Claims array with per-claim sources** – makes hallucination *checkable*; free-text answers are not.
+* **`answerable` flag + few-shot abstention example** – cheapest reliable abstention signal for a weak model.
+* **Constrained decoding with graceful downgrade** (`json_schema → guided_json → json_object → none`) plus validate → repair-with-error-message loop. Tool arguments are JSON-schema validated; tool exceptions become `ToolResult(ok=False)`.
+* **Budgets** – `MAX_LLM_CALLS`, `MAX_QUERY_TOKENS` (hard `BudgetExceeded`), `MAX_STEPS`, per-chunk char cap.
 
-1. Planner
-   - Parses the user's request.
-   - Classifies it as policy lookup, ambiguous guidance, or refusal case.
-   - Selects the smallest relevant retrieval strategy.
-
-2. Retrieval tools
-   - `search_documents(query, top_k=8)`
-   - `get_document_context(path, snippet_window=300)`
-   - `collect_citations(results)`
-
-3. Executor
-   - Builds a grounded answer from the top retrieved chunks.
-   - Uses the qwen 8b model through an OpenAI-compatible endpoint.
-   - Returns structured JSON with answer, citations, confidence, and whether a refusal was required.
-
-4. Critic
-   - Checks for unsupported claims, missing citations, and policy safety issues.
-   - Retries with stricter prompts if needed.
-   - Rejects hallucinated or non-cited answers.
-
-## Tools required
-
-The system includes at least these tools:
-
-- Policy search tool: uses BM25 + dense retrieval and returns ranked chunks.
-- Context fetch tool: loads precise document ranges and section headings.
-- Citation validation tool: confirms every claim maps back to a source path.
-- Refusal guard: blocks unsupported or sensitive requests.
-
-## Persistent state
-
-The app tracks:
-
-- conversation history
-- retrieval results per turn
-- tool call trace
-- answer metadata and confidence
-- failure taxonomy
-
-## Error handling
-
-The system handles:
-
-- malformed JSON from the model
-- empty retrieval results
-- model timeouts or API errors
-- infinite loops by enforcing max tool budget and max iterations
-- token budget caps on the prompt and response
+## Failure taxonomy (assigned in `scripts/run_e2e_eval.py::judge`)
+| Class | Rule |
+|---|---|
+| retrieval_miss | expected source not among retrieved evidence |
+| reasoning_error | source retrieved but answer wrong / abstained / low gold recall |
+| tool_call_error | `error_*` status, tool errors, unrecoverable JSON |
+| hallucination | critic found unsupported claims, or answered an unanswerable question |
+| refusal_error | refused a legitimate question, or answered one that must be refused |
 
 ## Observability
-
-The app is designed for Langfuse or OpenTelemetry tracing with fields for:
-
-- query
-- tool names and durations
-- retrieval scores
-- model name
-- answer creation stage
-- failure class
-
-## Responsible AI guardrails
-
-- Prompt injection tests against the document corpus
-- PII handling: no storage of personal employee details
-- Refusal behavior for consequential actions
-- Human-in-the-loop boundary for employment decisions
-- Conservative answer generation based on retrieved docs only
+Every query writes one JSON trace line (`traces/traces.jsonl`): guard, planner, each tool call (args, ms, ok), each LLM call (stage, tokens, mode), critic, counters, result. Mirrored to Langfuse when keys are set. The Streamlit *Traces* tab and `scripts/trace_summary.py` aggregate latency percentiles, tool calls/query, repairs, status mix.

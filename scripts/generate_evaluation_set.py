@@ -126,18 +126,6 @@ TOPIC_TEMPLATES = [
         "sources": ["benefits-pay-perks/benefits-perks/benefits.md", "departments/tech-ops/process/team_device_usage_privacy.md"],
     },
     {
-        "theme": "Security and vendor reviews",
-        "questions": [
-            "What is the general process for reviewing a new vendor in security?",
-            "Who requests vendor reviews?",
-            "What kinds of vendor data issues are considered?",
-            "Does the security policy require a formal checklist?",
-            "Can a teammate approve a vendor without a review?",
-        ],
-        "gold": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
-        "sources": ["departments/security/security-support-rotation.md"],
-    },
-    {
         "theme": "Data privacy and acceptable use",
         "questions": [
             "What is the general privacy expectation for company devices?",

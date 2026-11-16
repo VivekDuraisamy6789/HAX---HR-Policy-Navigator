@@ -470,51 +470,6 @@
     ]
   },
   {
-    "id": "Q11-01",
-    "theme": "Security and vendor reviews",
-    "question": "What is the general process for reviewing a new vendor in security?",
-    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
-    "expected_sources": [
-      "departments/security/security-support-rotation.md"
-    ]
-  },
-  {
-    "id": "Q11-02",
-    "theme": "Security and vendor reviews",
-    "question": "Who requests vendor reviews?",
-    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
-    "expected_sources": [
-      "departments/security/security-support-rotation.md"
-    ]
-  },
-  {
-    "id": "Q11-03",
-    "theme": "Security and vendor reviews",
-    "question": "What kinds of vendor data issues are considered?",
-    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
-    "expected_sources": [
-      "departments/security/security-support-rotation.md"
-    ]
-  },
-  {
-    "id": "Q11-04",
-    "theme": "Security and vendor reviews",
-    "question": "Does the security policy require a formal checklist?",
-    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
-    "expected_sources": [
-      "departments/security/security-support-rotation.md"
-    ]
-  },
-  {
-    "id": "Q11-05",
-    "theme": "Security and vendor reviews",
-    "question": "Can a teammate approve a vendor without a review?",
-    "gold_answer": "Vendor reviews are requested by teammates when a new vendor is being onboarded, and they cover aspects such as data processing, data protection, security reporting, and the type of data being shared. The review is intended to assess security risk before a vendor is approved, and the system should not authorize vendor access without a human review.",
-    "expected_sources": [
-      "departments/security/security-support-rotation.md"
-    ]
-  },
-  {
     "id": "Q12-01",
     "theme": "Data privacy and acceptable use",
     "question": "What is the general privacy expectation for company devices?",

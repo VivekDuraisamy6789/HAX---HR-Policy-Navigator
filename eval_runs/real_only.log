@@ -1,0 +1,4 @@
+heading_cap  bm25           hit@1=0.67 hit@3=0.85 hit@5=0.87 docrec@5=0.76 mrr=0.77  hit@5 95%CI=[0.764, 0.964]  (1695 chunks)
+heading_cap  dense          hit@1=0.56 hit@3=0.76 hit@5=0.87 docrec@5=0.78 mrr=0.69  hit@5 95%CI=[0.727, 0.982] Δvs bm25=[-0.073, 0.073]  (1695 chunks)
+heading_cap  hybrid         hit@1=0.71 hit@3=0.84 hit@5=0.87 docrec@5=0.77 mrr=0.78  hit@5 95%CI=[0.764, 0.964] Δvs bm25=[-0.055, 0.055]  (1695 chunks)
+heading_cap  hybrid_rerank  hit@1=0.73 hit@3=0.85 hit@5=0.89 docrec@5=0.78 mrr=0.80  hit@5 95%CI=[0.782, 0.982] Δvs bm25=[0.0, 0.055]  (1695 chunks)

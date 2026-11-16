@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    ports: ["8501:8501"]
+    env_file: .env
+    volumes:               # persist traces, session memory, human-review queue and the embedding cache
+      - ./traces:/app/traces
+      - ./state:/app/state
+      - ./.cache:/app/.cache
+    restart: unless-stopped

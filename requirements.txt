@@ -1,6 +1,13 @@
-streamlit>=1.36.0
-python-dotenv>=1.0.1
-pydantic>=2.7.4
-requests>=2.32.0
 openai>=1.40.0
+pydantic>=2.7.4
+jsonschema>=4.21.0
 numpy>=1.26.0
+scikit-learn>=1.4.0
+python-dotenv>=1.0.1
+streamlit>=1.36.0
+# optional: neural reranker (RERANKER=cross_encoder)
+# sentence-transformers>=3.0.0
+# optional: tracing to Langfuse (JSONL tracing is always on)
+langfuse>=2.0.0
+# dev
+pytest>=8.0.0

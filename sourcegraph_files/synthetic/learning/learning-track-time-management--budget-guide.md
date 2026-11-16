@@ -1,0 +1,19 @@
+---
+title: Learning track: Time management - budget guide
+synthetic: true
+family: learning
+tags: [time-management, learning]
+---
+
+# Learning track: Time management - budget guide
+
+> Synthetic training document. Not official Sourcegraph policy. Figures marked as policy facts match the real handbook.
+
+## Time management: budget guide
+Each teammate has $1000 per year for education and professional development (conferences and courses). A Time management course, book or conference counts against this budget. Submit via Airbase with receipts for anything over $25.
+
+Agree learning goals with your manager at the 60-day check-in and share what you learned with the team afterwards.
+
+## Related
+- [Learning and development](../../departments/people-talent/learning-and-development.md)
+- [Expenses](../../benefits-pay-perks/pay-expenses/expenses/index.md)
