@@ -107,10 +107,12 @@ With our retrieval layer achieving 89.1% Hit@5 and 0.793 MRR, our focus for Week
 
 We look forward to discussing these retrieval ablation findings during our upcoming sync.
 
-Best regards,  
-**Amit Bhardwaj** (and Team)  
-*Capstone Track B — Group [Number]*  
-*Executive Post Graduate Programme in Generative AI and Agentic AI*
+
+Best regards,
+**HAX Team**
+Capstone Track B — Group [046-065]
+Executive Post Graduate Programme in Generative AI and Agentic AI
+
 
 ---
 
