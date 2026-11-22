@@ -1,80 +1,33 @@
 {
- "baseline": {
-  "model": "Qwen/Qwen3-8B",
-  "n": 8,
-  "accuracy": 0.625,
-  "task_completion_rate": 1.0,
-  "retrieval_hit_in_context": 1.0,
-  "avg_tool_calls": 1.0,
-  "avg_llm_calls": 1.0,
-  "avg_tokens": 1799,
-  "avg_cost_usd": 9.6e-05,
-  "p50_latency_ms": 8353.8,
-  "p95_latency_ms": 10950.4,
-  "json_repairs": 0,
-  "accuracy_by_type": {
-   "answerable": "5/8"
-  },
-  "failure_taxonomy": {
-   "reasoning_error": 3
-  }
- },
- "structured": {
-  "model": "Qwen/Qwen3-8B",
-  "n": 8,
-  "accuracy": 0.75,
-  "task_completion_rate": 1.0,
-  "retrieval_hit_in_context": 1.0,
-  "avg_tool_calls": 1.0,
-  "avg_llm_calls": 2.62,
-  "avg_tokens": 2596,
-  "avg_cost_usd": 0.000148,
-  "p50_latency_ms": 9757.0,
-  "p95_latency_ms": 21954.7,
-  "json_repairs": 7,
-  "accuracy_by_type": {
-   "answerable": "6/8"
-  },
-  "failure_taxonomy": {
-   "reasoning_error": 2
-  }
- },
- "selfconsistency": {
-  "model": "Qwen/Qwen3-8B",
-  "n": 8,
-  "accuracy": 0.75,
-  "task_completion_rate": 1.0,
-  "retrieval_hit_in_context": 1.0,
-  "avg_tool_calls": 1.0,
-  "avg_llm_calls": 5.38,
-  "avg_tokens": 6985,
-  "avg_cost_usd": 0.000389,
-  "p50_latency_ms": 22190.9,
-  "p95_latency_ms": 28310.7,
-  "json_repairs": 13,
-  "accuracy_by_type": {
-   "answerable": "6/8"
-  },
-  "failure_taxonomy": {
-   "reasoning_error": 2
-  }
- },
  "decomposition": {
   "model": "Qwen/Qwen3-8B",
-  "n": 8,
-  "accuracy": 1.0,
+  "n": 84,
+  "accuracy": 0.429,
   "task_completion_rate": 1.0,
-  "retrieval_hit_in_context": 1.0,
-  "avg_tool_calls": 1.25,
-  "avg_llm_calls": 2.88,
-  "avg_tokens": 3474,
+  "retrieval_hit_in_context": 0.847,
+  "avg_tool_calls": 1.31,
+  "avg_llm_calls": 2.54,
+  "avg_tokens": 3505,
   "avg_cost_usd": 0.000191,
-  "p50_latency_ms": 5940.6,
-  "p95_latency_ms": 34331.1,
-  "json_repairs": 5,
+  "p50_latency_ms": 12963.0,
+  "p95_latency_ms": 42576.5,
+  "json_repairs": 28,
   "accuracy_by_type": {
-   "answerable": "8/8"
+   "answerable": "8/55",
+   "unanswerable": "5/5",
+   "out_of_scope": "3/3",
+   "consequential_action": "6/6",
+   "private_data": "4/4",
+   "legal_advice": "2/2",
+   "prompt_injection": "4/4",
+   "pii": "1/1",
+   "false_refusal_probe": "3/4"
   },
-  "failure_taxonomy": {}
+  "failure_taxonomy": {
+   "reasoning_error": 38,
+   "retrieval_miss": 8,
+   "refusal_error": 1,
+   "hallucination": 1
+  }
  }
 }

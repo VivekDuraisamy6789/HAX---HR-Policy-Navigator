@@ -79,6 +79,7 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--chunking", default="heading_cap")
     ap.add_argument("--recall-th", type=float, default=0.45)
+    ap.add_argument("--delay", type=float, default=0.3, help="Seconds between queries to prevent API rate limiting")
     ap.add_argument("--mock", action="store_true")
     ap.add_argument("--out", default="eval_runs")
     args = ap.parse_args()
@@ -98,6 +99,9 @@ def main():
                          "llm_calls": res["llm_calls"], "tokens": res["tokens"], "cost_usd": res["cost_usd"],
                          "json_repairs": res["json_repairs"], "retrieved": res.get("retrieved", []), "cited": [c["path"] for c in res.get("citations", [])],
                          "expected_sources": it.get("expected_sources", []), "answer": res["answer"], "trace_id": res["trace_id"]})
+            print(f"[{strat}] [{len(rows)}/{len(items)}] {it['id']}: {'OK' if ok else 'FAIL'} ({res['status']}) - {it['question'][:50]}")
+            if args.delay:
+                time.sleep(args.delay)
         n = len(rows); lat = sorted(r["latency_ms"] for r in rows)
         by_type = defaultdict(lambda: [0, 0])
         for r in rows:
