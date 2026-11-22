@@ -1,42 +1,80 @@
 {
  "baseline": {
   "model": "Qwen/Qwen3-8B",
-  "n": 5,
-  "accuracy": 0.0,
+  "n": 8,
+  "accuracy": 0.625,
   "task_completion_rate": 1.0,
   "retrieval_hit_in_context": 1.0,
   "avg_tool_calls": 1.0,
   "avg_llm_calls": 1.0,
-  "avg_tokens": 1664,
-  "avg_cost_usd": 9e-05,
-  "p50_latency_ms": 3253.1,
-  "p95_latency_ms": 7743.3,
+  "avg_tokens": 1799,
+  "avg_cost_usd": 9.6e-05,
+  "p50_latency_ms": 8353.8,
+  "p95_latency_ms": 10950.4,
   "json_repairs": 0,
   "accuracy_by_type": {
-   "answerable": "0/5"
+   "answerable": "5/8"
   },
   "failure_taxonomy": {
-   "reasoning_error": 5
+   "reasoning_error": 3
   }
  },
  "structured": {
   "model": "Qwen/Qwen3-8B",
-  "n": 5,
-  "accuracy": 0.0,
+  "n": 8,
+  "accuracy": 0.75,
   "task_completion_rate": 1.0,
   "retrieval_hit_in_context": 1.0,
   "avg_tool_calls": 1.0,
-  "avg_llm_calls": 3.8,
-  "avg_tokens": 3016,
-  "avg_cost_usd": 0.000182,
-  "p50_latency_ms": 15448.4,
-  "p95_latency_ms": 20543.1,
-  "json_repairs": 10,
+  "avg_llm_calls": 2.62,
+  "avg_tokens": 2596,
+  "avg_cost_usd": 0.000148,
+  "p50_latency_ms": 9757.0,
+  "p95_latency_ms": 21954.7,
+  "json_repairs": 7,
   "accuracy_by_type": {
-   "answerable": "0/5"
+   "answerable": "6/8"
   },
   "failure_taxonomy": {
-   "reasoning_error": 5
+   "reasoning_error": 2
   }
+ },
+ "selfconsistency": {
+  "model": "Qwen/Qwen3-8B",
+  "n": 8,
+  "accuracy": 0.75,
+  "task_completion_rate": 1.0,
+  "retrieval_hit_in_context": 1.0,
+  "avg_tool_calls": 1.0,
+  "avg_llm_calls": 5.38,
+  "avg_tokens": 6985,
+  "avg_cost_usd": 0.000389,
+  "p50_latency_ms": 22190.9,
+  "p95_latency_ms": 28310.7,
+  "json_repairs": 13,
+  "accuracy_by_type": {
+   "answerable": "6/8"
+  },
+  "failure_taxonomy": {
+   "reasoning_error": 2
+  }
+ },
+ "decomposition": {
+  "model": "Qwen/Qwen3-8B",
+  "n": 8,
+  "accuracy": 1.0,
+  "task_completion_rate": 1.0,
+  "retrieval_hit_in_context": 1.0,
+  "avg_tool_calls": 1.25,
+  "avg_llm_calls": 2.88,
+  "avg_tokens": 3474,
+  "avg_cost_usd": 0.000191,
+  "p50_latency_ms": 5940.6,
+  "p95_latency_ms": 34331.1,
+  "json_repairs": 5,
+  "accuracy_by_type": {
+   "answerable": "8/8"
+  },
+  "failure_taxonomy": {}
  }
 }

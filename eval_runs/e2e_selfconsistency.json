@@ -1,0 +1,270 @@
+{
+ "summary": {
+  "model": "Qwen/Qwen3-8B",
+  "n": 8,
+  "accuracy": 0.75,
+  "task_completion_rate": 1.0,
+  "retrieval_hit_in_context": 1.0,
+  "avg_tool_calls": 1.0,
+  "avg_llm_calls": 5.38,
+  "avg_tokens": 6985,
+  "avg_cost_usd": 0.000389,
+  "p50_latency_ms": 22190.9,
+  "p95_latency_ms": 28310.7,
+  "json_repairs": 13,
+  "accuracy_by_type": {
+   "answerable": "6/8"
+  },
+  "failure_taxonomy": {
+   "reasoning_error": 2
+  }
+ },
+ "rows": [
+  {
+   "id": "Q01-01",
+   "type": "answerable",
+   "question": "Are US-based full-time teammates eligible for health benefits on their date of hire?",
+   "status": "success",
+   "correct": true,
+   "failure": "",
+   "latency_ms": 13763.7,
+   "tool_calls": 1,
+   "llm_calls": 5,
+   "tokens": 5399,
+   "cost_usd": 0.000298,
+   "json_repairs": 1,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/total-rewards.md",
+    "benefits-pay-perks/benefits-perks/index.md",
+    "synthetic/faq/faq-for-contractors-converting-to-employees-are-insurance-premiums-covered.md",
+    "synthetic/region/united-states-benefits-summary.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "Yes, US-based full-time employees are eligible for health benefits on their date of hire.",
+   "trace_id": "000b8426a7ec"
+  },
+  {
+   "id": "Q01-02",
+   "type": "answerable",
+   "question": "Do dependents qualify for Sourcegraph health benefits?",
+   "status": "success",
+   "correct": true,
+   "failure": "",
+   "latency_ms": 25461.2,
+   "tool_calls": 1,
+   "llm_calls": 6,
+   "tokens": 6806,
+   "cost_usd": 0.000395,
+   "json_repairs": 3,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/total-rewards.md",
+    "departments/people-talent/family-support.md",
+    "benefits-pay-perks/benefits-perks/travel/index.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "Yes, dependents qualify for Sourcegraph health benefits.",
+   "trace_id": "6aa5b08d9751"
+  },
+  {
+   "id": "Q01-03",
+   "type": "answerable",
+   "question": "What is the deadline for US new hires to enroll in insurance after joining?",
+   "status": "success",
+   "correct": true,
+   "failure": "",
+   "latency_ms": 14966.6,
+   "tool_calls": 1,
+   "llm_calls": 4,
+   "tokens": 5916,
+   "cost_usd": 0.000315,
+   "json_repairs": 0,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/people-ops/tools/people-ops-faqs.md",
+    "departments/people-talent/talent/process/after_the_offer.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "company-info-and-process/communication/retrospectives.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "US new hires have 30 days from their start date to enroll in insurance.",
+   "trace_id": "433766e04ca8"
+  },
+  {
+   "id": "Q01-04",
+   "type": "answerable",
+   "question": "Can a teammate waive health coverage during the initial enrollment window?",
+   "status": "success",
+   "correct": false,
+   "failure": "reasoning_error",
+   "latency_ms": 20324.2,
+   "tool_calls": 1,
+   "llm_calls": 6,
+   "tokens": 7450,
+   "cost_usd": 0.000414,
+   "json_repairs": 2,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/ada.md",
+    "benefits-pay-perks/benefits-perks/leave-of-absence.md",
+    "benefits-pay-perks/benefits-perks/leave-of-absence.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "Yes, a teammate can waive health coverage during the initial enrollment window.",
+   "trace_id": "0cba494928ac"
+  },
+  {
+   "id": "Q01-05",
+   "type": "answerable",
+   "question": "When can a teammate change benefits outside of open enrollment?",
+   "status": "success",
+   "correct": true,
+   "failure": "",
+   "latency_ms": 22190.9,
+   "tool_calls": 1,
+   "llm_calls": 6,
+   "tokens": 7415,
+   "cost_usd": 0.000416,
+   "json_repairs": 2,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/index.md",
+    "company-info-and-process/working-at-sourcegraph/switching-teams.md",
+    "synthetic/manager/manager-guide-when-a-teammate-wants-to-change-teams--escalation.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "A teammate can change benefits outside of open enrollment if they experience a Qualifying Life Event (QLE), such as marriage or birth of a child.",
+   "trace_id": "7d93d4ae16c9"
+  },
+  {
+   "id": "Q02-01",
+   "type": "answerable",
+   "question": "What is open enrollment for benefits?",
+   "status": "success",
+   "correct": true,
+   "failure": "",
+   "latency_ms": 28310.7,
+   "tool_calls": 1,
+   "llm_calls": 6,
+   "tokens": 7950,
+   "cost_usd": 0.000456,
+   "json_repairs": 2,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/index.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/family-support.md",
+    "departments/people-talent/talent/process/opening_a_new_job.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "Open enrollment is your once-a-year opportunity to review and change your plans, add or remove dependents, and review your costs and contribution for benefits. It took place from 2023-11-20 to 2023-12-01 for 2024 benefits.",
+   "trace_id": "3d6f02bb126b"
+  },
+  {
+   "id": "Q02-02",
+   "type": "answerable",
+   "question": "When did the 2024 US benefits open enrollment take place?",
+   "status": "success",
+   "correct": true,
+   "failure": "",
+   "latency_ms": 26754.9,
+   "tool_calls": 1,
+   "llm_calls": 6,
+   "tokens": 7653,
+   "cost_usd": 0.000438,
+   "json_repairs": 3,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/pay-expenses/compensation/index.md",
+    "departments/people-talent/talent/process/opening_a_new_job.md",
+    "departments/people-talent/talent/process/interview_process.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "The 2024 US benefits open enrollment took place from 2023-11-20 to 2023-12-01.",
+   "trace_id": "85c2fac1acda"
+  },
+  {
+   "id": "Q02-03",
+   "type": "answerable",
+   "question": "How do teammates review or update their current benefits selections?",
+   "status": "success",
+   "correct": false,
+   "failure": "reasoning_error",
+   "latency_ms": 9948.8,
+   "tool_calls": 1,
+   "llm_calls": 4,
+   "tokens": 7289,
+   "cost_usd": 0.000384,
+   "json_repairs": 0,
+   "retrieved": [
+    "departments/people-talent/people-ops/process/teammate-sentiment/impact-reviews/index.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/people-ops/process/teammate-sentiment/impact-reviews/index.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/people-ops/process/teammate-sentiment/impact-reviews/index.md",
+    "departments/people-talent/index.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "Teammates can review or update their benefits selections by visiting the Sequoia app or Rippling. For open enrollment, they should log into Rippling.",
+   "trace_id": "376f2dd99b9a"
+  }
+ ]
+}

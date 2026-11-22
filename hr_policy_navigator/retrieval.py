@@ -88,21 +88,32 @@ class OpenAIEmbedder:
     """OpenAI-compatible /embeddings with a persistent cache (keyed by model+text hash)."""
 
     def __init__(self, base_url: str, api_key: str, model: str, cache_dir: str = ".cache/embeddings",
-                 batch: int = 32):
+                 batch: int = 16):
         from openai import OpenAI
         self.client = OpenAI(base_url=base_url, api_key=api_key, timeout=60)
-        self.model, self.batch = model, batch
+        self.model, self.batch = model, int(os.getenv("EMBEDDING_BATCH", str(batch)))
         self.name = f"api:{model}"
         self.cache_path = Path(cache_dir) / f"{hashlib.sha1(model.encode()).hexdigest()[:10]}.json"
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
         self.cache: Dict[str, List[float]] = (
             json.loads(self.cache_path.read_text()) if self.cache_path.exists() else {})
 
+    @staticmethod
+    def _truncate(t: str, max_chars: int = 800) -> str:
+        import re
+        t = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', t)  # strip markdown links to anchor text
+        t = re.sub(r'https?://\S+', '', t)               # strip raw URLs which bloat BPE tokens
+        if len(t) <= max_chars:
+            return t
+        idx = t[:max_chars].rfind(" ")
+        return t[:idx] if idx > 0 else t[:max_chars]
+
     def _key(self, t: str) -> str:
         return hashlib.sha1(t.encode()).hexdigest()
 
     def _embed(self, texts: List[str]) -> List[List[float]]:
         import time
+        texts = [self._truncate(t) for t in texts]
         missing = [t for t in dict.fromkeys(texts) if self._key(t) not in self.cache]
         for i in range(0, len(missing), self.batch):
             part = missing[i : i + self.batch]
@@ -110,7 +121,9 @@ class OpenAIEmbedder:
                 try:
                     resp = self.client.embeddings.create(model=self.model, input=part)
                     break
-                except Exception:
+                except Exception as e:
+                    if "512" in str(e) or "422" in str(e):
+                        part = [self._truncate(p, max_chars=400) for p in part]
                     if attempt == 3:
                         raise
                     time.sleep(0.5 * 2 ** attempt)

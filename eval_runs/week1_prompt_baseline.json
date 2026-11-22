@@ -1,0 +1,408 @@
+{
+  "zero_shot": {
+    "strategy": "zero_shot",
+    "queries": 8,
+    "accuracy": 0.375,
+    "task_completion": 1.0,
+    "json_validity_rate": "N/A",
+    "p50_latency_ms": 3143.7,
+    "failures": {
+      "false_refusal": 4,
+      "factual_error_low_recall": 1
+    },
+    "rows": [
+      {
+        "id": "Q01-01",
+        "type": "answerable",
+        "question": "Are US-based full-time teammates eligible for health benefits on their date of hire?",
+        "strategy": "zero_shot",
+        "latency_ms": 2267.8,
+        "json_valid": false,
+        "correct": true,
+        "failure": "",
+        "model_output": "Yes, US-based full-time teammates are generally eligible for health benefits on their date of hire, provided they meet the eligibility criteria outlined in Sourcegraph's benefits policy. The exact start date for benefits may depend on the specific plan and the timing of the hire, but most health ben"
+      },
+      {
+        "id": "Q01-02",
+        "type": "answerable",
+        "question": "Do dependents qualify for Sourcegraph health benefits?",
+        "strategy": "zero_shot",
+        "latency_ms": 2302.1,
+        "json_valid": false,
+        "correct": false,
+        "failure": "false_refusal",
+        "model_output": "Yes, dependents may qualify for Sourcegraph health benefits, depending on the specific plan and the employee's eligibility. Sourcegraph offers health insurance options through a partner provider, and eligible employees can enroll their dependents, such as spouses, children, and sometimes other famil"
+      },
+      {
+        "id": "Q01-03",
+        "type": "answerable",
+        "question": "What is the deadline for US new hires to enroll in insurance after joining?",
+        "strategy": "zero_shot",
+        "latency_ms": 2825.0,
+        "json_valid": false,
+        "correct": false,
+        "failure": "false_refusal",
+        "model_output": "At Sourcegraph, new hires in the United States are typically given a specific period to enroll in health insurance benefits after their start date. This period is often referred to as the \"open enrollment\" period, and it is generally around 30 days from the start date of employment. However, the exa"
+      },
+      {
+        "id": "Q01-04",
+        "type": "answerable",
+        "question": "Can a teammate waive health coverage during the initial enrollment window?",
+        "strategy": "zero_shot",
+        "latency_ms": 4641.2,
+        "json_valid": false,
+        "correct": false,
+        "failure": "false_refusal",
+        "model_output": "Yes, a teammate can choose to waive health coverage during the initial enrollment window, but this decision must be made carefully and in accordance with Sourcegraph's health benefits policy and applicable legal requirements.\n\nDuring the initial enrollment period, employees are typically given the o"
+      },
+      {
+        "id": "Q01-05",
+        "type": "answerable",
+        "question": "When can a teammate change benefits outside of open enrollment?",
+        "strategy": "zero_shot",
+        "latency_ms": 6124.4,
+        "json_valid": false,
+        "correct": false,
+        "failure": "false_refusal",
+        "model_output": "A teammate can only change benefits outside of the regular open enrollment period under specific circumstances, as outlined in Sourcegraph's benefits policy. These exceptions typically include:\n\n1. **Qualifying Life Events (QLEs):** These are events that significantly impact a teammate's health cove"
+      },
+      {
+        "id": "Q02-01",
+        "type": "answerable",
+        "question": "What is open enrollment for benefits?",
+        "strategy": "zero_shot",
+        "latency_ms": 3143.7,
+        "json_valid": false,
+        "correct": true,
+        "failure": "",
+        "model_output": "Open enrollment is a specific period during the year when employees can review, select, or change their benefits package. During this time, employees can enroll in new benefits, modify existing benefits, or disenroll from certain benefits, depending on the employer's policies and the applicable bene"
+      },
+      {
+        "id": "Q02-02",
+        "type": "answerable",
+        "question": "When did the 2024 US benefits open enrollment take place?",
+        "strategy": "zero_shot",
+        "latency_ms": 1911.3,
+        "json_valid": false,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "The 2024 US benefits open enrollment period for Sourcegraph employees typically takes place during the months of November and December. However, the exact dates are determined by the company's benefits administrator and are communicated to employees through internal channels such as email, the compa"
+      },
+      {
+        "id": "Q02-03",
+        "type": "answerable",
+        "question": "How do teammates review or update their current benefits selections?",
+        "strategy": "zero_shot",
+        "latency_ms": 5401.9,
+        "json_valid": false,
+        "correct": true,
+        "failure": "",
+        "model_output": "Teammates can review or update their current benefits selections through the **Sourcegraph Benefits Portal**, which is accessible via the company's internal systems. Here's a general overview of the process:\n\n1. **Access the Benefits Portal**: Employees can log in to the Sourcegraph internal portal "
+      }
+    ]
+  },
+  "structured_fewshot": {
+    "strategy": "structured_fewshot",
+    "queries": 8,
+    "accuracy": 0.125,
+    "task_completion": 1.0,
+    "json_validity_rate": 1.0,
+    "p50_latency_ms": 1052.6,
+    "failures": {
+      "factual_error_low_recall": 7
+    },
+    "rows": [
+      {
+        "id": "Q01-01",
+        "type": "answerable",
+        "question": "Are US-based full-time teammates eligible for health benefits on their date of hire?",
+        "strategy": "structured_fewshot",
+        "latency_ms": 814.1,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Yes, US-based full-time teammates are eligible for health benefits on their date of hire."
+      },
+      {
+        "id": "Q01-02",
+        "type": "answerable",
+        "question": "Do dependents qualify for Sourcegraph health benefits?",
+        "strategy": "structured_fewshot",
+        "latency_ms": 663.6,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Yes, dependents qualify for Sourcegraph health benefits."
+      },
+      {
+        "id": "Q01-03",
+        "type": "answerable",
+        "question": "What is the deadline for US new hires to enroll in insurance after joining?",
+        "strategy": "structured_fewshot",
+        "latency_ms": 783.3,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "US new hires have 30 days from their start date to enroll in insurance."
+      },
+      {
+        "id": "Q01-04",
+        "type": "answerable",
+        "question": "Can a teammate waive health coverage during the initial enrollment window?",
+        "strategy": "structured_fewshot",
+        "latency_ms": 1038.7,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Yes, a teammate can waive health coverage during the initial enrollment window, but they must do so intentionally and understand the implications of waiving coverage."
+      },
+      {
+        "id": "Q01-05",
+        "type": "answerable",
+        "question": "When can a teammate change benefits outside of open enrollment?",
+        "strategy": "structured_fewshot",
+        "latency_ms": 1067.0,
+        "json_valid": true,
+        "correct": true,
+        "failure": "",
+        "model_output": "A teammate can change benefits outside of open enrollment only during a qualifying life event, such as marriage, birth of a child, or loss of coverage."
+      },
+      {
+        "id": "Q02-01",
+        "type": "answerable",
+        "question": "What is open enrollment for benefits?",
+        "strategy": "structured_fewshot",
+        "latency_ms": 1052.6,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Open enrollment is a specific period during which employees can review, change, or enroll in health and wellness benefits offered by their employer."
+      },
+      {
+        "id": "Q02-02",
+        "type": "answerable",
+        "question": "When did the 2024 US benefits open enrollment take place?",
+        "strategy": "structured_fewshot",
+        "latency_ms": 1101.2,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "The 2024 US benefits open enrollment period typically takes place from November 1 to November 15, 2024."
+      },
+      {
+        "id": "Q02-03",
+        "type": "answerable",
+        "question": "How do teammates review or update their current benefits selections?",
+        "strategy": "structured_fewshot",
+        "latency_ms": 1099.7,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Teammates can review or update their benefits selections through the benefits portal provided by Sourcegraph, typically accessible via the company's internal systems or HR platform."
+      }
+    ]
+  },
+  "chain_of_thought": {
+    "strategy": "chain_of_thought",
+    "queries": 8,
+    "accuracy": 0.125,
+    "task_completion": 1.0,
+    "json_validity_rate": 1.0,
+    "p50_latency_ms": 3059.6,
+    "failures": {
+      "factual_error_low_recall": 6,
+      "false_refusal": 1
+    },
+    "rows": [
+      {
+        "id": "Q01-01",
+        "type": "answerable",
+        "question": "Are US-based full-time teammates eligible for health benefits on their date of hire?",
+        "strategy": "chain_of_thought",
+        "latency_ms": 1938.7,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Yes, US-based full-time teammates are eligible for health benefits on their date of hire."
+      },
+      {
+        "id": "Q01-02",
+        "type": "answerable",
+        "question": "Do dependents qualify for Sourcegraph health benefits?",
+        "strategy": "chain_of_thought",
+        "latency_ms": 3059.6,
+        "json_valid": true,
+        "correct": false,
+        "failure": "false_refusal",
+        "model_output": "Dependents may qualify for Sourcegraph health benefits, but the specific eligibility criteria depend on the plan and employee status. Please consult the health benefits plan details or contact HR for confirmation."
+      },
+      {
+        "id": "Q01-03",
+        "type": "answerable",
+        "question": "What is the deadline for US new hires to enroll in insurance after joining?",
+        "strategy": "chain_of_thought",
+        "latency_ms": 4130.3,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "The deadline for US new hires to enroll in insurance after joining typically falls within 90 days of their start date, as required by the Affordable Care Act (ACA). However, the exact deadline may vary depending on the employer's specific policies and the insurance plan's terms."
+      },
+      {
+        "id": "Q01-04",
+        "type": "answerable",
+        "question": "Can a teammate waive health coverage during the initial enrollment window?",
+        "strategy": "chain_of_thought",
+        "latency_ms": 2996.4,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "It is not possible to determine whether a teammate can waive health coverage during the initial enrollment window without specific policy details from Sourcegraph."
+      },
+      {
+        "id": "Q01-05",
+        "type": "answerable",
+        "question": "When can a teammate change benefits outside of open enrollment?",
+        "strategy": "chain_of_thought",
+        "latency_ms": 3821.2,
+        "json_valid": true,
+        "correct": true,
+        "failure": "",
+        "model_output": "A teammate can change benefits outside of open enrollment if they experience a qualifying life event, such as marriage, birth or adoption of a child, loss of coverage under another plan, or a change in employment status. The exact rules depend on Sourcegraph's HR policies."
+      },
+      {
+        "id": "Q02-01",
+        "type": "answerable",
+        "question": "What is open enrollment for benefits?",
+        "strategy": "chain_of_thought",
+        "latency_ms": 3458.8,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Open enrollment for benefits is an annual period during which employees can review, select, or change their health, dental, vision, and other benefit plans offered by their employer."
+      },
+      {
+        "id": "Q02-02",
+        "type": "answerable",
+        "question": "When did the 2024 US benefits open enrollment take place?",
+        "strategy": "chain_of_thought",
+        "latency_ms": 2977.7,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "The 2024 US benefits open enrollment typically took place between November 1 and December 15, though exact dates may vary by employer and state."
+      },
+      {
+        "id": "Q02-03",
+        "type": "answerable",
+        "question": "How do teammates review or update their current benefits selections?",
+        "strategy": "chain_of_thought",
+        "latency_ms": 2924.6,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Teammates can review or update their current benefits selections by logging into their Sourcegraph account and navigating to the benefits or compensation section. From there, they can view their current selections and make changes as needed."
+      }
+    ]
+  },
+  "decomposition": {
+    "strategy": "decomposition",
+    "queries": 8,
+    "accuracy": 0.25,
+    "task_completion": 1.0,
+    "json_validity_rate": 1.0,
+    "p50_latency_ms": 4160.7,
+    "failures": {
+      "factual_error_low_recall": 6
+    },
+    "rows": [
+      {
+        "id": "Q01-01",
+        "type": "answerable",
+        "question": "Are US-based full-time teammates eligible for health benefits on their date of hire?",
+        "strategy": "decomposition",
+        "latency_ms": 2633.3,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Yes, US-based full-time teammates are eligible for health benefits on their date of hire."
+      },
+      {
+        "id": "Q01-02",
+        "type": "answerable",
+        "question": "Do dependents qualify for Sourcegraph health benefits?",
+        "strategy": "decomposition",
+        "latency_ms": 3578.3,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Yes, dependents such as spouses, domestic partners, and children may qualify for Sourcegraph's health benefits, depending on the specific terms of the plan and the relationship to the employee."
+      },
+      {
+        "id": "Q01-03",
+        "type": "answerable",
+        "question": "What is the deadline for US new hires to enroll in insurance after joining?",
+        "strategy": "decomposition",
+        "latency_ms": 4592.5,
+        "json_valid": true,
+        "correct": true,
+        "failure": "",
+        "model_output": "The general deadline for new hires in the US to enroll in insurance is typically within 30 days of their start date. However, Sourcegraph may have specific policies or timelines for insurance enrollment for new hires, which are outlined in the employee handbook or onboarding materials."
+      },
+      {
+        "id": "Q01-04",
+        "type": "answerable",
+        "question": "Can a teammate waive health coverage during the initial enrollment window?",
+        "strategy": "decomposition",
+        "latency_ms": 3710.4,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Yes, a teammate can waive health coverage during the initial enrollment window if they choose not to enroll in the company's health benefits. This window is typically during the first few months of employment, allowing new teammates to make decisions about their health coverage."
+      },
+      {
+        "id": "Q01-05",
+        "type": "answerable",
+        "question": "When can a teammate change benefits outside of open enrollment?",
+        "strategy": "decomposition",
+        "latency_ms": 6180.7,
+        "json_valid": true,
+        "correct": true,
+        "failure": "",
+        "model_output": "A teammate can change benefits outside of open enrollment in specific circumstances such as a qualifying life event (QLE), which includes events like marriage, birth or adoption of a child, loss of other coverage, or a change in marital status. These events may allow for a special enrollment period."
+      },
+      {
+        "id": "Q02-01",
+        "type": "answerable",
+        "question": "What is open enrollment for benefits?",
+        "strategy": "decomposition",
+        "latency_ms": 4160.7,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Open enrollment for benefits is a specific period during which employees can review, select, or change their health, dental, vision, and other benefit plans offered by their employer. The purpose of open enrollment is to allow employees to make informed decisions about their benefits, ensuring they "
+      },
+      {
+        "id": "Q02-02",
+        "type": "answerable",
+        "question": "When did the 2024 US benefits open enrollment take place?",
+        "strategy": "decomposition",
+        "latency_ms": 3325.6,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "The 2024 US benefits open enrollment took place from November 1, 2024, to December 15, 2024."
+      },
+      {
+        "id": "Q02-03",
+        "type": "answerable",
+        "question": "How do teammates review or update their current benefits selections?",
+        "strategy": "decomposition",
+        "latency_ms": 4761.9,
+        "json_valid": true,
+        "correct": false,
+        "failure": "factual_error_low_recall",
+        "model_output": "Teammates can review their current benefits selections through the Sourcegraph benefits portal, which is accessible via the company's internal platform or through the employee's personal account. To update their benefits selections, they can log into the portal, navigate to the relevant section, and"
+      }
+    ]
+  }
+}
