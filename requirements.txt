@@ -5,8 +5,12 @@ numpy>=1.26.0
 scikit-learn>=1.4.0
 python-dotenv>=1.0.1
 streamlit>=1.36.0
+# Sprint 1 — Amit-Enhanced
+pyttsx3>=2.90          # offline text-to-speech (Read Aloud, Sprint 3)
 # optional: neural reranker (RERANKER=cross_encoder)
 # sentence-transformers>=3.0.0
+# Sprint 3 voice input (offline Whisper tiny — install separately due to torch dep):
+# openai-whisper>=20231117
 # optional: tracing to Langfuse (JSONL tracing is always on)
 langfuse>=2.0.0
 # dev
