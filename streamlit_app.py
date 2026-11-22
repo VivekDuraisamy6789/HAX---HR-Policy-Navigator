@@ -357,33 +357,47 @@ def main() -> None:
     # ==================================================================
     # E6: Voice Input helpers (rendered inside chat tab)
     # ==================================================================
-    def _voice_input_widget() -> str:
-        """Renders optional audio input; returns transcribed text or '' if none."""
-        try:
-            with st.expander("🎙️ Voice Input (Record from microphone)", expanded=False):
-                audio_val = st.audio_input("Record audio", key="mic_input")
-        except (AttributeError, Exception):
-            return ""
+    def _voice_input_widget() -> Optional[str]:
+        """Renders audio recorder inside an expander with confirmation button."""
+        st.session_state.setdefault("mic_idx", 0)
+        mic_key = f"mic_{st.session_state.mic_idx}"
 
-        if audio_val is None:
-            return ""
+        with st.expander("🎙️ Voice Input (Record from microphone)", expanded=False):
+            try:
+                audio_val = st.audio_input("Record your question", key=mic_key)
+            except (AttributeError, Exception):
+                return None
 
-        audio_bytes = audio_val.getvalue()
-        if not audio_bytes:
-            return ""
+            if audio_val is not None:
+                audio_bytes = audio_val.getvalue()
+                if audio_bytes:
+                    import hashlib
+                    cur_hash = hashlib.md5(audio_bytes).hexdigest()[:12]
+                    if st.session_state.get("cached_audio_hash") != cur_hash:
+                        with st.spinner("🎙️ Transcribing audio…"):
+                            from hr_policy_navigator.voice import transcribe
+                            st.session_state["pending_voice_text"] = transcribe(audio_bytes)
+                            st.session_state["cached_audio_hash"] = cur_hash
 
-        import hashlib
-        audio_hash = hashlib.md5(audio_bytes).hexdigest()[:12]
-        if st.session_state.get("last_audio_hash") == audio_hash:
-            return st.session_state.get("last_transcript", "")
+            pending = st.session_state.get("pending_voice_text", "").strip()
+            if pending:
+                st.info(f"🎙️ **Transcribed:** *\"{pending}\"*")
+                btn_col1, btn_col2 = st.columns([1, 1])
+                with btn_col1:
+                    if st.button("🚀 Ask This Question", type="primary", key="btn_send_voice"):
+                        q_to_send = pending
+                        st.session_state["pending_voice_text"] = ""
+                        st.session_state["cached_audio_hash"] = ""
+                        st.session_state["mic_idx"] += 1
+                        return q_to_send
+                with btn_col2:
+                    if st.button("❌ Clear Voice", key="btn_clear_voice"):
+                        st.session_state["pending_voice_text"] = ""
+                        st.session_state["cached_audio_hash"] = ""
+                        st.session_state["mic_idx"] += 1
+                        st.rerun()
 
-        with st.spinner("🎙️ Transcribing audio…"):
-            from hr_policy_navigator.voice import transcribe
-            transcript = transcribe(audio_bytes)
-
-        st.session_state["last_audio_hash"] = audio_hash
-        st.session_state["last_transcript"] = transcript
-        return transcript
+        return None
 
     # ==================================================================
     # Chat Tab
@@ -414,13 +428,10 @@ def main() -> None:
 
         # ── E6: Voice input widget ──
         voice_query = _voice_input_widget()
-        if voice_query:
-            st.info(f"🎙️ Transcribed: *\"{voice_query}\"*")
 
-        # ── Text chat input (also pre-filled from voice) ──
+        # ── Text chat input ──
         q = st.chat_input("Ask about benefits, leave, remote work, conduct…")
-        # Accept voice transcript if no text typed
-        final_q = q or (voice_query if voice_query else None)
+        final_q = q or voice_query
 
         if final_q:
             st.session_state["last_query"] = final_q
@@ -443,9 +454,6 @@ def main() -> None:
 
                 st.session_state.log.append((final_q, res))
                 history_store.append(user.user_id, st.session_state.sid, final_q, res)
-                # Reset voice transcript so it doesn't re-fire
-                st.session_state.pop("last_audio_hash", None)
-                st.session_state.pop("last_transcript", None)
                 st.rerun()
 
     # ==================================================================

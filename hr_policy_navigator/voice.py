@@ -119,13 +119,36 @@ def tts_available() -> bool:
         return False
 
 
+def clean_hr_transcript(text: str) -> str:
+    """Post-process speech recognition transcripts to normalize common HR terms."""
+    if not text:
+        return ""
+    import re
+    subs = [
+        (r"\bpeople days\b", "PTO days"),
+        (r"\bpeople day\b", "PTO day"),
+        (r"\bhow many people\b(?= (?:days|leave|hours))", "how many PTO"),
+        (r"\bp\.?\s?t\.?\s?o\.?\b", "PTO"),
+        (r"\bp\s?tea\s?oh\b", "PTO"),
+        (r"\bbamboo\s?h\.?r\.?\b", "BambooHR"),
+        (r"\btimeoff\b", "time off"),
+        (r"\bco\s?working\b", "coworking"),
+    ]
+    cleaned = text
+    for pattern, repl in subs:
+        cleaned = re.sub(pattern, repl, cleaned, flags=re.IGNORECASE)
+    return cleaned.strip()
+
+
 def transcribe(audio_bytes: bytes, language: str = "en") -> str:
     """
     Transcribe audio bytes to text using SpeechRecognition or Whisper.
-    Returns the transcription string, or '' if unavailable or failed.
+    Returns the cleaned transcription string, or '' if unavailable or failed.
     """
     if not audio_bytes:
         return ""
+
+    raw_text = ""
 
     # Strategy 1: SpeechRecognition (fast, lightweight)
     try:
@@ -134,29 +157,28 @@ def transcribe(audio_bytes: bytes, language: str = "en") -> str:
         with io.BytesIO(audio_bytes) as audio_file:
             with sr.AudioFile(audio_file) as source:
                 audio_data = r.record(source)
-        text = r.recognize_google(audio_data, language=language)
-        if text:
-            return text.strip()
+        raw_text = r.recognize_google(audio_data, language=language)
     except Exception as exc:
         logger.debug("SpeechRecognition pass: %s", exc)
 
-    # Strategy 2: Whisper (if installed)
-    try:
-        import whisper
-        import numpy as np
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-            tmp.write(audio_bytes)
-            tmp_path = tmp.name
+    # Strategy 2: Whisper (if installed and SpeechRecognition failed)
+    if not raw_text:
         try:
-            model = whisper.load_model("tiny")
-            result = model.transcribe(tmp_path, language=language)
-            return result.get("text", "").strip()
-        finally:
+            import whisper
+            import numpy as np
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+                tmp.write(audio_bytes)
+                tmp_path = tmp.name
             try:
-                os.unlink(tmp_path)
-            except OSError:
-                pass
-    except Exception as exc:
-        logger.debug("Whisper pass: %s", exc)
+                model = whisper.load_model("tiny")
+                result = model.transcribe(tmp_path, language=language)
+                raw_text = result.get("text", "").strip()
+            finally:
+                try:
+                    os.unlink(tmp_path)
+                except OSError:
+                    pass
+        except Exception as exc:
+            logger.debug("Whisper pass: %s", exc)
 
-    return ""
+    return clean_hr_transcript(raw_text)
