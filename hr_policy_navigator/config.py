@@ -20,6 +20,8 @@ class Settings:
     api_key: str = _env("OPENAI_API_KEY")
     model: str = _env("OPENAI_MODEL", "qwen-8b-instruct")
     embedding_model: str = _env("EMBEDDING_MODEL")
+    embedding_base_url: str = _env("EMBEDDING_BASE_URL")
+    embedding_api_key: str = _env("EMBEDDING_API_KEY")
     # constrained decoding: auto | json_schema | guided_json | json_object | none
     constrained_mode: str = _env("CONSTRAINED_MODE", "auto")
     # Qwen3 "thinking" off: true | false | auto (auto = on when the model name contains "qwen3")

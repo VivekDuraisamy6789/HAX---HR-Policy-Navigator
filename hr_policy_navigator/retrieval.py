@@ -262,10 +262,12 @@ class PolicyCorpus:
             return None
         if spec != "auto":
             return spec
-        base, key = os.getenv("OPENAI_BASE_URL", ""), os.getenv("OPENAI_API_KEY", "")
-        if base and key and os.getenv("EMBEDDING_MODEL"):
+        base = os.getenv("EMBEDDING_BASE_URL") or os.getenv("OPENAI_BASE_URL", "")
+        key = os.getenv("EMBEDDING_API_KEY") or os.getenv("OPENAI_API_KEY", "")
+        emb_model = os.getenv("EMBEDDING_MODEL")
+        if base and key and emb_model:
             try:
-                return OpenAIEmbedder(base, key, os.environ["EMBEDDING_MODEL"])
+                return OpenAIEmbedder(base, key, emb_model)
             except Exception:
                 pass
         try:

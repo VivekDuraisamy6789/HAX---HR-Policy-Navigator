@@ -1,0 +1,176 @@
+{
+ "summary": {
+  "model": "Qwen/Qwen3-8B",
+  "n": 5,
+  "accuracy": 0.0,
+  "task_completion_rate": 1.0,
+  "retrieval_hit_in_context": 1.0,
+  "avg_tool_calls": 1.0,
+  "avg_llm_calls": 3.8,
+  "avg_tokens": 3016,
+  "avg_cost_usd": 0.000182,
+  "p50_latency_ms": 15448.4,
+  "p95_latency_ms": 20543.1,
+  "json_repairs": 10,
+  "accuracy_by_type": {
+   "answerable": "0/5"
+  },
+  "failure_taxonomy": {
+   "reasoning_error": 5
+  }
+ },
+ "rows": [
+  {
+   "id": "Q01-01",
+   "type": "answerable",
+   "question": "Are US-based full-time teammates eligible for health benefits on their date of hire?",
+   "status": "success",
+   "correct": false,
+   "failure": "reasoning_error",
+   "latency_ms": 10409.1,
+   "tool_calls": 1,
+   "llm_calls": 3,
+   "tokens": 2272,
+   "cost_usd": 0.000133,
+   "json_repairs": 1,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/total-rewards.md",
+    "benefits-pay-perks/benefits-perks/index.md",
+    "benefits-pay-perks/benefits-perks/index.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "Yes, US-based full-time employees are eligible for health benefits on their date of hire.",
+   "trace_id": "2143968bd1bc"
+  },
+  {
+   "id": "Q01-02",
+   "type": "answerable",
+   "question": "Do dependents qualify for Sourcegraph health benefits?",
+   "status": "success",
+   "correct": false,
+   "failure": "reasoning_error",
+   "latency_ms": 14564.9,
+   "tool_calls": 1,
+   "llm_calls": 4,
+   "tokens": 2897,
+   "cost_usd": 0.000175,
+   "json_repairs": 2,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/total-rewards.md",
+    "departments/people-talent/family-support.md",
+    "benefits-pay-perks/benefits-perks/leave-of-absence.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "Dependents qualify for Sourcegraph health benefits.",
+   "trace_id": "25dc888781cd"
+  },
+  {
+   "id": "Q01-03",
+   "type": "answerable",
+   "question": "What is the deadline for US new hires to enroll in insurance after joining?",
+   "status": "success",
+   "correct": false,
+   "failure": "reasoning_error",
+   "latency_ms": 20543.1,
+   "tool_calls": 1,
+   "llm_calls": 4,
+   "tokens": 3145,
+   "cost_usd": 0.0002,
+   "json_repairs": 3,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "synthetic/faq/faq-for-new-hires-are-insurance-premiums-covered.md",
+    "departments/people-talent/onboarding-for-hiring-managers.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/people-ops/tools/people-ops-faqs.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "US new hires have 30 days from their start date to enroll in insurance.",
+   "trace_id": "283a7fdb1c24"
+  },
+  {
+   "id": "Q01-04",
+   "type": "answerable",
+   "question": "Can a teammate waive health coverage during the initial enrollment window?",
+   "status": "success",
+   "correct": false,
+   "failure": "reasoning_error",
+   "latency_ms": 15821.7,
+   "tool_calls": 1,
+   "llm_calls": 4,
+   "tokens": 3530,
+   "cost_usd": 0.000208,
+   "json_repairs": 2,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/time-off/index.md",
+    "departments/people-talent/ada.md",
+    "departments/people-talent/wellness.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "Yes, a teammate can waive health coverage if they do not select insurance during their first 30 days.",
+   "trace_id": "d7fae0ada176"
+  },
+  {
+   "id": "Q01-05",
+   "type": "answerable",
+   "question": "When can a teammate change benefits outside of open enrollment?",
+   "status": "success",
+   "correct": false,
+   "failure": "reasoning_error",
+   "latency_ms": 15448.4,
+   "tool_calls": 1,
+   "llm_calls": 4,
+   "tokens": 3238,
+   "cost_usd": 0.000194,
+   "json_repairs": 2,
+   "retrieved": [
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "benefits-pay-perks/benefits-perks/benefits.md",
+    "departments/people-talent/index.md",
+    "departments/people-talent/people-ops/process/name-changes.md",
+    "company-info-and-process/working-at-sourcegraph/switching-teams.md"
+   ],
+   "cited": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "expected_sources": [
+    "benefits-pay-perks/benefits-perks/benefits.md"
+   ],
+   "answer": "A teammate can change benefits outside of open enrollment if they experience a qualifying life event (QLE).",
+   "trace_id": "1177941d4030"
+  }
+ ]
+}

@@ -36,7 +36,9 @@ print("\nRecommended CONSTRAINED_MODE:", ok_modes[0] if ok_modes else "none (rel
 if s.embedding_model:
     try:
         from hr_policy_navigator.retrieval import OpenAIEmbedder
-        v = OpenAIEmbedder(s.base_url, s.api_key, s.embedding_model, cache_dir="/tmp/embcheck").encode_query("health insurance")
+        emb_base = s.embedding_base_url or s.base_url
+        emb_key = s.embedding_api_key or s.api_key
+        v = OpenAIEmbedder(emb_base, emb_key, s.embedding_model, cache_dir=".cache/embcheck").encode_query("health insurance")
         print(f"embeddings OK: model={s.embedding_model} dim={len(v)}")
     except Exception as e:
         print(f"embeddings FAIL: {str(e)[:150]}")
