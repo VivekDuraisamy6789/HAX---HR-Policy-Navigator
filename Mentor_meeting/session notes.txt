@@ -1,0 +1,15 @@
+n this session, the discussion revolves around the development and evaluation of a document retrieval and question-answering system using HR policy data. Key points include:
+
+- **Data Sources and Preparation**: The team has compiled a dataset comprising 150 original HR documents and 1000 synthetically generated documents. These documents are stored in JSON format, with each line representing a JSON object. The dataset is used to create an evaluation set with 50 questions and corresponding answers.
+
+- **Evaluation and Metrics**: The evaluation involves two main components: retrieval accuracy and answer generation accuracy. The retrieval component is assessed using recall metrics, while the answer generation is evaluated using accuracy and Rouge-LCS metrics. The current retrieval system achieves a recall of 86% at 7 chunks, while the answer generation accuracy is reported at 68%.
+
+- **Model and Embedding**: The system utilizes a model based on the Quinn 3 billion architecture, with embeddings provided by a Mini LM-L6-V2 model. The discussion highlights the importance of using domain-specific embeddings to improve retrieval and answer accuracy, suggesting the exploration of alternative models like those available on Hugging Face.
+
+- **Challenges and Considerations**: The team faces challenges in chunking large documents and ensuring accurate retrieval of relevant sections. The discussion emphasizes the need for a sophisticated approach to document chunking and metadata management, particularly for complex documents with rich context.
+
+- **Technical Implementation**: The implementation involves using Google Colab for model training and evaluation, with potential integration of vector databases like ChromaDB for efficient retrieval. The team is advised to consider the trade-offs between using in-memory storage versus vector databases based on document size and complexity.
+
+- **Next Steps**: The team plans to finalize the evaluation metrics, particularly focusing on Rouge-LCS for long answer generation, and to refine the retrieval system using the RAG (Retrieval-Augmented Generation) approach. They are also encouraged to explore domain-specific embedding models to enhance performance.
+
+Overall, the session provides a comprehensive overview of the current state of the project, challenges faced, and strategic directions for improving the system's performance.
