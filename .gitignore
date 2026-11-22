@@ -7,3 +7,5 @@ state/
 .cache/
 .pytest_cache/
 eval_runs/*MOCK*
+
+.vscode/

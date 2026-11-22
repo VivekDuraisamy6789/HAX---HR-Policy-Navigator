@@ -76,6 +76,19 @@ A central mandate of Track B is measuring retrieval recall@k separately from end
 
 ---
 
+### 4. Hard Miss Case Studies: Queries Failing Across All 4 Approaches
+Out of 60 benchmark queries, exactly 5 failed to retrieve a gold document in top 5 across all modes (BM25, Dense, Hybrid, Hybrid+Rerank). Our detailed analysis in `docs/retrieval_results.md` highlights two key failure mechanisms:
+1. **The Lexical Synonym Gap (`Q04-02`):**  
+   *Query: "Does a teammate need permission to step away during the workday?"*  
+   *Handbook Text: "You don't need to ask permission or tell anyone if you need to step out."*  
+   *Why it failed:* The query used `"step away"`, while the handbook author wrote `"step out"`. BM25 failed due to word mismatch, while dense embeddings semantically drifted towards formal PTO/leave policies (`time-off/index.md` and `parental-leave.md`). Both algorithms reached a false consensus, burying `remote/index.md` at rank #7.
+2. **Distractor Dominance from Corpus Scaling (`Q10-02`):**  
+   *Query: "Where do new teammates get their payroll and tax information?"*  
+   *Why it failed:* Scaling to 1,151 documents introduced `onboarding.md` and regional synthetic guides with dense headers like `"Payroll and Tax Setup for New Teammates"`. Both BM25 and neural search preferred these distractor guides over the brief footnote in gold document `benefits.md`.
+* **Week 3 Agentic Remedy:** Low retrieval confidence scores ($< 0.22$) trigger the Planner to automatically execute query reformulations and context expansion via `read_section`.
+
+---
+
 ### 4. Roadmap for Week 3 (Multi-Agent System)
 With our retrieval layer achieving 89.1% Hit@5 and 0.793 MRR, our focus for Week 3 shifts to the agentic control loop:
 * **Planner Agent:** Intent classification, multi-hop query decomposition, and query reformulation on low retrieval confidence.
