@@ -36,8 +36,8 @@ Before writing any code, we authored a comprehensive domain specification ([`doc
   3. *Conservative Abstention:* Explicitly states uncertainty and abstains (*"The documents do not say"*) when documentation is missing or ambiguous, avoiding speculation.
   4. *Concise & Verifiable:* Concise plain-English claims where all numbers, dates, and percentages are strictly verified against source text.
 * **Frozen Evaluation Dataset (89 Realistic Queries):**
-  * **60 Domain Queries with Gold Answers (`evaluation_set.json`):** Spanning 12 distinct policy clusters (health benefits, parental leave, expenses, remote norms) with verified gold answers and expected source document ground truths.
-  * **29 Adversarial & Edge Queries (`evaluation_set_adversarial.json`):** Covering unanswerable policies, out-of-scope questions, PII probes, and prompt injection attempts.
+  * **60 Domain Queries with Gold Answers ([`evaluation_set.json`](../evaluation_set.json)):** Spanning 12 distinct policy clusters (health benefits, parental leave, expenses, remote norms) with verified gold answers and expected source document ground truths.
+  * **29 Adversarial & Edge Queries ([`evaluation_set_adversarial.json`](../evaluation_set_adversarial.json)):** Covering unanswerable policies, out-of-scope questions, PII probes, and prompt injection attempts.
 
 ---
 
@@ -92,11 +92,11 @@ These Week 1 baseline results clearly demonstrate why a single prompt on an 8B m
 ---
 
 ### 6. Deliverables & Repository Links
-* **Repository:** `https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator (Branch: Amit)`
-* **Task Specification & Refusal Policy:** [`docs/specification.md`](docs/specification.md)
-* **Frozen Benchmark Sets:** [`evaluation_set.json`](evaluation_set.json) & [`evaluation_set_adversarial.json`](evaluation_set_adversarial.json)
-* **Week 1 Detailed Methodology Report:** [`docs/week1_baseline_report.md`](docs/week1_baseline_report.md)
-* **Raw Benchmark Telemetry Data:** [`eval_runs/week1_prompt_baseline.json`](eval_runs/week1_prompt_baseline.json)
+* **Repository (Branch: Amit):** [GitHub Repository](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/tree/Amit)
+* **Task Specification & Refusal Policy:** [`docs/specification.md`](specification.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/docs/specification.md)
+* **Frozen Benchmark Sets:** [`evaluation_set.json`](../evaluation_set.json) & [`evaluation_set_adversarial.json`](../evaluation_set_adversarial.json) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/evaluation_set.json)
+* **Week 1 Detailed Methodology Report:** [`docs/week1_baseline_report.md`](week1_baseline_report.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/docs/week1_baseline_report.md)
+* **Raw Benchmark Telemetry Data:** [`eval_runs/week1_prompt_baseline.json`](../eval_runs/week1_prompt_baseline.json) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/eval_runs/week1_prompt_baseline.json)
 
 We look forward to discussing these baseline findings during our upcoming sync.
 
