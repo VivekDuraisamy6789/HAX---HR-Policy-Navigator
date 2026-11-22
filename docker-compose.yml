@@ -7,4 +7,5 @@ services:
       - ./traces:/app/traces
       - ./state:/app/state
       - ./.cache:/app/.cache
+      - ./certs:/app/certs:ro
     restart: unless-stopped

@@ -6,6 +6,7 @@ RUN pip install -r requirements.txt
 COPY hr_policy_navigator ./hr_policy_navigator
 COPY streamlit_app.py ./
 COPY sourcegraph_files ./sourcegraph_files
+COPY certs ./certs
 COPY evaluation_set.json evaluation_set_adversarial.json ./
 RUN useradd -m app && mkdir -p traces state .cache && chown -R app /app
 USER app
