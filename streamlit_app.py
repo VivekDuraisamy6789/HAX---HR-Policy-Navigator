@@ -1,10 +1,9 @@
-"""HR Policy Navigator — Streamlit Application (Amit-Enhanced, Sprint 1).
+"""HR Policy Navigator — Streamlit Application (Amit-Enhanced, Sprint 3).
 
-Sprint 1 additions over baseline Amit branch:
-  - Login screen with role & tenure persona selection (E1)
-  - Persistent per-user chat history with 7-day retention (E3)
-  - Sidebar: previous sessions browser + quick startup guide (E10)
-  - Role-aware header & capability hint strip
+Sprint history:
+  Sprint 1: Login screen, role-aware UI, persistent chat history (E1, E3, E10)
+  Sprint 2: Role-based persona answers, tenure personalization, HITL state machine (E2, E4, E8)
+  Sprint 3: Voice input (Whisper tiny), Read Aloud (pyttsx3), RLHF thumbs + Feedback Analytics tab (E6, E7, E9)
 """
 
 import json
@@ -17,20 +16,21 @@ from hr_policy_navigator.agent import Copilot
 from hr_policy_navigator.auth import UserProfile, authenticate, demo_users
 from hr_policy_navigator.chat_history import ChatHistory
 from hr_policy_navigator.config import Settings
+from hr_policy_navigator.feedback import FeedbackStore
 from hr_policy_navigator.retrieval import PolicyCorpus
 from hr_policy_navigator.serving import RateLimiter, ResponseCache
 from hr_policy_navigator.state import HandoffStore
 from hr_policy_navigator.tracing import load_traces, summarize
+from hr_policy_navigator.voice import text_to_speech, tts_available, whisper_available
 
 S = Settings()
 
 # ---------------------------------------------------------------------------
-# Role metadata used for capability hints in the UI
+# Role metadata
 # ---------------------------------------------------------------------------
 _ROLE_META = {
     "hr_ops": {
-        "icon": "🏢",
-        "label": "HR Operations",
+        "icon": "🏢", "label": "HR Operations",
         "hint": "Full access · HITL queue visible · Verbatim policy answers",
         "color": "#c0392b",
         "sample_queries": [
@@ -40,8 +40,7 @@ _ROLE_META = {
         ],
     },
     "manager": {
-        "icon": "👩‍💼",
-        "label": "People Manager",
+        "icon": "👩‍💼", "label": "People Manager",
         "hint": "Team-scoped HITL queue · Manager-layer policy context",
         "color": "#2980b9",
         "sample_queries": [
@@ -51,8 +50,7 @@ _ROLE_META = {
         ],
     },
     "associate": {
-        "icon": "👤",
-        "label": "Associate",
+        "icon": "👤", "label": "Associate",
         "hint": "Policy Q&A with personalized answer depth based on your tenure",
         "color": "#27ae60",
         "sample_queries": [
@@ -63,24 +61,24 @@ _ROLE_META = {
     },
 }
 
-
 # ---------------------------------------------------------------------------
-# Cached heavy resources (loaded once per process)
+# Cached heavy resources
 # ---------------------------------------------------------------------------
 @st.cache_resource(show_spinner="Indexing policy corpus…")
 def load_agent() -> Copilot:
     return Copilot(PolicyCorpus(S.data_root, reranker=S.reranker), S)
 
-
 @st.cache_resource
 def shared():
     return RateLimiter(S.rate_limit_per_min, 60), ResponseCache(S.cache_ttl_s)
-
 
 @st.cache_resource
 def get_history() -> ChatHistory:
     return ChatHistory(S.state_dir)
 
+@st.cache_resource
+def get_feedback() -> FeedbackStore:
+    return FeedbackStore(S.state_dir)
 
 @st.cache_resource
 def get_handoff_store() -> HandoffStore:
@@ -90,13 +88,15 @@ def get_handoff_store() -> HandoffStore:
 # ---------------------------------------------------------------------------
 # Rendering helpers
 # ---------------------------------------------------------------------------
-def render(res: dict, idx: int = 0) -> None:
-    """Render a single agent response (answer, citations, metadata)."""
+def render(res: dict, idx: int = 0, feedback_store: FeedbackStore = None,
+           user_role: str = "", user_id: str = "", strategy: str = "") -> None:
+    """Render a single agent response with citations, metadata, TTS button, and RLHF thumbs."""
     badge = {
         "success": "✅ Answer",
         "refused": "🚫 Can't help with that here",
         "abstained": "🔍 Not found in the documents",
     }.get(res["status"], res["status"])
+
     st.markdown(f"**{badge}**" + ("  \n:grey[(cached)]" if res.get("cached") else ""))
     st.write(res["answer"])
 
@@ -109,20 +109,73 @@ def render(res: dict, idx: int = 0) -> None:
     if res["status"] == "refused" and res.get("refusal_category") in ("consequential_action", "legal_advice"):
         st.info("🧑‍💼 A request for human follow-up was recorded. Nothing has been approved or changed.")
 
-    st.caption(
-        f"{res.get('latency_ms', 0):.0f} ms · {res.get('tool_calls', 0)} tool calls · "
-        f"{res.get('tokens', 0)} tokens · ~${res.get('cost_usd', 0):.5f} · trace {res.get('trace_id', '-')}"
-    )
+    # ── Telemetry + TTS + RLHF row ──
+    tele_col, tts_col, rlhf_col = st.columns([3, 1, 2])
+    with tele_col:
+        st.caption(
+            f"{res.get('latency_ms', 0):.0f} ms · {res.get('tool_calls', 0)} tool calls · "
+            f"{res.get('tokens', 0)} tokens · ~${res.get('cost_usd', 0):.5f} · trace {res.get('trace_id', '-')}"
+        )
+
+    # ── E7: Read Aloud button ──
+    with tts_col:
+        if tts_available() and res.get("answer") and res["status"] in ("success", "abstained"):
+            if st.button("🔊 Read", key=f"tts_{idx}_{res.get('trace_id','x')}", help="Read answer aloud"):
+                with st.spinner("Generating audio…"):
+                    wav = text_to_speech(res["answer"])
+                if wav:
+                    st.audio(wav, format="audio/wav")
+                else:
+                    st.warning("TTS unavailable on this machine.")
+
+    # ── E9: RLHF thumbs ──
+    with rlhf_col:
+        if feedback_store is not None and res.get("trace_id"):
+            rating_key = f"rated_{res['trace_id']}"
+            if st.session_state.get(rating_key):
+                st.caption(f"{'👍' if st.session_state[rating_key] > 0 else '👎'} Rated — thanks!")
+            else:
+                r_col1, r_col2 = st.columns(2)
+                if r_col1.button("👍", key=f"up_{idx}_{res.get('trace_id')}",
+                                 help="This answer was helpful"):
+                    feedback_store.save(
+                        trace_id=res["trace_id"],
+                        query=st.session_state.get("last_query", ""),
+                        answer=res.get("answer", ""),
+                        rating=1, user_role=user_role, user_id=user_id, strategy=strategy,
+                    )
+                    st.session_state[rating_key] = 1
+                    st.rerun()
+                if r_col2.button("👎", key=f"dn_{idx}_{res.get('trace_id')}",
+                                 help="This answer needs improvement"):
+                    # Show correction field
+                    st.session_state[f"show_correction_{res['trace_id']}"] = True
+                    st.rerun()
+
+        # Correction input after thumbs-down
+        trace_id = res.get("trace_id", "")
+        if st.session_state.get(f"show_correction_{trace_id}"):
+            with st.form(key=f"correction_form_{trace_id}", clear_on_submit=True):
+                corr = st.text_area("What should the answer have been? (optional)", height=60)
+                submitted = st.form_submit_button("Submit 👎")
+                if submitted and feedback_store is not None:
+                    feedback_store.save(
+                        trace_id=trace_id,
+                        query=st.session_state.get("last_query", ""),
+                        answer=res.get("answer", ""),
+                        rating=-1, correction=corr,
+                        user_role=user_role, user_id=user_id, strategy=strategy,
+                    )
+                    st.session_state[f"rated_{trace_id}"] = -1
+                    st.session_state.pop(f"show_correction_{trace_id}", None)
+                    st.rerun()
 
 
 # ---------------------------------------------------------------------------
 # Login screen
 # ---------------------------------------------------------------------------
 def render_login() -> None:
-    """Full-page login screen. Sets st.session_state.user on success."""
     st.set_page_config(page_title="HR Policy Navigator — Login", layout="centered")
-
-    # Header
     st.markdown(
         """
         <div style='text-align:center; padding: 2rem 0 1rem 0;'>
@@ -134,16 +187,13 @@ def render_login() -> None:
         """,
         unsafe_allow_html=True,
     )
-
     col_form, col_hint = st.columns([1.1, 0.9], gap="large")
 
     with col_form:
         st.markdown("### Sign in")
         username = st.text_input("Username", placeholder="e.g. emp_bob")
         password = st.text_input("Password", type="password", placeholder="••••••")
-        sign_in = st.button("Sign In", type="primary", use_container_width=True)
-
-        if sign_in:
+        if st.button("Sign In", type="primary", use_container_width=True):
             profile = authenticate(username, password)
             if profile:
                 st.session_state.user = profile
@@ -156,8 +206,6 @@ def render_login() -> None:
     with col_hint:
         st.markdown("### Demo Accounts")
         for u in demo_users():
-            meta = _ROLE_META.get(u["role"].split()[0].lower(), _ROLE_META["associate"])
-            # Derive role key for colouring
             role_key = "hr_ops" if "hr" in u["role"].lower() else ("manager" if "manager" in u["role"].lower() else "associate")
             meta = _ROLE_META[role_key]
             st.markdown(
@@ -167,13 +215,10 @@ def render_login() -> None:
                 </div>""",
                 unsafe_allow_html=True,
             )
-        st.caption("These are demo credentials for capstone presentation only.")
+        st.caption("Demo credentials for capstone presentation only.")
 
     st.markdown("---")
-    st.caption(
-        "This tool explains Sourcegraph HR policy. It cannot approve, decide or act on HR matters. "
-        "All answers are cited from policy documents."
-    )
+    st.caption("This tool explains Sourcegraph HR policy. It cannot approve, decide or act on HR matters.")
 
 
 # ---------------------------------------------------------------------------
@@ -203,19 +248,23 @@ def main() -> None:
         "This tool explains policy; it cannot approve, decide or act on HR matters."
     )
 
-    agent = load_agent()
+    agent        = load_agent()
     limiter, cache = shared()
-    history_store = get_history()
-    handoff_store = get_handoff_store()
+    history_store  = get_history()
+    feedback_store = get_feedback()
 
     st.session_state.setdefault("sid", uuid.uuid4().hex[:10])
     st.session_state.setdefault("log", [])
+
+    user_profile_dict = {
+        "user_id": user.user_id, "name": user.name,
+        "role": user.role, "tenure": user.tenure, "team_id": user.team_id,
+    }
 
     # ------------------------------------------------------------------
     # Sidebar
     # ------------------------------------------------------------------
     with st.sidebar:
-        # User info + sign out
         st.markdown(f"### {meta['icon']} {user.name}")
         st.caption(f"{user.display_role} · {user.tenure} tenure")
         if st.button("🚪 Sign Out", use_container_width=True):
@@ -225,7 +274,6 @@ def main() -> None:
 
         st.divider()
 
-        # System info
         with st.expander("⚙️ System", expanded=False):
             st.write(f"Documents: {len(agent.corpus.docs)} · Chunks: {len(agent.corpus.chunks)}")
             st.write(f"Chunking: `{agent.corpus.chunking}`")
@@ -235,6 +283,9 @@ def main() -> None:
                 st.warning(note)
             st.write(f"Model: `{S.model}`" if S.has_model else ":red[No model endpoint configured]")
             st.write(f"Cache hits/misses: {cache.hits}/{cache.misses}")
+            # Sprint 3 capability flags
+            st.write(f"🎙️ Voice input: {'✅ Whisper ready' if whisper_available() else '⚠️ Install openai-whisper'}")
+            st.write(f"🔊 Read Aloud: {'✅ pyttsx3 ready' if tts_available() else '⚠️ Install pyttsx3'}")
 
         strategy = st.selectbox(
             "Prompt strategy",
@@ -245,13 +296,11 @@ def main() -> None:
 
         st.divider()
 
-        # New conversation button
         if st.button("➕ New Conversation", use_container_width=True):
             st.session_state.sid = uuid.uuid4().hex[:10]
             st.session_state.log = []
             st.rerun()
 
-        # Previous sessions browser
         st.markdown("### 🕘 Previous Sessions")
         sessions = history_store.list_sessions(user.user_id)
         if not sessions:
@@ -271,7 +320,6 @@ def main() -> None:
 
         st.divider()
 
-        # Quick guide
         with st.expander("📖 Quick Guide", expanded=False):
             st.markdown(
                 f"""**What can I ask?**
@@ -284,71 +332,131 @@ def main() -> None:
 
 **Who reviews flagged requests?**
 • HR Ops reviews the Human Review Queue within 1 business day.
+
+**New features (Sprint 3):**
+• 🎙️ Click the mic button to speak your question
+• 🔊 Click "Read" below any answer to hear it aloud
+• 👍 / 👎 Rate answers to help improve the system
 """
             )
 
     # ------------------------------------------------------------------
-    # Tabs — visible tabs depend on role
+    # Tabs
     # ------------------------------------------------------------------
-    tab_labels = ["💬 Ask", "📊 Traces"]
+    tab_labels = ["💬 Ask", "📊 Traces", "👍 Feedback"]
     if user.role in ("hr_ops", "manager"):
         tab_labels.append("🧑‍💼 Human Review Queue")
 
     tabs = st.tabs(tab_labels)
-    tab_chat = tabs[0]
-    tab_traces = tabs[1]
-    tab_review = tabs[2] if user.role in ("hr_ops", "manager") else None
+    tab_chat    = tabs[0]
+    tab_traces  = tabs[1]
+    tab_fb      = tabs[2]
+    tab_review  = tabs[3] if user.role in ("hr_ops", "manager") else None
 
-    # ------ Chat Tab -------------------------------------------------------
+    # ==================================================================
+    # E6: Voice Input helpers (rendered inside chat tab)
+    # ==================================================================
+    def _voice_input_widget() -> str:
+        """Renders mic widget; returns transcribed text or '' if unavailable/no audio."""
+        if not whisper_available():
+            with st.expander("🎙️ Voice Input (unavailable — install openai-whisper)"):
+                st.caption(
+                    "Run: `.venv\\Scripts\\pip install openai-whisper` then restart the app.\n"
+                    "Whisper tiny model (~39MB) loads on first use."
+                )
+            return ""
+
+        # Streamlit 1.31+ has st.audio_input()
+        try:
+            audio_val = st.audio_input("🎙️ Speak your question", key="mic_input")
+        except AttributeError:
+            st.caption("🎙️ Voice input requires Streamlit ≥ 1.31. Update with `pip install -U streamlit`.")
+            return ""
+
+        if audio_val is None:
+            return ""
+
+        audio_bytes = audio_val.getvalue()
+        if not audio_bytes:
+            return ""
+
+        # Only transcribe when new audio arrives (avoid re-transcribing on every rerun)
+        import hashlib
+        audio_hash = hashlib.md5(audio_bytes).hexdigest()[:12]
+        if st.session_state.get("last_audio_hash") == audio_hash:
+            return st.session_state.get("last_transcript", "")
+
+        with st.spinner("🎙️ Transcribing…"):
+            from hr_policy_navigator.voice import transcribe
+            transcript = transcribe(audio_bytes)
+
+        st.session_state["last_audio_hash"] = audio_hash
+        st.session_state["last_transcript"] = transcript
+        return transcript
+
+    # ==================================================================
+    # Chat Tab
+    # ==================================================================
     with tab_chat:
-        # Persona active badge — shows judges the persona engine is live
+        # Persona active badge
         tenure_labels = {"new": "New Hire (<1 yr)", "mid": "1–3 yrs", "senior": "Tenured (3+ yrs)"}
         st.markdown(
             f"<span style='background:{meta['color']}33; border:1px solid {meta['color']}; "
             f"border-radius:12px; padding:3px 10px; font-size:0.82rem;'>"
-            f"🎭 Persona active: <b>{user.display_role}</b> · {tenure_labels.get(user.tenure, user.tenure)}"
+            f"🎭 Persona: <b>{user.display_role}</b> · {tenure_labels.get(user.tenure, user.tenure)}"
             f"</span>",
             unsafe_allow_html=True,
         )
-        st.caption("Answer depth and style adapt to your role and tenure.")
         st.write("")
 
-        # Build profile dict passed to agent
-        user_profile_dict = {
-            "user_id": user.user_id,
-            "name": user.name,
-            "role": user.role,
-            "tenure": user.tenure,
-            "team_id": user.team_id,
-        }
-
-        # Replay conversation log
-        for i, (q, r) in enumerate(st.session_state.log):
+        # Replay conversation log with RLHF buttons
+        for i, (turn_q, turn_r) in enumerate(st.session_state.log):
             with st.chat_message("user"):
-                st.write(q)
+                st.write(turn_q)
             with st.chat_message("assistant"):
-                render(r, idx=i)
+                render(
+                    turn_r, idx=i,
+                    feedback_store=feedback_store,
+                    user_role=user.role, user_id=user.user_id,
+                    strategy=strategy,
+                )
 
+        # ── E6: Voice input widget ──
+        voice_query = _voice_input_widget()
+        if voice_query:
+            st.info(f"🎙️ Transcribed: *\"{voice_query}\"*")
+
+        # ── Text chat input (also pre-filled from voice) ──
         q = st.chat_input("Ask about benefits, leave, remote work, conduct…")
-        if q:
+        # Accept voice transcript if no text typed
+        final_q = q or (voice_query if voice_query else None)
+
+        if final_q:
+            st.session_state["last_query"] = final_q
             ok, wait = limiter.check(st.session_state.sid)
             if not ok:
                 st.warning(f"⏱️ Rate limit reached. Please wait {wait:.0f}s.")
             else:
-                # Cache only on first turn (follow-ups require session memory)
-                res = cache.get(q, strategy) if len(st.session_state.log) == 0 else None
+                res = cache.get(final_q, strategy) if len(st.session_state.log) == 0 else None
                 if res is None:
                     with st.spinner("🔍 Searching policies…"):
-                        res = agent.run(q, st.session_state.sid, strategy, user_profile=user_profile_dict)
+                        res = agent.run(
+                            final_q, st.session_state.sid, strategy,
+                            user_profile=user_profile_dict,
+                        )
                     if len(st.session_state.log) == 0:
-                        cache.put(q, strategy, res)
+                        cache.put(final_q, strategy, res)
 
-                # Persist to in-memory log and disk history
-                st.session_state.log.append((q, res))
-                history_store.append(user.user_id, st.session_state.sid, q, res)
+                st.session_state.log.append((final_q, res))
+                history_store.append(user.user_id, st.session_state.sid, final_q, res)
+                # Reset voice transcript so it doesn't re-fire
+                st.session_state.pop("last_audio_hash", None)
+                st.session_state.pop("last_transcript", None)
                 st.rerun()
 
-    # ------ Traces Tab -----------------------------------------------------
+    # ==================================================================
+    # Traces Tab
+    # ==================================================================
     with tab_traces:
         traces = load_traces(S.trace_dir)
         if not traces:
@@ -363,22 +471,107 @@ def main() -> None:
             c[4].metric("JSON repairs", m["json_repairs"])
             st.json(m["statuses"])
             st.dataframe(
-                [
-                    {
-                        "trace": t["trace_id"],
-                        "query": t["meta"].get("query", "")[:80],
-                        "status": t["result"]["status"],
-                        "ms": t["duration_ms"],
-                        **{k: v for k, v in t["counters"].items()},
-                    }
-                    for t in reversed(traces[-200:])
-                ],
+                [{"trace": t["trace_id"], "query": t["meta"].get("query", "")[:80],
+                  "status": t["result"]["status"], "ms": t["duration_ms"],
+                  **{k: v for k, v in t["counters"].items()}}
+                 for t in reversed(traces[-200:])],
                 use_container_width=True,
             )
             pick = st.selectbox("Inspect trace", [t["trace_id"] for t in reversed(traces[-50:])])
             st.json(next(t for t in traces if t["trace_id"] == pick))
 
-    # ------ Human Review Queue Tab (HR Ops + Manager only) ----------------
+    # ==================================================================
+    # E9: Feedback Analytics Tab
+    # ==================================================================
+    with tab_fb:
+        st.markdown("### 👍 RLHF Feedback Analytics")
+        st.caption(
+            "Real user ratings collected via thumbs-up / thumbs-down on every answer. "
+            "Negative-rated queries are flagged as improvement opportunities."
+        )
+
+        fb = feedback_store.analytics()
+
+        if fb["total"] == 0:
+            st.info("No feedback yet. Rate some answers in the Ask tab to populate this dashboard.")
+            st.markdown(
+                """
+                **How the RLHF loop works:**
+                1. User rates an answer 👍 or 👎 in the Ask tab
+                2. Rating + optional correction saved to `state/feedback_log.jsonl`
+                3. This dashboard surfaces low-rated queries as improvement opportunities
+                4. `scripts/analyze_feedback.py` *(coming soon)* clusters negatives and proposes prompt patches
+                5. Prompt is updated → re-evaluated on the 84-query frozen benchmark → metrics improve
+
+                > This closes the **human-in-the-loop learning cycle** without any model fine-tuning —
+                > pure prompt engineering driven by real user signal.
+                """
+            )
+        else:
+            # Top-line metrics
+            mc = st.columns(4)
+            mc[0].metric("Total Ratings", fb["total"])
+            mc[1].metric("👍 Positive", fb["positive"])
+            mc[2].metric("👎 Negative", fb["negative"])
+            mc[3].metric("Satisfaction", f"{fb['pct_positive']}%",
+                         delta=f"{fb['pct_positive'] - 70:.1f}%" if fb["total"] > 5 else None,
+                         delta_color="normal")
+
+            st.divider()
+            left, right = st.columns(2)
+
+            with left:
+                st.markdown("#### By Role")
+                if fb["by_role"]:
+                    role_data = [
+                        {"Role": role, "👍 Positive": v["pos"], "👎 Negative": v["neg"], "Total": v["total"]}
+                        for role, v in fb["by_role"].items()
+                    ]
+                    st.dataframe(role_data, use_container_width=True, hide_index=True)
+
+                st.markdown("#### By Strategy")
+                if fb["by_strategy"]:
+                    strat_data = [
+                        {"Strategy": s, "👍": v["pos"], "👎": v["neg"], "Total": v["total"]}
+                        for s, v in fb["by_strategy"].items()
+                    ]
+                    st.dataframe(strat_data, use_container_width=True, hide_index=True)
+
+            with right:
+                st.markdown("#### 🔴 Top Improvement Opportunities")
+                st.caption("Queries with the most thumbs-down ratings — investigate these prompts first.")
+                if fb["low_rated"]:
+                    for item in fb["low_rated"]:
+                        with st.container(border=True):
+                            st.markdown(f"**{item['count']}× 👎** — *\"{item['query']}\"*")
+                            if item.get("answer_snippet"):
+                                st.caption(f"Answer: {item['answer_snippet'][:100]}…")
+                else:
+                    st.success("No negatively-rated queries yet!")
+
+                st.markdown("#### 🟢 Top Positive Queries")
+                if fb["high_rated"]:
+                    for item in fb["high_rated"]:
+                        st.markdown(f"**{item['count']}× 👍** — *\"{item['query']}\"*")
+
+            st.divider()
+            if fb["corrections"]:
+                st.markdown("#### ✏️ User Corrections (most recent)")
+                st.caption("These are suggested better answers from users who clicked 👎.")
+                for c in fb["corrections"]:
+                    with st.container(border=True):
+                        st.caption(c["ts"])
+                        st.markdown(f"**Q:** *{c['query']}*")
+                        st.markdown(f"**Suggested correction:** {c['correction']}")
+
+            st.divider()
+            st.markdown("#### 📄 Raw Feedback Log")
+            with st.expander("View all feedback records"):
+                st.dataframe(feedback_store.all(), use_container_width=True)
+
+    # ==================================================================
+    # Human Review Queue Tab (HR Ops + Manager)
+    # ==================================================================
     if tab_review is not None:
         with tab_review:
             handoff_store = HandoffStore(S.state_dir)
@@ -390,11 +583,10 @@ def main() -> None:
                 "A person must handle these — nothing has been approved or changed."
             )
 
-            # Summary metrics row
             if rows:
                 pending_n = sum(1 for r in rows if r.get("ui_status", "pending") == "pending")
-                ack_n = sum(1 for r in rows if r.get("ui_status") == "acknowledged")
-                res_n = sum(1 for r in rows if r.get("ui_status") in ("resolved", "escalated"))
+                ack_n     = sum(1 for r in rows if r.get("ui_status") == "acknowledged")
+                res_n     = sum(1 for r in rows if r.get("ui_status") in ("resolved", "escalated"))
                 mc = st.columns(3)
                 mc[0].metric("🔴 Pending", pending_n)
                 mc[1].metric("🟡 Acknowledged", ack_n)
@@ -406,9 +598,9 @@ def main() -> None:
             else:
                 from hr_policy_navigator.state import STATUS_LABELS, VALID_TRANSITIONS
                 for row in rows:
-                    ticket_id = row.get("ticket_id", "unknown")
+                    ticket_id      = row.get("ticket_id", "unknown")
                     current_status = row.get("ui_status", "pending")
-                    allowed_next = VALID_TRANSITIONS.get(current_status, [])
+                    allowed_next   = VALID_TRANSITIONS.get(current_status, [])
 
                     with st.container(border=True):
                         hdr_col, badge_col = st.columns([3, 1])
@@ -422,12 +614,11 @@ def main() -> None:
                             st.caption(
                                 f"🕐 {row.get('timestamp', 'unknown')}"
                                 + (f"  ·  Role: {role_lbl}" if role_lbl else "")
-                                + (f"  ·  Session: {row.get('session_id', '')[:12]}" if row.get("session_id") else "")
+                                + (f"  ·  Session: {row.get('session_id','')[:12]}" if row.get("session_id") else "")
                             )
                         with badge_col:
                             st.markdown(f"**{STATUS_LABELS.get(current_status, '🔴 Pending')}**")
 
-                        # Action buttons — only show valid transitions
                         if allowed_next:
                             btn_cols = st.columns(len(allowed_next) + 1)
                             for i, next_st in enumerate(allowed_next):
@@ -440,10 +631,9 @@ def main() -> None:
                                     handoff_store.update_status(ticket_id, next_st, actor=user.name)
                                     st.toast(f"Ticket {ticket_id[:10]}… → {next_st}", icon="✅")
                                     st.rerun()
-
-                            # Note input
                             with st.expander("📝 Add resolution note"):
-                                note_text = st.text_area("Note", key=f"note_{ticket_id}", height=80, placeholder="Describe action taken…")
+                                note_text = st.text_area("Note", key=f"note_{ticket_id}", height=80,
+                                                         placeholder="Describe action taken…")
                                 if st.button("Save Note", key=f"savenote_{ticket_id}"):
                                     if note_text.strip():
                                         handoff_store.add_note(ticket_id, note_text.strip(), actor=user.name)
@@ -454,7 +644,7 @@ def main() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Entry point — gate entire app behind login
+# Entry point
 # ---------------------------------------------------------------------------
 def app() -> None:
     if "user" not in st.session_state:
