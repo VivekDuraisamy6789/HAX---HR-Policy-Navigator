@@ -7,6 +7,7 @@ python-dotenv>=1.0.1
 streamlit>=1.36.0
 # Sprint 1 — Amit-Enhanced
 pyttsx3>=2.90          # offline text-to-speech (Read Aloud, Sprint 3)
+SpeechRecognition>=3.10.0  # voice input transcription (Sprint 3)
 # optional: neural reranker (RERANKER=cross_encoder)
 # sentence-transformers>=3.0.0
 # Sprint 3 voice input (offline Whisper tiny — install separately due to torch dep):

@@ -21,7 +21,7 @@ from hr_policy_navigator.retrieval import PolicyCorpus
 from hr_policy_navigator.serving import RateLimiter, ResponseCache
 from hr_policy_navigator.state import HandoffStore
 from hr_policy_navigator.tracing import load_traces, summarize
-from hr_policy_navigator.voice import text_to_speech, tts_available, whisper_available
+from hr_policy_navigator.voice import stt_available, text_to_speech, tts_available, whisper_available
 
 S = Settings()
 
@@ -284,7 +284,7 @@ def main() -> None:
             st.write(f"Model: `{S.model}`" if S.has_model else ":red[No model endpoint configured]")
             st.write(f"Cache hits/misses: {cache.hits}/{cache.misses}")
             # Sprint 3 capability flags
-            st.write(f"🎙️ Voice input: {'✅ Whisper ready' if whisper_available() else '⚠️ Install openai-whisper'}")
+            st.write(f"🎙️ Voice input: {'✅ Ready' if stt_available() else 'Off'}")
             st.write(f"🔊 Read Aloud: {'✅ pyttsx3 ready' if tts_available() else '⚠️ Install pyttsx3'}")
 
         strategy = st.selectbox(
@@ -358,20 +358,11 @@ def main() -> None:
     # E6: Voice Input helpers (rendered inside chat tab)
     # ==================================================================
     def _voice_input_widget() -> str:
-        """Renders mic widget; returns transcribed text or '' if unavailable/no audio."""
-        if not whisper_available():
-            with st.expander("🎙️ Voice Input (unavailable — install openai-whisper)"):
-                st.caption(
-                    "Run: `.venv\\Scripts\\pip install openai-whisper` then restart the app.\n"
-                    "Whisper tiny model (~39MB) loads on first use."
-                )
-            return ""
-
-        # Streamlit 1.31+ has st.audio_input()
+        """Renders optional audio input; returns transcribed text or '' if none."""
         try:
-            audio_val = st.audio_input("🎙️ Speak your question", key="mic_input")
-        except AttributeError:
-            st.caption("🎙️ Voice input requires Streamlit ≥ 1.31. Update with `pip install -U streamlit`.")
+            with st.expander("🎙️ Voice Input (Record from microphone)", expanded=False):
+                audio_val = st.audio_input("Record audio", key="mic_input")
+        except (AttributeError, Exception):
             return ""
 
         if audio_val is None:
@@ -381,13 +372,12 @@ def main() -> None:
         if not audio_bytes:
             return ""
 
-        # Only transcribe when new audio arrives (avoid re-transcribing on every rerun)
         import hashlib
         audio_hash = hashlib.md5(audio_bytes).hexdigest()[:12]
         if st.session_state.get("last_audio_hash") == audio_hash:
             return st.session_state.get("last_transcript", "")
 
-        with st.spinner("🎙️ Transcribing…"):
+        with st.spinner("🎙️ Transcribing audio…"):
             from hr_policy_navigator.voice import transcribe
             transcript = transcribe(audio_bytes)
 
@@ -441,10 +431,13 @@ def main() -> None:
                 res = cache.get(final_q, strategy) if len(st.session_state.log) == 0 else None
                 if res is None:
                     with st.spinner("🔍 Searching policies…"):
-                        res = agent.run(
-                            final_q, st.session_state.sid, strategy,
-                            user_profile=user_profile_dict,
-                        )
+                        try:
+                            res = agent.run(
+                                final_q, st.session_state.sid, strategy,
+                                user_profile=user_profile_dict,
+                            )
+                        except TypeError:
+                            res = agent.run(final_q, st.session_state.sid, strategy)
                     if len(st.session_state.log) == 0:
                         cache.put(final_q, strategy, res)
 

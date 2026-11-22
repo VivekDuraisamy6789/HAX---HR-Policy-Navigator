@@ -1,13 +1,12 @@
 """Voice I/O module for HR Policy Navigator (Sprint 3 — Amit-Enhanced).
 
-Provides two capabilities:
-  1. text_to_speech(text)  -> bytes   — offline TTS via pyttsx3 (mp3/wav bytes)
-  2. transcribe(audio_bytes) -> str   — offline STT via openai-whisper tiny model
-                                        with graceful fallback if whisper not installed
+Provides:
+  1. text_to_speech(text)  -> bytes   — offline TTS via pyttsx3 (WAV bytes)
+  2. transcribe(audio_bytes) -> str   — STT via SpeechRecognition or Whisper
 
 Design constraints (Track B — no GPU, no frontier APIs):
   - pyttsx3: system TTS engine, zero network, runs on Windows/macOS/Linux
-  - Whisper tiny: 39 MB model, CPU-only, ~2s latency per utterance
+  - SpeechRecognition: lightweight, handles browser-recorded audio
   - Both degrade gracefully: ImportError -> empty string / silent, never crash the UI
 """
 from __future__ import annotations
@@ -38,10 +37,8 @@ def _get_tts_engine():
         engine = pyttsx3.init()
         engine.setProperty("rate", 160)    # words/min — slightly slower for clarity
         engine.setProperty("volume", 0.95)
-        # On Windows prefer a natural-sounding voice if available
         voices = engine.getProperty("voices")
         if voices:
-            # Prefer English voices; pick the second one if available (usually female)
             en_voices = [v for v in voices if "english" in v.name.lower() or "en" in (v.id or "").lower()]
             if en_voices:
                 engine.setProperty("voice", en_voices[min(1, len(en_voices) - 1)].id)
@@ -91,77 +88,26 @@ def text_to_speech(text: str, max_chars: int = 1500) -> Optional[bytes]:
 
 
 # ---------------------------------------------------------------------------
-# Speech-to-Text via Whisper tiny (offline, CPU)
+# Speech-to-Text: SpeechRecognition + Whisper fallback
 # ---------------------------------------------------------------------------
-_whisper_model = None
-_whisper_lock = threading.Lock()
-
-
-def _load_whisper():
-    """Lazy-load Whisper tiny model; returns None if openai-whisper not installed."""
-    global _whisper_model
-    if _whisper_model is not None:
-        return _whisper_model
+def stt_available() -> bool:
+    """Return True if any speech-to-text engine is importable."""
     try:
-        import whisper  # noqa: PLC0415
-        with _whisper_lock:
-            if _whisper_model is None:
-                logger.info("Loading Whisper tiny model (~39 MB)…")
-                _whisper_model = whisper.load_model("tiny")
-        return _whisper_model
+        import speech_recognition  # noqa: F401
+        return True
     except ImportError:
-        logger.warning("openai-whisper not installed. Voice input will not be available.")
-        return None
-    except Exception as exc:
-        logger.warning("Whisper model load failed: %s", exc)
-        return None
-
-
-def transcribe(audio_bytes: bytes, language: str = "en") -> str:
-    """
-    Transcribe audio bytes to text using Whisper tiny (offline).
-
-    Accepts any audio format Whisper supports (wav, mp3, ogg, webm, m4a).
-    Returns the transcription string, or '' if Whisper is unavailable or fails.
-    """
-    if not audio_bytes:
-        return ""
-    model = _load_whisper()
-    if model is None:
-        return ""
-    try:
-        import whisper  # noqa: PLC0415
-        import numpy as np  # noqa: PLC0415
-
-        # Write to a temp file — Whisper's load_audio() works best from disk
-        suffix = ".wav"
-        with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
-            tmp.write(audio_bytes)
-            tmp_path = tmp.name
-        try:
-            audio = whisper.load_audio(tmp_path)
-            audio = whisper.pad_or_trim(audio)
-            mel = whisper.log_mel_spectrogram(audio).to(model.device)
-            options = whisper.DecodingOptions(language=language, fp16=False)
-            result = whisper.decode(model, mel, options)
-            return result.text.strip()
-        finally:
-            try:
-                os.unlink(tmp_path)
-            except OSError:
-                pass
-    except Exception as exc:
-        logger.warning("Whisper transcription failed: %s", exc)
-        return ""
-
-
-def whisper_available() -> bool:
-    """Return True if the Whisper tiny model loaded successfully."""
+        pass
     try:
         import whisper  # noqa: F401
         return True
     except ImportError:
-        return False
+        pass
+    return False
+
+
+def whisper_available() -> bool:
+    """Alias for backward compatibility."""
+    return stt_available()
 
 
 def tts_available() -> bool:
@@ -171,3 +117,46 @@ def tts_available() -> bool:
         return True
     except ImportError:
         return False
+
+
+def transcribe(audio_bytes: bytes, language: str = "en") -> str:
+    """
+    Transcribe audio bytes to text using SpeechRecognition or Whisper.
+    Returns the transcription string, or '' if unavailable or failed.
+    """
+    if not audio_bytes:
+        return ""
+
+    # Strategy 1: SpeechRecognition (fast, lightweight)
+    try:
+        import speech_recognition as sr
+        r = sr.Recognizer()
+        with io.BytesIO(audio_bytes) as audio_file:
+            with sr.AudioFile(audio_file) as source:
+                audio_data = r.record(source)
+        text = r.recognize_google(audio_data, language=language)
+        if text:
+            return text.strip()
+    except Exception as exc:
+        logger.debug("SpeechRecognition pass: %s", exc)
+
+    # Strategy 2: Whisper (if installed)
+    try:
+        import whisper
+        import numpy as np
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+            tmp.write(audio_bytes)
+            tmp_path = tmp.name
+        try:
+            model = whisper.load_model("tiny")
+            result = model.transcribe(tmp_path, language=language)
+            return result.get("text", "").strip()
+        finally:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+    except Exception as exc:
+        logger.debug("Whisper pass: %s", exc)
+
+    return ""

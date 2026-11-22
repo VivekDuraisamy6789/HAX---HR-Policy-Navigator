@@ -72,7 +72,7 @@ class Copilot:
 
     # ------------------------------------------------------------------ public API
     def run(self, query: str, session_id: str = "default", strategy: Optional[str] = None,
-            user_profile: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+            user_profile: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
         """Run a query. user_profile may carry {user_id, role, tenure, team_id, name}."""
         strategy = strategy or self.s.strategy
         profile = user_profile or {}

@@ -1,5 +1,6 @@
 [client]
-showDeployButton = false
+showErrorDetails = false
+showErrorLinks = false
 toolbarMode = "minimal"
 
 [browser]
