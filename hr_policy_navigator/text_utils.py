@@ -28,3 +28,34 @@ def tokenize(text: str, remove_stop: bool = True) -> List[str]:
     if remove_stop:
         toks = [t for t in toks if t not in STOPWORDS]
     return [stem(t) for t in toks]
+
+
+def lcs_length(x: List[str], y: List[str]) -> int:
+    """Length of Longest Common Subsequence of token lists (dynamic programming)."""
+    m, n = len(x), len(y)
+    if m == 0 or n == 0:
+        return 0
+    dp = [0] * (n + 1)
+    for i in range(1, m + 1):
+        prev = 0
+        for j in range(1, n + 1):
+            temp = dp[j]
+            dp[j] = prev + 1 if x[i - 1] == y[j - 1] else max(dp[j], dp[j - 1])
+            prev = temp
+    return dp[n]
+
+
+def rouge_lcs(candidate: str, reference: str, beta: float = 1.0) -> tuple[float, float, float]:
+    """Compute ROUGE-LCS (recall, precision, harmonic F1) on token sequences."""
+    c_tokens = tokenize(candidate)
+    r_tokens = tokenize(reference)
+    if not c_tokens or not r_tokens:
+        return 0.0, 0.0, 0.0
+    lcs = lcs_length(c_tokens, r_tokens)
+    rec = lcs / len(r_tokens)
+    prec = lcs / len(c_tokens)
+    if rec + prec == 0:
+        return rec, prec, 0.0
+    f1 = ((1 + beta**2) * rec * prec) / (rec + beta**2 * prec)
+    return rec, prec, f1
+

@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "tests"))
 from hr_policy_navigator.agent import Copilot
 from hr_policy_navigator.config import Settings
 from hr_policy_navigator.retrieval import PolicyCorpus
-from hr_policy_navigator.text_utils import tokenize
+from hr_policy_navigator.text_utils import rouge_lcs, tokenize
 
 TAXONOMY = ["retrieval_miss", "reasoning_error", "tool_call_error", "hallucination", "refusal_error"]
 
@@ -94,8 +94,9 @@ def main():
         for it in items:
             res = agent.run(it["question"], session_id=f"eval-{strat}-{it['id']}", strategy=strat)
             ok, fc = judge(it, res, args.recall_th)
+            _, _, rl_f1 = rouge_lcs(res["answer"], it.get("gold_answer", "")) if it.get("gold_answer") else (0.0, 0.0, 0.0)
             rows.append({"id": it["id"], "type": it.get("type", "answerable"), "question": it["question"], "status": res["status"],
-                         "correct": ok, "failure": fc, "latency_ms": res["latency_ms"], "tool_calls": res["tool_calls"],
+                         "correct": ok, "failure": fc, "rouge_lcs_f1": round(rl_f1, 4), "latency_ms": res["latency_ms"], "tool_calls": res["tool_calls"],
                          "llm_calls": res["llm_calls"], "tokens": res["tokens"], "cost_usd": res["cost_usd"],
                          "json_repairs": res["json_repairs"], "retrieved": res.get("retrieved", []), "cited": [c["path"] for c in res.get("citations", [])],
                          "expected_sources": it.get("expected_sources", []), "answer": res["answer"], "trace_id": res["trace_id"]})
@@ -107,8 +108,10 @@ def main():
         for r in rows:
             by_type[r["type"]][0] += r["correct"]; by_type[r["type"]][1] += 1
         ans_rows = [r for r in rows if r["expected_sources"] and r["type"] in ("answerable", "pii", "false_refusal_probe")]
+        mean_rouge = round(sum(r.get("rouge_lcs_f1", 0.0) for r in ans_rows) / max(1, len(ans_rows)), 4) if ans_rows else 0.0
         summary[strat] = {
             "model": model, "n": n, "accuracy": round(sum(r["correct"] for r in rows) / n, 3),
+            "rouge_lcs_f1": mean_rouge,
             "task_completion_rate": round(sum(not r["status"].startswith("error") for r in rows) / n, 3),
             "retrieval_hit_in_context": round(sum(bool(set(r["retrieved"]) & set(r["expected_sources"])) for r in ans_rows) / max(1, len(ans_rows)), 3),
             "avg_tool_calls": round(sum(r["tool_calls"] for r in rows) / n, 2), "avg_llm_calls": round(sum(r["llm_calls"] for r in rows) / n, 2),

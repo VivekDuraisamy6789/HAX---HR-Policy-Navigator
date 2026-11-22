@@ -28,6 +28,7 @@
    "retrieval_miss": 8,
    "refusal_error": 1,
    "hallucination": 1
-  }
+  },
+  "rouge_lcs_f1": 0.1981
  }
 }
