@@ -1,1121 +1,23 @@
 {
- "fixed_200|bm25": {
-  "n": 60,
-  "n_themes": 12,
+ "heading_cap|bm25": {
+  "n": 55,
+  "n_themes": 11,
   "hit_rate": {
-   "@1": 0.6,
-   "@3": 0.8,
-   "@5": 0.85,
-   "@8": 0.917
+   "@1": 0.618,
+   "@3": 0.836,
+   "@5": 0.836,
+   "@8": 0.909
   },
   "doc_recall": {
-   "@1": 0.483,
-   "@3": 0.675,
-   "@5": 0.742,
-   "@8": 0.8
-  },
-  "mrr": 0.723,
-  "hit5_ci95": [
-   0.75,
-   0.933
-  ],
-  "misses": [
-   {
-    "id": "Q02-04",
-    "q": "Are plan changes effective immediately or only on a fixed date?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/compensation-and-leveling/compensation-role-changes.md",
-     "departments/people-talent/people-ops/tools/bamboohr.md",
-     "departments/people-talent/people-ops/tools/internal-onboarding.md"
-    ]
-   },
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "departments/tech-ops/tools/Okta/main.md",
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
-    ]
-   },
-   {
-    "id": "Q06-05",
-    "q": "What should a teammate do if they feel disrespected at work?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "company-info-and-process/communication/code_of_conduct.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md",
-     "departments/people-talent/people-ops/process/teammate-sentiment/pulse-survey.md"
-    ]
-   },
-   {
-    "id": "Q07-04",
-    "q": "Can leave decisions be made solely by an AI assistant?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
-    ],
-    "top3": [
-     "departments/people-talent/talent/tools/guide_to_using_brighthire.md",
-     "departments/people-talent/talent/process/types_of_interviews.md",
-     "benefits-pay-perks/benefits-perks/parental-leave.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "departments/people-talent/talent/process/hacker-news-who-is-hiring.md",
-     "company-info-and-process/communication/code_of_conduct.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md",
-     "company-info-and-process/communication/code_of_conduct.md",
-     "company-info-and-process/community/code_of_conduct.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "company-info-and-process/respectful-workplace-policy.md",
-     "departments/people-talent/family-support.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/family-support.md",
-     "departments/people-talent/people-ops/process/moving.md",
-     "benefits-pay-perks/pay-expenses/compensation/equity-faq.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/security-incident-response-process.md",
-     "departments/security/security-incident-response.md",
-     "departments/security/security-risk-management-process.md"
-    ]
-   }
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 1989,
-  "docs": 297,
-  "build_s": 18.6,
-  "embedder": "lsa-offline"
- },
- "fixed_200|dense": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.517,
-   "@3": 0.783,
-   "@5": 0.8,
-   "@8": 0.85
-  },
-  "doc_recall": {
-   "@1": 0.408,
-   "@3": 0.692,
-   "@5": 0.717,
-   "@8": 0.767
-  },
-  "mrr": 0.647,
-  "hit5_ci95": [
-   0.633,
-   0.933
-  ],
-  "misses": [
-   {
-    "id": "Q02-04",
-    "q": "Are plan changes effective immediately or only on a fixed date?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/compensation-and-leveling/compensation-role-changes.md",
-     "departments/people-talent/people-ops/tools/bamboohr.md",
-     "departments/people-talent/people-ops/tools/internal-onboarding.md"
-    ]
-   },
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "departments/security/tooling/entitle_request.md",
-     "departments/security/tooling/entitle.md",
-     "departments/people-talent/ada.md"
-    ]
-   },
-   {
-    "id": "Q06-04",
-    "q": "Does the policy cover interactions with external vendors and partners?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "departments/finance/process/ap.md",
-     "departments/tech-ops/process/vendor-request.md",
-     "departments/tech-ops/process/vendor-reviewer-guide.md"
-    ]
-   },
-   {
-    "id": "Q06-05",
-    "q": "What should a teammate do if they feel disrespected at work?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/teammate-sentiment/pulse-survey.md",
-     "benefits-pay-perks/benefits-perks/celebrate.md",
-     "departments/people-talent/onboarding-feedback-milestones.md"
-    ]
-   },
-   {
-    "id": "Q07-02",
-    "q": "Does Sourcegraph offer short-term and long-term disability?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
-    ],
-    "top3": [
-     "departments/people-talent/ada.md",
-     "company-info-and-process/onboarding/glossary.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/communication/content_guidelines/terminology_guidelines.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "company-info-and-process/communication/content_guidelines/style_and_mechanics.md"
-    ]
-   },
-   {
-    "id": "Q08-02",
-    "q": "Does the company provide paid time off for a range of reasons?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/submitting-time-off.md",
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/tools/index.md"
-    ]
-   },
-   {
-    "id": "Q08-03",
-    "q": "What values are emphasized around workplace equality?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/talent/process/evaluating_values.md",
-     "company-info-and-process/values/index.md",
-     "company-info-and-process/respectful-workplace-policy.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/communication/code_of_conduct.md",
-     "company-info-and-process/community/code_of_conduct.md",
-     "benefits-pay-perks/benefits-perks/parental-leave.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "departments/people-talent/resources_for_candidates.md",
-     "departments/people-talent/people-ops/process/Leaving_Sourcegraph_resources_for_managers.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/onboarding.md",
-     "departments/people-talent/onboarding-feedback-milestones.md",
-     "departments/people-talent/onboarding-for-hiring-managers.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "company-info-and-process/policies/index.md",
-     "company-info-and-process/policies/information-security-policy.md",
-     "company-info-and-process/policies/cloud-security-policy.md"
-    ]
-   }
-  ],
-  "hit5_delta_vs_bm25_ci95": [
-   -0.117,
-   0.0
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 1989,
-  "docs": 297,
-  "build_s": 18.6,
-  "embedder": "lsa-offline"
- },
- "fixed_200|hybrid": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.55,
-   "@3": 0.85,
-   "@5": 0.867,
-   "@8": 0.883
-  },
-  "doc_recall": {
-   "@1": 0.433,
-   "@3": 0.717,
-   "@5": 0.767,
-   "@8": 0.783
-  },
-  "mrr": 0.694,
-  "hit5_ci95": [
-   0.75,
-   0.967
-  ],
-  "misses": [
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "departments/security/tooling/entitle_request.md",
-     "departments/tech-ops/tools/Okta/main.md",
-     "departments/people-talent/ada.md"
-    ]
-   },
-   {
-    "id": "Q06-04",
-    "q": "Does the policy cover interactions with external vendors and partners?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "departments/finance/process/ap.md",
-     "departments/tech-ops/process/vendor-request.md",
-     "departments/people-talent/background-check-policy.md"
-    ]
-   },
-   {
-    "id": "Q06-05",
-    "q": "What should a teammate do if they feel disrespected at work?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/teammate-sentiment/pulse-survey.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "benefits-pay-perks/benefits-perks/celebrate.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "departments/people-talent/talent/process/hacker-news-who-is-hiring.md",
-     "departments/people-talent/talent/process/types_of_interviews.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/communication/code_of_conduct.md",
-     "company-info-and-process/community/code_of_conduct.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "departments/people-talent/people-ops/process/Leaving_Sourcegraph_resources_for_managers.md",
-     "company-info-and-process/communication/announcements.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/onboarding.md",
-     "departments/people-talent/people-ops/tools/people-ops-faqs.md",
-     "departments/people-talent/people-ops/process/moving.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/security-risk-management-process.md",
-     "company-info-and-process/policies/cloud-security-policy.md",
-     "company-info-and-process/policies/third-party-management-policy.md"
-    ]
-   }
-  ],
-  "hit5_delta_vs_bm25_ci95": [
-   -0.033,
-   0.067
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 1989,
-  "docs": 297,
-  "build_s": 18.6,
-  "embedder": "lsa-offline"
- },
- "fixed_200|hybrid_rerank": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.7,
-   "@3": 0.85,
-   "@5": 0.867,
-   "@8": 0.883
-  },
-  "doc_recall": {
-   "@1": 0.558,
-   "@3": 0.725,
-   "@5": 0.758,
-   "@8": 0.775
-  },
-  "mrr": 0.783,
-  "hit5_ci95": [
-   0.767,
-   0.967
-  ],
-  "misses": [
-   {
-    "id": "Q02-04",
-    "q": "Are plan changes effective immediately or only on a fixed date?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/compensation-and-leveling/compensation-role-changes.md",
-     "departments/people-talent/people-ops/tools/bamboohr.md",
-     "departments/people-talent/people-ops/tools/internal-onboarding.md"
-    ]
-   },
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "departments/tech-ops/tools/Okta/main.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md",
-     "departments/people-talent/ada.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/talent/process/hacker-news-who-is-hiring.md",
-     "departments/people-talent/talent/process/opening_a_new_job.md",
-     "departments/people-talent/talent/process/types_of_interviews.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/community/code_of_conduct.md",
-     "company-info-and-process/communication/code_of_conduct.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "departments/people-talent/people-ops/process/Leaving_Sourcegraph_resources_for_managers.md",
-     "company-info-and-process/communication/announcements.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/moving.md",
-     "departments/people-talent/family-support.md",
-     "departments/people-talent/people-ops/tools/people-ops-faqs.md"
-    ]
-   },
-   {
-    "id": "Q11-03",
-    "q": "What kinds of vendor data issues are considered?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/finance/process/ap.md",
-     "company-info-and-process/respectful-workplace-policy.md",
-     "company-info-and-process/policies/third-party-management-policy.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/security-incident-response-process.md",
-     "company-info-and-process/policies/third-party-management-policy.md",
-     "departments/security/security-risk-management-process.md"
-    ]
-   }
-  ],
-  "hit5_delta_vs_bm25_ci95": [
-   -0.033,
-   0.067
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 1989,
-  "docs": 297,
-  "build_s": 18.6,
-  "embedder": "lsa-offline"
- },
- "fixed_500|bm25": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.583,
-   "@3": 0.817,
-   "@5": 0.85,
-   "@8": 0.9
-  },
-  "doc_recall": {
-   "@1": 0.492,
-   "@3": 0.683,
-   "@5": 0.733,
-   "@8": 0.792
-  },
-  "mrr": 0.703,
-  "hit5_ci95": [
-   0.75,
-   0.95
-  ],
-  "misses": [
-   {
-    "id": "Q02-04",
-    "q": "Are plan changes effective immediately or only on a fixed date?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/compensation-and-leveling/compensation-role-changes.md",
-     "departments/people-talent/people-ops/tools/bamboohr.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
-    ]
-   },
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "departments/tech-ops/tools/Okta/main.md",
-     "departments/people-talent/ada.md"
-    ]
-   },
-   {
-    "id": "Q07-04",
-    "q": "Can leave decisions be made solely by an AI assistant?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
-    ],
-    "top3": [
-     "departments/people-talent/talent/process/types_of_interviews.md",
-     "departments/people-talent/talent/tools/guide_to_using_brighthire.md",
-     "company-info-and-process/policies/data-sharing.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "departments/people-talent/talent/process/types_of_interviews.md",
-     "departments/people-talent/talent/process/hacker-news-who-is-hiring.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/onboarding/glossary.md",
-     "company-info-and-process/community/code_of_conduct.md",
-     "departments/people-talent/talent/process/engineering_interview_process_candidates.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/family-support.md",
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "company-info-and-process/respectful-workplace-policy.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/moving.md",
-     "departments/people-talent/people-ops/tools/people-ops-faqs.md",
-     "departments/people-talent/family-support.md"
-    ]
-   },
-   {
-    "id": "Q11-03",
-    "q": "What kinds of vendor data issues are considered?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/finance/process/ap.md",
-     "departments/security/knowledge-base/index.md",
-     "company-info-and-process/policies/third-party-management-policy.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/security-incident-response-process.md",
-     "departments/people-talent/people-ops/tools/manager-guide.md",
-     "departments/people-talent/people-ops/process/onboarding.md"
-    ]
-   }
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 885,
-  "docs": 297,
-  "build_s": 17.2,
-  "embedder": "lsa-offline"
- },
- "fixed_500|dense": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
    "@1": 0.5,
-   "@3": 0.75,
-   "@5": 0.867,
-   "@8": 0.9
+   "@3": 0.718,
+   "@5": 0.727,
+   "@8": 0.809
   },
-  "doc_recall": {
-   "@1": 0.408,
-   "@3": 0.642,
-   "@5": 0.758,
-   "@8": 0.783
-  },
-  "mrr": 0.653,
+  "mrr": 0.737,
   "hit5_ci95": [
-   0.733,
-   0.967
-  ],
-  "misses": [
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "departments/people-talent/ada.md",
-     "departments/tech-ops/process/application_access_request.md",
-     "departments/security/tooling/entitle.md"
-    ]
-   },
-   {
-    "id": "Q06-04",
-    "q": "Does the policy cover interactions with external vendors and partners?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "departments/tech-ops/process/vendor-request.md",
-     "departments/tech-ops/process/vendor-reviewer-guide.md",
-     "departments/finance/process/ap.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/talent/process/hacker-news-who-is-hiring.md",
-     "departments/people-talent/talent/process/types_of_interviews.md",
-     "departments/people-talent/resources_for_candidates.md"
-    ]
-   },
-   {
-    "id": "Q08-02",
-    "q": "Does the company provide paid time off for a range of reasons?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/submitting-time-off.md",
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/tools/index.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/communication/code_of_conduct.md",
-     "company-info-and-process/onboarding/glossary.md",
-     "company-info-and-process/community/code_of_conduct.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "departments/people-talent/family-support.md",
-     "departments/people-talent/people-ops/process/teammate-sentiment/impact-reviews/index.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "company-info-and-process/communication/asynchronous-communication.md",
-     "departments/people-talent/onboarding-feedback-milestones.md",
-     "departments/people-talent/resources-for-new-hires/new-teammate-setup.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "company-info-and-process/policies/index.md",
-     "company-info-and-process/policies/cloud-security-policy.md",
-     "company-info-and-process/policies/information-security-policy.md"
-    ]
-   }
-  ],
-  "hit5_delta_vs_bm25_ci95": [
-   -0.05,
-   0.083
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 885,
-  "docs": 297,
-  "build_s": 17.2,
-  "embedder": "lsa-offline"
- },
- "fixed_500|hybrid": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.55,
-   "@3": 0.833,
-   "@5": 0.9,
-   "@8": 0.9
-  },
-  "doc_recall": {
-   "@1": 0.458,
-   "@3": 0.667,
-   "@5": 0.792,
-   "@8": 0.808
-  },
-  "mrr": 0.706,
-  "hit5_ci95": [
-   0.8,
-   0.983
-  ],
-  "misses": [
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "departments/people-talent/ada.md",
-     "departments/tech-ops/tools/Okta/main.md",
-     "benefits-pay-perks/benefits-perks/time-off/index.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/talent/process/hacker-news-who-is-hiring.md",
-     "departments/people-talent/talent/process/types_of_interviews.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/onboarding/glossary.md",
-     "company-info-and-process/community/code_of_conduct.md",
-     "company-info-and-process/communication/code_of_conduct.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/family-support.md",
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "departments/people-talent/resources_for_candidates.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/tools/people-ops-faqs.md",
-     "departments/people-talent/people-ops/process/moving.md",
-     "departments/people-talent/people-ops/process/onboarding.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "company-info-and-process/policies/cloud-security-policy.md",
-     "departments/people-talent/people-ops/process/onboarding.md",
-     "departments/security/security-incident-response-process.md"
-    ]
-   }
-  ],
-  "hit5_delta_vs_bm25_ci95": [
-   0.0,
-   0.1
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 885,
-  "docs": 297,
-  "build_s": 17.2,
-  "embedder": "lsa-offline"
- },
- "fixed_500|hybrid_rerank": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.733,
-   "@3": 0.85,
-   "@5": 0.883,
-   "@8": 0.883
-  },
-  "doc_recall": {
-   "@1": 0.575,
-   "@3": 0.725,
-   "@5": 0.775,
-   "@8": 0.783
-  },
-  "mrr": 0.799,
-  "hit5_ci95": [
-   0.767,
-   0.983
-  ],
-  "misses": [
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "departments/tech-ops/tools/Okta/main.md",
-     "departments/people-talent/ada.md",
-     "company-info-and-process/communication/asynchronous-communication.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/talent/process/hacker-news-who-is-hiring.md",
-     "departments/people-talent/talent/process/types_of_interviews.md",
-     "departments/people-talent/talent/tools/guide_to_using_brighthire.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/community/code_of_conduct.md",
-     "company-info-and-process/communication/code_of_conduct.md",
-     "company-info-and-process/onboarding/glossary.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/family-support.md",
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "departments/people-talent/resources_for_candidates.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/tools/people-ops-faqs.md",
-     "departments/people-talent/people-ops/process/moving.md",
-     "departments/people-talent/buddy-program.md"
-    ]
-   },
-   {
-    "id": "Q11-03",
-    "q": "What kinds of vendor data issues are considered?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/knowledge-base/index.md",
-     "departments/finance/process/ap.md",
-     "company-info-and-process/policies/third-party-management-policy.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/security-incident-response-process.md",
-     "company-info-and-process/policies/cloud-security-policy.md",
-     "company-info-and-process/policies/third-party-management-policy.md"
-    ]
-   }
-  ],
-  "hit5_delta_vs_bm25_ci95": [
-   0.0,
-   0.083
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 885,
-  "docs": 297,
-  "build_s": 17.2,
-  "embedder": "lsa-offline"
- },
- "heading|bm25": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.633,
-   "@3": 0.783,
-   "@5": 0.833,
-   "@8": 0.867
-  },
-  "doc_recall": {
-   "@1": 0.542,
-   "@3": 0.683,
-   "@5": 0.725,
-   "@8": 0.758
-  },
-  "mrr": 0.728,
-  "hit5_ci95": [
-   0.7,
-   0.933
+   0.727,
+   0.927
   ],
   "misses": [
    {
@@ -1138,8 +40,8 @@
     ],
     "top3": [
      "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "departments/tech-ops/tools/Okta/main.md",
-     "departments/security/tooling/entitle_request.md"
+     "benefits-pay-perks/benefits-perks/leave-of-absence.md",
+     "departments/people-talent/people-ops/tools/peo.md"
     ]
    },
    {
@@ -1162,8 +64,8 @@
      "benefits-pay-perks/benefits-perks/leave-of-absence.md"
     ],
     "top3": [
-     "benefits-pay-perks/benefits-perks/parental-leave.md",
-     "company-info-and-process/policies/data-sharing.md",
+     "departments/people-talent/talent/process/interview_process.md",
+     "company-info-and-process/communication/code_of_conduct.md",
      "departments/people-talent/talent/tools/guide_to_using_brighthire.md"
     ]
    },
@@ -1175,22 +77,9 @@
      "company-info-and-process/queer.md"
     ],
     "top3": [
-     "company-info-and-process/index.md",
      "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "departments/finance/deal-desk/deal-desk-faqs.md"
-    ]
-   },
-   {
-    "id": "Q08-02",
-    "q": "Does the company provide paid time off for a range of reasons?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "departments/people-talent/ada.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
+     "company-info-and-process/respectful-workplace-policy.md",
+     "departments/people-talent/talent/process/interview_process.md"
     ]
    },
    {
@@ -1202,8 +91,8 @@
     ],
     "top3": [
      "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md",
-     "company-info-and-process/policies/secure-development-policy.md",
-     "departments/tech-ops/tools/computer-setup.md"
+     "company-info-and-process/values/index.md",
+     "departments/people-talent/git-intro.md"
     ]
    },
    {
@@ -1214,9 +103,22 @@
      "company-info-and-process/queer.md"
     ],
     "top3": [
+     "benefits-pay-perks/benefits-perks/travel/index.md",
      "company-info-and-process/respectful-workplace-policy.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md",
-     "benefits-pay-perks/benefits-perks/travel/index.md"
+     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md"
+    ]
+   },
+   {
+    "id": "Q09-04",
+    "q": "How can teammates reduce friction when writing messages across time zones?",
+    "gold": [
+     "company-info-and-process/communication/asynchronous-communication.md",
+     "company-info-and-process/remote/index.md"
+    ],
+    "top3": [
+     "company-info-and-process/remote/tips.md",
+     "synthetic/wellness/wellbeing-time-zones--resources.md",
+     "synthetic/wellness/wellbeing-time-zones--how-to-use-your-stipend.md"
     ]
    },
    {
@@ -1228,63 +130,39 @@
     ],
     "top3": [
      "departments/people-talent/people-ops/tools/people-ops-faqs.md",
-     "departments/people-talent/people-ops/process/moving.md",
+     "synthetic/region/working-remotely-from-new-zealand.md",
      "company-info-and-process/about-sourcegraph/general-office-info.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/security-incident-response-process.md",
-     "company-info-and-process/policies/cloud-security-policy.md",
-     "departments/security/security-incident-response.md"
     ]
    }
   ],
   "reranker": "lexical",
   "notes": [],
-  "chunks": 2650,
-  "docs": 297,
-  "build_s": 19.4,
-  "embedder": "lsa-offline"
+  "chunks": 3686,
+  "docs": 1151,
+  "build_s": 9.2,
+  "embedder": "api:bge-small-en-v1.5"
  },
- "heading|dense": {
-  "n": 60,
-  "n_themes": 12,
+ "heading_cap|dense": {
+  "n": 55,
+  "n_themes": 11,
   "hit_rate": {
-   "@1": 0.4,
-   "@3": 0.633,
-   "@5": 0.733,
-   "@8": 0.8
+   "@1": 0.582,
+   "@3": 0.745,
+   "@5": 0.764,
+   "@8": 0.836
   },
   "doc_recall": {
-   "@1": 0.325,
-   "@3": 0.533,
-   "@5": 0.658,
-   "@8": 0.717
+   "@1": 0.473,
+   "@3": 0.645,
+   "@5": 0.709,
+   "@8": 0.764
   },
-  "mrr": 0.544,
+  "mrr": 0.668,
   "hit5_ci95": [
-   0.583,
-   0.883
+   0.6,
+   0.909
   ],
   "misses": [
-   {
-    "id": "Q02-04",
-    "q": "Are plan changes effective immediately or only on a fixed date?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/tools/manager-guide.md",
-     "departments/people-talent/people-ops/process/compensation-and-leveling/compensation-role-changes.md",
-     "company-info-and-process/communication/announcements.md"
-    ]
-   },
    {
     "id": "Q03-02",
     "q": "What coverage exists when a teammate travels for work on behalf of Sourcegraph?",
@@ -1293,20 +171,20 @@
     ],
     "top3": [
      "benefits-pay-perks/benefits-perks/travel/index.md",
-     "benefits-pay-perks/benefits-perks/travel/Navan.md",
-     "departments/people-talent/people-ops/tools/manager-guide.md"
+     "departments/people-talent/people-ops/process/Leaving_Sourcegraph_resources_for_managers.md",
+     "departments/people-talent/people-ops/process/how-we-engage-talent-outside-the-us/index.md"
     ]
    },
    {
-    "id": "Q03-05",
-    "q": "Who provides the corporate travel insurance for business travel?",
+    "id": "Q03-04",
+    "q": "What should a teammate do when traveling for vacation and wanting insurance?",
     "gold": [
      "benefits-pay-perks/benefits-perks/benefits.md"
     ],
     "top3": [
      "benefits-pay-perks/benefits-perks/travel/index.md",
-     "benefits-pay-perks/benefits-perks/travel/Navan.md",
-     "departments/people-talent/people-ops/tools/manager-guide.md"
+     "synthetic/faq/faq-for-remote-teammates-are-insurance-premiums-covered.md",
+     "benefits-pay-perks/benefits-perks/parental-leave.md"
     ]
    },
    {
@@ -1316,33 +194,9 @@
      "company-info-and-process/remote/index.md"
     ],
     "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "departments/security/tooling/entitle.md",
-     "departments/people-talent/ada.md"
-    ]
-   },
-   {
-    "id": "Q05-03",
-    "q": "Are company meetings rescheduled around certain US holidays?",
-    "gold": [
-     "company-info-and-process/working-at-sourcegraph/holidays.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/teammate-sentiment/culture-meetings.md",
-     "company-info-and-process/communication/index.md",
-     "company-info-and-process/communication/1-1.md"
-    ]
-   },
-   {
-    "id": "Q06-04",
-    "q": "Does the policy cover interactions with external vendors and partners?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "departments/finance/process/ap.md",
-     "departments/tech-ops/process/vendor-request.md",
-     "departments/finance/process/payables.md"
+     "synthetic/manager/manager-guide-when-a-teammate-needs-an-accommodation--escalation.md",
+     "synthetic/manager/manager-guide-when-a-teammate-is-leaving--escalation.md",
+     "synthetic/manager/manager-guide-when-a-teammate-wants-outside-work--escalation.md"
     ]
    },
    {
@@ -1352,22 +206,48 @@
      "company-info-and-process/respectful-workplace-policy.md"
     ],
     "top3": [
-     "benefits-pay-perks/benefits-perks/celebrate.md",
-     "company-info-and-process/communication/announcements.md",
-     "departments/people-talent/people-ops/process/leaving.md"
+     "synthetic/manager/manager-guide-when-a-teammate-raises-a-concern--what-to-avoid.md",
+     "synthetic/manager/manager-guide-when-a-teammate-raises-a-concern--first-steps.md",
+     "company-info-and-process/communication/code_of_conduct.md"
     ]
    },
    {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
+    "id": "Q07-03",
+    "q": "Where can a teammate find medical leave guidance?",
     "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
+     "benefits-pay-perks/benefits-perks/benefits.md",
+     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
     ],
     "top3": [
-     "departments/security/security-trust-center.md",
-     "departments/people-talent/talent/process/candidate-rejection-reasons.md",
-     "departments/people-talent/talent/process/types_of_interviews.md"
+     "synthetic/manager/manager-guide-when-a-teammate-asks-about-wellness-support--escalation.md",
+     "synthetic/manager/manager-guide-when-a-teammate-asks-about-wellness-support--first-steps.md",
+     "synthetic/manager/manager-guide-when-a-teammate-asks-about-wellness-support--follow-up.md"
+    ]
+   },
+   {
+    "id": "Q07-04",
+    "q": "Can leave decisions be made solely by an AI assistant?",
+    "gold": [
+     "benefits-pay-perks/benefits-perks/benefits.md",
+     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
+    ],
+    "top3": [
+     "synthetic/manager/manager-guide-when-a-teammate-asks-for-leave--documentation.md",
+     "synthetic/manager/manager-guide-when-a-teammate-asks-for-leave--escalation.md",
+     "synthetic/manager/manager-guide-when-a-teammate-is-leaving--documentation.md"
+    ]
+   },
+   {
+    "id": "Q07-05",
+    "q": "What should a teammate do if they need formal leave support?",
+    "gold": [
+     "benefits-pay-perks/benefits-perks/benefits.md",
+     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
+    ],
+    "top3": [
+     "benefits-pay-perks/benefits-perks/parental-leave.md",
+     "synthetic/manager/manager-guide-when-a-teammate-is-leaving--escalation.md",
+     "synthetic/manager/manager-guide-when-a-teammate-needs-an-accommodation--escalation.md"
     ]
    },
    {
@@ -1378,22 +258,9 @@
      "company-info-and-process/queer.md"
     ],
     "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/submitting-time-off.md",
      "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/tools/index.md"
-    ]
-   },
-   {
-    "id": "Q08-03",
-    "q": "What values are emphasized around workplace equality?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/Required-workplace-postings.md",
-     "departments/people-talent/Required-posting-page.md",
-     "departments/people-talent/talent/process/evaluating_values.md"
+     "benefits-pay-perks/index.md",
+     "benefits-pay-perks/benefits-perks/index.md"
     ]
    },
    {
@@ -1404,9 +271,9 @@
      "company-info-and-process/queer.md"
     ],
     "top3": [
-     "company-info-and-process/communication/content_guidelines/style_and_mechanics.md",
-     "company-info-and-process/communication/content_guidelines/terminology_guidelines.md",
-     "company-info-and-process/policies/secure-development-policy.md"
+     "departments/people-talent/people-ops/process/leaving.md",
+     "company-info-and-process/values/index.md",
+     "departments/people-talent/ada.md"
     ]
    },
    {
@@ -1417,9 +284,22 @@
      "company-info-and-process/queer.md"
     ],
     "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "benefits-pay-perks/benefits-perks/nomad-life.md",
-     "departments/people-talent/resources-for-new-hires/new-teammate-setup.md"
+     "departments/people-talent/index.md",
+     "synthetic/manager/manager-guide-when-a-teammate-is-promoted--what-to-avoid.md",
+     "synthetic/manager/manager-guide-when-a-teammate-asks-about-equity--what-to-avoid.md"
+    ]
+   },
+   {
+    "id": "Q10-01",
+    "q": "What should a new teammate do when they have not received a Rippling invite?",
+    "gold": [
+     "benefits-pay-perks/benefits-perks/benefits.md",
+     "departments/tech-ops/process/team_device_usage_privacy.md"
+    ],
+    "top3": [
+     "departments/people-talent/resources-for-new-hires/new-teammate-setup.md",
+     "departments/people-talent/onboarding-feedback-milestones.md",
+     "benefits-pay-perks/benefits-perks/travel/Navan.md"
     ]
    },
    {
@@ -1430,9 +310,9 @@
      "departments/tech-ops/process/team_device_usage_privacy.md"
     ],
     "top3": [
-     "departments/people-talent/resources-for-new-hires/new-teammate-setup.md",
+     "benefits-pay-perks/pay-expenses/compensation/index.md",
      "departments/people-talent/people-ops/process/onboarding.md",
-     "departments/people-talent/buddy-program.md"
+     "departments/people-talent/onboarding-feedback-milestones.md"
     ]
    },
    {
@@ -1443,66 +323,42 @@
      "departments/tech-ops/process/team_device_usage_privacy.md"
     ],
     "top3": [
-     "company-info-and-process/policies/access-control-policy.md",
-     "departments/tech-ops/tools/computer-setup.md",
-     "departments/security/security-onboarding.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "company-info-and-process/policies/cloud-security-policy.md",
-     "company-info-and-process/policies/index.md",
-     "departments/security/index.md"
-    ]
-   },
-   {
-    "id": "Q11-05",
-    "q": "Can a teammate approve a vendor without a review?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/teammate-sentiment/impact-reviews/index.md",
-     "departments/people-talent/people-ops/process/giving-feedback.md",
-     "departments/people-talent/people-ops/process/teammate-sentiment/impact-reviews/delivering-impact-reviews.md"
+     "synthetic/onboarding/it-onboarding-first-week.md",
+     "synthetic/onboarding/it-onboarding-buddy-guide.md",
+     "synthetic/onboarding/it-manager-onboarding-checklist.md"
     ]
    }
   ],
   "hit5_delta_vs_bm25_ci95": [
-   -0.183,
-   -0.017
+   -0.218,
+   0.055
   ],
   "reranker": "lexical",
   "notes": [],
-  "chunks": 2650,
-  "docs": 297,
-  "build_s": 19.4,
-  "embedder": "lsa-offline"
+  "chunks": 3686,
+  "docs": 1151,
+  "build_s": 9.2,
+  "embedder": "api:bge-small-en-v1.5"
  },
- "heading|hybrid": {
-  "n": 60,
-  "n_themes": 12,
+ "heading_cap|hybrid": {
+  "n": 55,
+  "n_themes": 11,
   "hit_rate": {
-   "@1": 0.533,
-   "@3": 0.8,
-   "@5": 0.833,
-   "@8": 0.85
+   "@1": 0.691,
+   "@3": 0.855,
+   "@5": 0.855,
+   "@8": 0.855
   },
   "doc_recall": {
-   "@1": 0.433,
-   "@3": 0.683,
-   "@5": 0.742,
-   "@8": 0.767
+   "@1": 0.545,
+   "@3": 0.745,
+   "@5": 0.764,
+   "@8": 0.764
   },
-  "mrr": 0.665,
+  "mrr": 0.772,
   "hit5_ci95": [
-   0.667,
-   0.967
+   0.745,
+   0.964
   ],
   "misses": [
    {
@@ -1512,21 +368,9 @@
      "company-info-and-process/remote/index.md"
     ],
     "top3": [
-     "departments/people-talent/ada.md",
-     "departments/security/tooling/entitle_github.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
-    ]
-   },
-   {
-    "id": "Q06-04",
-    "q": "Does the policy cover interactions with external vendors and partners?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "departments/finance/process/ap.md",
-     "company-info-and-process/policies/third-party-management-policy.md",
-     "departments/tech-ops/process/vendor-request.md"
+     "benefits-pay-perks/benefits-perks/parental-leave.md",
+     "synthetic/manager/manager-guide-when-a-teammate-needs-an-accommodation--first-steps.md",
+     "synthetic/manager/manager-guide-when-a-teammate-needs-equipment--first-steps.md"
     ]
    },
    {
@@ -1536,22 +380,35 @@
      "company-info-and-process/respectful-workplace-policy.md"
     ],
     "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "departments/people-talent/people-ops/process/teammate-sentiment/impact-reviews/delivering-impact-reviews.md",
-     "departments/people-talent/people-ops/process/teammate-sentiment/pulse-survey.md"
+     "benefits-pay-perks/benefits-perks/celebrate.md",
+     "company-info-and-process/communication/code_of_conduct.md",
+     "synthetic/manager/manager-guide-when-a-teammate-raises-a-concern--what-to-avoid.md"
     ]
    },
    {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
+    "id": "Q07-04",
+    "q": "Can leave decisions be made solely by an AI assistant?",
     "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
+     "benefits-pay-perks/benefits-perks/benefits.md",
+     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
     ],
     "top3": [
-     "company-info-and-process/index.md",
      "departments/people-talent/talent/process/interview_process.md",
-     "departments/people-talent/talent/process/types_of_interviews.md"
+     "synthetic/manager/manager-guide-when-a-teammate-asks-for-leave--documentation.md",
+     "company-info-and-process/communication/code_of_conduct.md"
+    ]
+   },
+   {
+    "id": "Q07-05",
+    "q": "What should a teammate do if they need formal leave support?",
+    "gold": [
+     "benefits-pay-perks/benefits-perks/benefits.md",
+     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
+    ],
+    "top3": [
+     "benefits-pay-perks/benefits-perks/parental-leave.md",
+     "synthetic/manager/manager-guide-when-a-teammate-needs-an-accommodation--escalation.md",
+     "synthetic/manager/manager-guide-when-a-teammate-needs-an-accommodation--first-steps.md"
     ]
    },
    {
@@ -1563,21 +420,8 @@
     ],
     "top3": [
      "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "benefits-pay-perks/benefits-perks/time-off/submitting-time-off.md",
-     "benefits-pay-perks/benefits-perks/index.md"
-    ]
-   },
-   {
-    "id": "Q08-03",
-    "q": "What values are emphasized around workplace equality?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/Required-workplace-postings.md",
-     "departments/people-talent/Required-posting-page.md",
-     "company-info-and-process/respectful-workplace-policy.md"
+     "benefits-pay-perks/benefits-perks/index.md",
+     "benefits-pay-perks/benefits-perks/time-off/submitting-time-off.md"
     ]
    },
    {
@@ -1588,9 +432,9 @@
      "company-info-and-process/queer.md"
     ],
     "top3": [
-     "company-info-and-process/communication/content_guidelines/style_and_mechanics.md",
-     "departments/people-talent/git-intro.md",
-     "benefits-pay-perks/benefits-perks/parental-leave.md"
+     "departments/people-talent/people-ops/process/compensation-and-leveling/preparing-for-calibrations.md",
+     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md",
+     "departments/people-talent/people-ops/process/leaving.md"
     ]
    },
    {
@@ -1602,250 +446,8 @@
     ],
     "top3": [
      "benefits-pay-perks/benefits-perks/travel/index.md",
-     "benefits-pay-perks/benefits-perks/nomad-life.md",
-     "departments/people-talent/resources_for_candidates.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "company-info-and-process/about-sourcegraph/general-office-info.md",
-     "departments/people-talent/people-ops/process/onboarding.md",
-     "departments/people-talent/resources-for-new-hires/new-teammate-setup.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "company-info-and-process/policies/cloud-security-policy.md",
-     "departments/security/index.md",
-     "company-info-and-process/policies/index.md"
-    ]
-   }
-  ],
-  "hit5_delta_vs_bm25_ci95": [
-   -0.067,
-   0.067
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 2650,
-  "docs": 297,
-  "build_s": 19.4,
-  "embedder": "lsa-offline"
- },
- "heading|hybrid_rerank": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.65,
-   "@3": 0.85,
-   "@5": 0.883,
-   "@8": 0.883
-  },
-  "doc_recall": {
-   "@1": 0.542,
-   "@3": 0.733,
-   "@5": 0.767,
-   "@8": 0.767
-  },
-  "mrr": 0.755,
-  "hit5_ci95": [
-   0.783,
-   0.967
-  ],
-  "misses": [
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/addressing-underperformance.md",
-     "departments/security/tooling/entitle_github.md"
-    ]
-   },
-   {
-    "id": "Q06-05",
-    "q": "What should a teammate do if they feel disrespected at work?",
-    "gold": [
+     "departments/people-talent/index.md",
      "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "company-info-and-process/communication/code_of_conduct.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/talent/process/interview_process.md",
-     "departments/people-talent/talent/process/types_of_interviews.md",
-     "departments/people-talent/talent/process/hacker-news-who-is-hiring.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md",
-     "company-info-and-process/policies/secure-development-policy.md",
-     "company-info-and-process/communication/content_guidelines/style_and_mechanics.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md",
-     "company-info-and-process/respectful-workplace-policy.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/buddy-program.md",
-     "departments/people-talent/people-ops/process/moving.md",
-     "departments/people-talent/people-ops/process/onboarding.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/security-incident-response-process.md",
-     "departments/security/security-incident-response.md",
-     "departments/people-talent/people-ops/process/onboarding.md"
-    ]
-   }
-  ],
-  "hit5_delta_vs_bm25_ci95": [
-   0.0,
-   0.1
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 2650,
-  "docs": 297,
-  "build_s": 19.4,
-  "embedder": "lsa-offline"
- },
- "heading_cap|bm25": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.6,
-   "@3": 0.8,
-   "@5": 0.867,
-   "@8": 0.9
-  },
-  "doc_recall": {
-   "@1": 0.5,
-   "@3": 0.7,
-   "@5": 0.758,
-   "@8": 0.783
-  },
-  "mrr": 0.719,
-  "hit5_ci95": [
-   0.767,
-   0.95
-  ],
-  "misses": [
-   {
-    "id": "Q02-04",
-    "q": "Are plan changes effective immediately or only on a fixed date?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/compensation-and-leveling/compensation-role-changes.md",
-     "departments/people-talent/people-ops/tools/bamboohr.md",
-     "departments/people-talent/talent/process/headcount_changes.md"
-    ]
-   },
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "departments/tech-ops/tools/Okta/main.md",
-     "departments/security/tooling/entitle_request.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "departments/finance/deal-desk/deal-desk-faqs.md",
-     "company-info-and-process/respectful-workplace-policy.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md",
-     "company-info-and-process/values/index.md",
-     "company-info-and-process/onboarding/glossary.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "company-info-and-process/respectful-workplace-policy.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md"
     ]
    },
    {
@@ -1857,416 +459,41 @@
     ],
     "top3": [
      "departments/people-talent/people-ops/tools/people-ops-faqs.md",
-     "departments/people-talent/people-ops/process/moving.md",
-     "departments/people-talent/people-ops/process/onboarding.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/security-incident-response-process.md",
-     "departments/security/security-incident-response.md",
-     "company-info-and-process/policies/cloud-security-policy.md"
-    ]
-   },
-   {
-    "id": "Q12-02",
-    "q": "Is personal use of company equipment allowed?",
-    "gold": [
-     "company-info-and-process/policies/acceptable-use-policy.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "company-info-and-process/communication/code_of_conduct.md",
-     "departments/people-talent/talent/internship/index.md",
-     "company-info-and-process/policies/asset-management-policy.md"
-    ]
-   }
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 2668,
-  "docs": 297,
-  "build_s": 17.5,
-  "embedder": "lsa-offline"
- },
- "heading_cap|dense": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.45,
-   "@3": 0.717,
-   "@5": 0.783,
-   "@8": 0.817
-  },
-  "doc_recall": {
-   "@1": 0.358,
-   "@3": 0.608,
-   "@5": 0.708,
-   "@8": 0.733
-  },
-  "mrr": 0.587,
-  "hit5_ci95": [
-   0.617,
-   0.933
-  ],
-  "misses": [
-   {
-    "id": "Q03-02",
-    "q": "What coverage exists when a teammate travels for work on behalf of Sourcegraph?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "benefits-pay-perks/benefits-perks/travel/Navan.md"
-    ]
-   },
-   {
-    "id": "Q03-05",
-    "q": "Who provides the corporate travel insurance for business travel?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "benefits-pay-perks/benefits-perks/travel/Navan.md",
-     "departments/people-talent/people-ops/tools/manager-guide.md"
-    ]
-   },
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "departments/security/tooling/entitle_request.md",
-     "departments/people-talent/people-ops/tools/internal-onboarding.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
-    ]
-   },
-   {
-    "id": "Q06-04",
-    "q": "Does the policy cover interactions with external vendors and partners?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "departments/tech-ops/process/vendor-request.md",
-     "departments/finance/process/ap.md",
-     "departments/finance/process/payables.md"
-    ]
-   },
-   {
-    "id": "Q06-05",
-    "q": "What should a teammate do if they feel disrespected at work?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "company-info-and-process/remote/tips.md",
-     "company-info-and-process/communication/asynchronous-communication.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/security/security-trust-center.md",
-     "departments/people-talent/talent/process/interview_process.md",
-     "departments/security/knowledge-base/index.md"
-    ]
-   },
-   {
-    "id": "Q08-02",
-    "q": "Does the company provide paid time off for a range of reasons?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "benefits-pay-perks/benefits-perks/time-off/submitting-time-off.md",
-     "benefits-pay-perks/benefits-perks/index.md"
-    ]
-   },
-   {
-    "id": "Q08-03",
-    "q": "What values are emphasized around workplace equality?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/values/index.md",
-     "departments/people-talent/talent/process/evaluating_values.md",
-     "departments/people-talent/resources_for_candidates.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/values/index.md",
-     "benefits-pay-perks/benefits-perks/parental-leave.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/holidays.md",
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "benefits-pay-perks/benefits-perks/spending-company-money.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/resources-for-new-hires/new-teammate-setup.md",
      "departments/people-talent/people-ops/process/onboarding.md",
-     "departments/people-talent/onboarding-for-hiring-managers.md"
-    ]
-   },
-   {
-    "id": "Q10-04",
-    "q": "Can a teammate use work devices for personal reasons?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/tech-ops/process/internal-security/passwords.md",
-     "departments/people-talent/talent/process/candidate-rejection-reasons.md",
-     "departments/tech-ops/tools/computer-setup.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "company-info-and-process/policies/index.md",
-     "company-info-and-process/policies/information-security-policy.md",
-     "company-info-and-process/policies/cloud-security-policy.md"
+     "benefits-pay-perks/pay-expenses/compensation/index.md"
     ]
    }
   ],
   "hit5_delta_vs_bm25_ci95": [
-   -0.2,
-   0.033
+   -0.036,
+   0.073
   ],
   "reranker": "lexical",
   "notes": [],
-  "chunks": 2668,
-  "docs": 297,
-  "build_s": 17.5,
-  "embedder": "lsa-offline"
- },
- "heading_cap|hybrid": {
-  "n": 60,
-  "n_themes": 12,
-  "hit_rate": {
-   "@1": 0.55,
-   "@3": 0.767,
-   "@5": 0.833,
-   "@8": 0.883
-  },
-  "doc_recall": {
-   "@1": 0.45,
-   "@3": 0.667,
-   "@5": 0.742,
-   "@8": 0.775
-  },
-  "mrr": 0.672,
-  "hit5_ci95": [
-   0.667,
-   0.967
-  ],
-  "misses": [
-   {
-    "id": "Q04-02",
-    "q": "Does a teammate need permission to step away during the workday?",
-    "gold": [
-     "company-info-and-process/remote/index.md"
-    ],
-    "top3": [
-     "departments/security/tooling/entitle_request.md",
-     "departments/people-talent/ada.md",
-     "benefits-pay-perks/benefits-perks/leave-of-absence.md"
-    ]
-   },
-   {
-    "id": "Q06-04",
-    "q": "Does the policy cover interactions with external vendors and partners?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "departments/finance/process/ap.md",
-     "departments/tech-ops/process/vendor-request.md",
-     "departments/finance/process/payables.md"
-    ]
-   },
-   {
-    "id": "Q06-05",
-    "q": "What should a teammate do if they feel disrespected at work?",
-    "gold": [
-     "company-info-and-process/respectful-workplace-policy.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "company-info-and-process/communication/asynchronous-communication.md",
-     "departments/people-talent/people-ops/process/Leaving_Sourcegraph_resources_for_managers.md"
-    ]
-   },
-   {
-    "id": "Q08-01",
-    "q": "What is Sourcegraph's general approach to equal opportunity?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "departments/finance/deal-desk/deal-desk-faqs.md",
-     "departments/people-talent/talent/process/interview_process.md"
-    ]
-   },
-   {
-    "id": "Q08-02",
-    "q": "Does the company provide paid time off for a range of reasons?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/time-off/index.md",
-     "benefits-pay-perks/benefits-perks/time-off/submitting-time-off.md",
-     "benefits-pay-perks/benefits-perks/index.md"
-    ]
-   },
-   {
-    "id": "Q08-03",
-    "q": "What values are emphasized around workplace equality?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "departments/people-talent/talent/process/evaluating_values.md",
-     "departments/people-talent/Required-posting-page.md",
-     "company-info-and-process/respectful-workplace-policy.md"
-    ]
-   },
-   {
-    "id": "Q08-04",
-    "q": "Does Sourcegraph commit to an inclusive environment?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "company-info-and-process/values/index.md",
-     "benefits-pay-perks/benefits-perks/parental-leave.md",
-     "company-info-and-process/community/code_of_conduct.md"
-    ]
-   },
-   {
-    "id": "Q08-05",
-    "q": "How should the company treat LGBTQIA+ teammates?",
-    "gold": [
-     "company-info-and-process/equality-of-opportunity.md",
-     "company-info-and-process/queer.md"
-    ],
-    "top3": [
-     "benefits-pay-perks/benefits-perks/travel/index.md",
-     "company-info-and-process/working-at-sourcegraph/holidays.md",
-     "departments/people-talent/people-ops/process/Leaving_Sourcegraph_resources_for_managers.md"
-    ]
-   },
-   {
-    "id": "Q10-02",
-    "q": "Where do new teammates get their payroll and tax information?",
-    "gold": [
-     "benefits-pay-perks/benefits-perks/benefits.md",
-     "departments/tech-ops/process/team_device_usage_privacy.md"
-    ],
-    "top3": [
-     "departments/people-talent/people-ops/process/onboarding.md",
-     "departments/people-talent/resources-for-new-hires/new-teammate-setup.md",
-     "departments/people-talent/buddy-program.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "company-info-and-process/policies/cloud-security-policy.md",
-     "company-info-and-process/policies/index.md",
-     "departments/security/security-incident-response-process.md"
-    ]
-   }
-  ],
-  "hit5_delta_vs_bm25_ci95": [
-   -0.133,
-   0.067
-  ],
-  "reranker": "lexical",
-  "notes": [],
-  "chunks": 2668,
-  "docs": 297,
-  "build_s": 17.5,
-  "embedder": "lsa-offline"
+  "chunks": 3686,
+  "docs": 1151,
+  "build_s": 9.2,
+  "embedder": "api:bge-small-en-v1.5"
  },
  "heading_cap|hybrid_rerank": {
-  "n": 60,
-  "n_themes": 12,
+  "n": 55,
+  "n_themes": 11,
   "hit_rate": {
-   "@1": 0.683,
-   "@3": 0.85,
-   "@5": 0.883,
-   "@8": 0.917
+   "@1": 0.709,
+   "@3": 0.836,
+   "@5": 0.891,
+   "@8": 0.909
   },
   "doc_recall": {
-   "@1": 0.567,
-   "@3": 0.725,
-   "@5": 0.775,
-   "@8": 0.792
+   "@1": 0.573,
+   "@3": 0.709,
+   "@5": 0.8,
+   "@8": 0.818
   },
-  "mrr": 0.78,
+  "mrr": 0.787,
   "hit5_ci95": [
-   0.783,
-   0.967
+   0.782,
+   0.982
   ],
   "misses": [
    {
@@ -2276,9 +503,9 @@
      "company-info-and-process/remote/index.md"
     ],
     "top3": [
-     "departments/security/tooling/entitle_request.md",
-     "departments/tech-ops/tools/Okta/main.md",
-     "benefits-pay-perks/benefits-perks/time-off/index.md"
+     "benefits-pay-perks/benefits-perks/parental-leave.md",
+     "benefits-pay-perks/benefits-perks/time-off/index.md",
+     "departments/people-talent/people-ops/tools/peo.md"
     ]
    },
    {
@@ -2289,9 +516,9 @@
      "benefits-pay-perks/benefits-perks/leave-of-absence.md"
     ],
     "top3": [
-     "benefits-pay-perks/benefits-perks/parental-leave.md",
      "departments/people-talent/resources-for-new-hires/new-teammate-setup.md",
-     "departments/people-talent/talent/tools/guide_to_using_brighthire.md"
+     "departments/people-talent/talent/tools/guide_to_using_brighthire.md",
+     "departments/people-talent/talent/process/types_of_interviews.md"
     ]
    },
    {
@@ -2303,8 +530,8 @@
     ],
     "top3": [
      "departments/people-talent/talent/process/opening_a_new_job.md",
-     "company-info-and-process/working-at-sourcegraph/teammate-development/index.md",
-     "departments/finance/deal-desk/deal-desk-faqs.md"
+     "departments/people-talent/talent/process/hacker-news-who-is-hiring.md",
+     "company-info-and-process/communication/code_of_conduct.md"
     ]
    },
    {
@@ -2315,8 +542,8 @@
      "company-info-and-process/queer.md"
     ],
     "top3": [
-     "company-info-and-process/values/index.md",
      "company-info-and-process/working-at-sourcegraph/teammate-development/training/compliance/preventing-harassment-and-discrimination.md",
+     "company-info-and-process/values/index.md",
      "departments/people-talent/talent/process/types_of_interviews.md"
     ]
    },
@@ -2329,8 +556,8 @@
     ],
     "top3": [
      "benefits-pay-perks/benefits-perks/travel/index.md",
-     "departments/people-talent/people-ops/process/Leaving_Sourcegraph_resources_for_managers.md",
-     "company-info-and-process/communication/announcements.md"
+     "company-info-and-process/communication/announcements.md",
+     "departments/people-talent/people-ops/process/Leaving_Sourcegraph_resources_for_managers.md"
     ]
    },
    {
@@ -2342,32 +569,20 @@
     ],
     "top3": [
      "departments/people-talent/people-ops/process/onboarding.md",
-     "departments/people-talent/buddy-program.md",
-     "departments/people-talent/people-ops/process/moving.md"
-    ]
-   },
-   {
-    "id": "Q11-04",
-    "q": "Does the security policy require a formal checklist?",
-    "gold": [
-     "departments/security/security-support-rotation.md"
-    ],
-    "top3": [
-     "departments/security/security-incident-response-process.md",
-     "departments/security/security-incident-response.md",
-     "company-info-and-process/policies/index.md"
+     "departments/people-talent/people-ops/tools/people-ops-faqs.md",
+     "synthetic/region/working-remotely-from-new-zealand.md"
     ]
    }
   ],
   "hit5_delta_vs_bm25_ci95": [
-   -0.033,
-   0.067
+   0.0,
+   0.109
   ],
   "reranker": "lexical",
   "notes": [],
-  "chunks": 2668,
-  "docs": 297,
-  "build_s": 17.5,
-  "embedder": "lsa-offline"
+  "chunks": 3686,
+  "docs": 1151,
+  "build_s": 9.2,
+  "embedder": "api:bge-small-en-v1.5"
  }
 }
