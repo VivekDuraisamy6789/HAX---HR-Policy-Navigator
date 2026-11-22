@@ -25,19 +25,23 @@ Below is an executive summary of our final deployed system, empirical achievemen
 ### 1. Final Project Highlights
 
 #### A. Production Streamlit Web Application (`streamlit_app.py`)
-* **Interactive Employee Interface:** Conversational interface featuring multi-turn session memory, interactive expandable citation drawers showing exact source markdown passages, and real-time streaming responses.
+* **Multi-Persona Enterprise Authentication:** Secure login screen supporting 4 distinct roles & personas (`hr_admin`, `mgr_alice`, `emp_bob`, `emp_carol`).
+* **Personalized Response Adaptation:** Dynamically tailors answer depth and style based on employee tenure and role (step-by-step onboarding for new hires vs. concise direct answers for 3+ yr seniors).
+* **Offline Voice I/O & Accessibility:** Speech-to-text powered locally by Whisper `tiny` (39MB CPU model) and offline Read Aloud text-to-speech powered by `pyttsx3`.
+* **Continuous RLHF Learning Loop:** In-app thumbs-up / thumbs-down ratings capturing real user signal and suggestions into `state/feedback_log.jsonl`, visualized on a real-time Feedback Analytics dashboard.
+* **"Our Journey" Interactive Presentation Tab:** Built-in 4-week progression story arc and live side-by-side comparison arena (Week 1 raw LLM hallucination vs. Week 4 copilot).
 * **Live Telemetry & Traces:** Dedicated *Traces* dashboard tab displaying end-to-end execution latency percentiles ($p_{50}, p_{95}$), token consumption budgets, tool call sequences, and JSON repair events.
-* **Human-in-the-Loop (HITL) Review Queue:** Built-in reviewer panel displaying flagged consequential requests (terminations, salary adjustments, disciplinary actions) logged asynchronously in `handoffs.jsonl`.
-* **Sliding-Window Rate Limiting:** Sliding-window per-IP / per-session rate limiter preventing API abuse and token exhaustion.
+* **Human-in-the-Loop (HITL) State Machine:** Built-in reviewer panel displaying flagged consequential requests with audit lifecycle tracking (`🔴 Pending` $\to$ `🟡 Acknowledged` $\to$ `🟢 Resolved / 🔺 Escalated`) and resolution notes.
+* **Sliding-Window Rate Limiting & Response Cache:** Sliding-window rate limiter (10 req/min) and LRU ResponseCache (900s TTL) preventing API abuse and token exhaustion.
 
 #### B. Responsible AI, Safety & Red-Teaming
 * **Deterministic PII Redaction:** Pre-guard regex scrubbing masking employee Social Security Numbers, emails, phone numbers, and compensation values before any payload reaches the hosted API.
-* **Indirect Prompt Injection Defense:** Document sanitizer stripping malicious prompt injection vectors (system instruction overrides, role-flipping delimiters) hidden inside retrieved handbook files. Validated via `scripts/run_injection_suite.py` achieving an **87.5% defense success rate** (7/8 malicious document injections thwarted).
-* **Strict Refusal & Policy Boundaries:** Deterministic interception of material employment decisions and personal employee records, strictly redirecting users to human People Operations representatives.
+* **Indirect Prompt Injection Defense:** Document sanitizer stripping malicious prompt injection vectors hidden inside retrieved handbook files. Validated via `scripts/run_injection_suite.py` achieving an **87.5% defense success rate** (7/8 malicious document injections thwarted).
+* **Strict Refusal & Policy Boundaries:** Deterministic interception of material employment decisions and personal employee records, strictly redirecting users to human People Operations representatives with automated ticket generation.
 
 #### C. Containerized & Reproducible Deployment
 * Packaged with production-grade `Dockerfile` and `docker-compose.yml` for single-command deployment (`docker compose up --build`).
-* Verified multi-platform compatibility, environment variable isolation, and automated health checks.
+* Verified multi-platform compatibility, pre-bundled SSL certificates (`certs/ca-bundle.crt`), environment variable isolation, and automated health checks.
 
 ---
 
@@ -47,27 +51,30 @@ Below is an executive summary of our final deployed system, empirical achievemen
 |---|---|---|---|
 | **Week 1** | Single-Agent Prompting Baseline | 37.5% Accuracy | Established raw 8B model baseline; documented hallucination and schema failure modes. |
 | **Week 2** | Scaled Hybrid RAG (1,151 docs) | 89.1% Hit@5 / 0.793 MRR | BM25 + Dense (`bge-small-en-v1.5`) + Reranking elevated Top-1 retrieval from 58.2% to 70.9%. |
-| **Week 3** | Multi-Agent Control Loop | 100.0% Task Accuracy | Decomposition Agent eliminated 8B reasoning overload, cutting $p_{50}$ latency to 5.94s. |
-| **Week 4** | Safety & Red-Teaming Suite | 87.5% Injection Defense | Thwarted poisoned corpus injections; 96.5% refusal accuracy on adversarial queries. |
+| **Week 3** | Multi-Agent Control Loop | 100.0% Completion / 96.6% Refusal | Decomposition Agent eliminated 8B reasoning overload, cutting $p_{50}$ latency to 5.94s. |
+| **Week 4** | Amit-Enhanced Enterprise Platform | 87.5% Injection Def / 60 Tests | Multi-persona auth, voice I/O, RLHF loop, HITL state machine, 100% unit tests passed. |
 
 *Overall System Telemetry:*
-* **Task Accuracy:** 88.3% across all benchmarked policy queries.
-* **Refusal Accuracy:** 96.5% on adversarial, out-of-scope, and consequential queries.
-* **Median Latency ($p_{50}$):** 5.94s (Decomposition agent) / 9.76s (overall traced pipeline).
+* **Task Completion Rate:** 100.0% (84 / 84 benchmark queries completed with 0 unhandled crashes).
+* **Adversarial Refusal Accuracy:** 96.6% (28 / 29 safe refusals on dangerous/adversarial probes).
+* **Exact Gold Document Citation Rate:** 78.2% (43 / 55 domain queries).
+* **Indirect Injection Defense Rate:** 87.5% (7 / 8 attack vectors thwarted).
+* **Median Latency ($p_{50}$):** 5.94s (Decomposition agent).
 * **Inference Cost:** ~\$0.00019 USD per query on hosted inference.
 * **Test Suite:** **60/60 passing unit tests** (`pytest tests`).
 
 ---
 
 ### 3. Submission Deliverables & Links
-1. **GitHub Repository (Branch: Amit):** [GitHub Repository](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/tree/Amit)
-2. **Comprehensive 12-Page Technical Report:** [`docs/technical_report.md`](technical_report.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/docs/technical_report.md)
-3. **Task Specification & Refusal Boundaries:** [`docs/specification.md`](specification.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/docs/specification.md)
-4. **Retrieval Ablation Report:** [`docs/retrieval_results.md`](retrieval_results.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/docs/retrieval_results.md)
-5. **Agent Design & Failure Taxonomy:** [`docs/agent-design.md`](agent-design.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/docs/agent-design.md)
-6. **Strategy Comparison & Benchmark Report:** [`docs/strategy_comparison.md`](strategy_comparison.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/docs/strategy_comparison.md)
-7. **Trace Telemetry & Evaluation Artifacts:** [`traces/traces.jsonl`](../traces/traces.jsonl) & [`eval_runs/summary.json`](../eval_runs/summary.json) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit/eval_runs/summary.json)
-8. **Deployment Configuration:** [`Dockerfile`](../Dockerfile) & [`docker-compose.yml`](../docker-compose.yml)
+1. **GitHub Repository (Branch: Amit-Enhanced):** [GitHub Repository](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/tree/Amit-Enhanced)
+2. **Comprehensive 12-Page Technical Report:** [`docs/technical_report.md`](technical_report.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit-Enhanced/docs/technical_report.md)
+3. **10-Minute Live Demo Cue Script:** [`docs/DEMO_SCRIPT.md`](DEMO_SCRIPT.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit-Enhanced/docs/DEMO_SCRIPT.md)
+4. **1-Page Startup Guide:** [`docs/STARTUP_GUIDE.md`](STARTUP_GUIDE.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit-Enhanced/docs/STARTUP_GUIDE.md)
+5. **Task Specification & Refusal Boundaries:** [`docs/specification.md`](specification.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit-Enhanced/docs/specification.md)
+6. **Retrieval Ablation Report:** [`docs/retrieval_results.md`](retrieval_results.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit-Enhanced/docs/retrieval_results.md)
+7. **Strategy Comparison & Benchmark Report:** [`docs/strategy_comparison.md`](strategy_comparison.md) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit-Enhanced/docs/strategy_comparison.md)
+8. **Trace Telemetry & Evaluation Artifacts:** [`traces/traces.jsonl`](../traces/traces.jsonl) & [`eval_runs/summary.json`](../eval_runs/summary.json) · [GitHub Link](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/blob/Amit-Enhanced/eval_runs/summary.json)
+9. **Deployment Configuration:** [`Dockerfile`](../Dockerfile) & [`docker-compose.yml`](../docker-compose.yml)
 
 ---
 
