@@ -1,12 +1,20 @@
-"""Prompts + JSON schemas. Small-model rules baked in:
-  * cite by short ids [S1], [S2] (not file paths - 8B models mangle paths)
+"""Prompts + JSON schemas + persona-aware answer builder (Sprint 2 — Amit-Enhanced).
+
+Small-model rules baked in:
+  * cite by short ids [S1], [S2] (not file paths — 8B models mangle paths)
   * every claim is a separate array item with its own source ids -> checkable
   * 'answerable' field gives the model an explicit, cheap way to abstain
   * documents are wrapped as untrusted DATA
+
+Sprint 2 additions:
+  * TENURE_PERSONA — role × tenure prompt prefixes injected into ANSWER_RULES
+  * build_persona_prefix()   — returns the right prefix for a UserProfile
+  * answer_messages_personalized() — drop-in replacement for answer_messages()
+    that prepends the persona context into the system message
 """
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 PLAN_SCHEMA = {
     "type": "object",
@@ -63,18 +71,121 @@ FEWSHOT: List[Dict[str, str]] = [
     {"role": "assistant", "content": '{"reasoning":"No source mentions a desk stipend.","answerable":false,"answer":"The documents do not say.","claims":[],"confidence":"low"}'},
 ]
 
+# ---------------------------------------------------------------------------
+# Sprint 2 — Persona-aware answer depth
+# ---------------------------------------------------------------------------
+
+# Structure: (role, tenure) -> instruction snippet appended to ANSWER_RULES
+# The model is instructed on *how* to present the answer — not what to say.
+# Content always comes from retrieved evidence; only formatting/style changes.
+TENURE_PERSONA: Dict[str, str] = {
+
+    # ── HR Operations ──────────────────────────────────────────────────────
+    "hr_ops:new": (
+        "\nUSER CONTEXT: HR Operations team member (new). "
+        "Provide the COMPLETE policy verbatim where relevant, including all sub-clauses, exceptions, and escalation paths. "
+        "Reference specific policy document section names. "
+        "Add a 'HR Action Required' note if the query involves an employee-facing form or approval step."
+    ),
+    "hr_ops:mid": (
+        "\nUSER CONTEXT: HR Operations team member. "
+        "Give the full policy with all relevant clauses, escalation steps, and document section names. "
+        "Include any compliance or approval checklist items found in the sources."
+    ),
+    "hr_ops:senior": (
+        "\nUSER CONTEXT: Senior HR Operations professional. "
+        "Give complete verbatim policy, all sub-clauses, exceptions, escalation paths, and cross-references to related policies. "
+        "Assume deep familiarity with BambooHR, People Ops processes, and legal terminology."
+    ),
+
+    # ── Manager ───────────────────────────────────────────────────────────
+    "manager:new": (
+        "\nUSER CONTEXT: First-time People Manager. "
+        "Answer with numbered steps a manager must take. "
+        "Distinguish between what the MANAGER must do vs. what the EMPLOYEE must do. "
+        "Mention any approval thresholds that require escalation to People Ops. "
+        "Avoid acronyms without explanation."
+    ),
+    "manager:mid": (
+        "\nUSER CONTEXT: People Manager with moderate experience. "
+        "Give the manager's specific obligations under this policy, including approval steps and documentation requirements. "
+        "Flag any situations that require People Ops involvement."
+    ),
+    "manager:senior": (
+        "\nUSER CONTEXT: Experienced People Manager. "
+        "Give the policy answer with manager-specific responsibilities highlighted. "
+        "Be concise — skip procedural steps the manager already knows (e.g. BambooHR navigation). "
+        "Focus on thresholds, exceptions, and escalation triggers."
+    ),
+
+    # ── Associate (new hire) ──────────────────────────────────────────────
+    "associate:new": (
+        "\nUSER CONTEXT: New employee (less than 1 year tenure). "
+        "Answer in simple, friendly language. Use numbered steps for any process. "
+        "Spell out every acronym on first use (e.g. PTO = Paid Time Off). "
+        "End with a 'Quick Tip' sentence and mention who to contact if unsure (e.g. People Ops or their manager). "
+        "Do not assume familiarity with internal tools."
+    ),
+    "associate:mid": (
+        "\nUSER CONTEXT: Employee with 1–3 years of tenure. "
+        "Give a clear, moderately detailed answer. Use steps for processes but skip trivial navigation details. "
+        "Mention the relevant tool or form by name (e.g. BambooHR) without full navigation instructions."
+    ),
+
+    # ── Associate (tenured / senior) ──────────────────────────────────────
+    "associate:senior": (
+        "\nUSER CONTEXT: Tenured employee (3+ years). "
+        "Give a direct, concise answer — 1–3 sentences maximum unless the policy is genuinely complex. "
+        "Skip procedural steps and BambooHR navigation. "
+        "Assume familiarity with all internal tools and processes."
+    ),
+}
+
+# Fallback if role/tenure combination not found
+_DEFAULT_PERSONA = (
+    "\nUSER CONTEXT: Employee. Give a clear, cited answer from the policy documents."
+)
+
+
+def build_persona_prefix(role: Optional[str], tenure: Optional[str]) -> str:
+    """Return the persona instruction string for the given role + tenure."""
+    if not role:
+        return _DEFAULT_PERSONA
+    key = f"{role}:{tenure or 'mid'}"
+    return TENURE_PERSONA.get(key, TENURE_PERSONA.get(f"{role}:mid", _DEFAULT_PERSONA))
+
 
 def format_sources(evidence: Dict[str, dict], limit_chars: int) -> str:
     return "\n\n".join(f"[{sid}] ({ev['path'].rsplit('/', 1)[-1]} > {ev['section'][:80]})\n{ev['text'][:limit_chars]}" for sid, ev in evidence.items())
 
 
 def answer_messages(strategy: str, question: str, evidence: Dict[str, dict], limit_chars: int, sub_answers: str = "") -> List[Dict[str, str]]:
+    """Original (non-personalized) answer messages — kept for backward compat + tests."""
+    return answer_messages_personalized(strategy, question, evidence, limit_chars, sub_answers, role=None, tenure=None)
+
+
+def answer_messages_personalized(
+    strategy: str,
+    question: str,
+    evidence: Dict[str, dict],
+    limit_chars: int,
+    sub_answers: str = "",
+    role: Optional[str] = None,
+    tenure: Optional[str] = None,
+) -> List[Dict[str, str]]:
+    """Build answer messages with an optional persona prefix injected into the system prompt."""
     src = format_sources(evidence, limit_chars)
     user = f"SOURCES:\n{src}\n\nQUESTION: {question}"
     if sub_answers:
         user += f"\n\nNOTES FROM SUB-QUESTIONS:\n{sub_answers}"
-    sys_msg = {"role": "system", "content": ANSWER_RULES + (
-        "\nFirst think step by step in `reasoning` (max 4 short sentences) listing which sources matter, then answer." if strategy == "selfconsistency" else
-        "\nKeep `reasoning` to one sentence.")}
+
+    persona = build_persona_prefix(role, tenure)
+    reasoning_hint = (
+        "\nFirst think step by step in `reasoning` (max 4 short sentences) listing which sources matter, then answer."
+        if strategy == "selfconsistency" else
+        "\nKeep `reasoning` to one sentence."
+    )
+    sys_content = ANSWER_RULES + persona + reasoning_hint
+    sys_msg = {"role": "system", "content": sys_content}
     shots = FEWSHOT if strategy in ("structured", "selfconsistency", "decomposition") else []
     return [sys_msg, *shots, {"role": "user", "content": user}]

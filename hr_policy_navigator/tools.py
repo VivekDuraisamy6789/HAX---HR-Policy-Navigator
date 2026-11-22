@@ -69,12 +69,29 @@ def build_tools(corpus, handoff_path: Path, claim_checker: Callable) -> ToolRegi
     def validate_citations(claims: list, evidence: dict):
         return claim_checker(claims, evidence)
 
-    def escalate_to_human(topic: str, reason: str):
+    def escalate_to_human(topic: str, reason: str, session_id: str = "", user_id: str = "", user_role: str = "", team_id: str = ""):
+        """Record a human-review ticket. Never performs the HR action itself."""
         handoff_path.parent.mkdir(parents=True, exist_ok=True)
-        rec = {"ts": time.time(), "topic": topic[:300], "reason": reason[:300], "status": "pending_human_review"}
+        import uuid as _uuid
+        ticket_id = "tk_" + _uuid.uuid4().hex[:10]
+        from datetime import datetime as _dt, timezone as _tz
+        rec = {
+            "ticket_id": ticket_id,
+            "timestamp": _dt.now(_tz.utc).isoformat(),
+            "ts": time.time(),
+            "topic": topic[:300],
+            "reason": reason[:300],
+            "session_id": session_id[:64],
+            "user_id": user_id[:64],
+            "user_role": user_role,
+            "team_id": team_id,
+            "ui_status": "pending",
+            "status": "pending_human_review",   # backward-compat for existing tests
+            "notes": [],
+        }
         with open(handoff_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(rec) + "\n")
-        return {"ticket": "pending_human_review"}
+        return {"ticket": ticket_id}
 
     S = lambda props, req: {"type": "object", "properties": props, "required": req, "additionalProperties": False}
     return ToolRegistry([
@@ -86,5 +103,8 @@ def build_tools(corpus, handoff_path: Path, claim_checker: Callable) -> ToolRegi
         Tool("validate_citations", "Check each claim is supported by its cited evidence.",
              S({"claims": {"type": "array"}, "evidence": {"type": "object"}}, ["claims", "evidence"]), validate_citations),
         Tool("escalate_to_human", "Record a request for human review. Never performs the action.",
-             S({"topic": {"type": "string"}, "reason": {"type": "string"}}, ["topic", "reason"]), escalate_to_human),
+             S({"topic": {"type": "string"}, "reason": {"type": "string"},
+                "session_id": {"type": "string"}, "user_id": {"type": "string"},
+                "user_role": {"type": "string"}, "team_id": {"type": "string"}},
+               ["topic", "reason"]), escalate_to_human),
     ])

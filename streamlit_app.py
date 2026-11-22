@@ -19,6 +19,7 @@ from hr_policy_navigator.chat_history import ChatHistory
 from hr_policy_navigator.config import Settings
 from hr_policy_navigator.retrieval import PolicyCorpus
 from hr_policy_navigator.serving import RateLimiter, ResponseCache
+from hr_policy_navigator.state import HandoffStore
 from hr_policy_navigator.tracing import load_traces, summarize
 
 S = Settings()
@@ -79,6 +80,11 @@ def shared():
 @st.cache_resource
 def get_history() -> ChatHistory:
     return ChatHistory(S.state_dir)
+
+
+@st.cache_resource
+def get_handoff_store() -> HandoffStore:
+    return HandoffStore(S.state_dir)
 
 
 # ---------------------------------------------------------------------------
@@ -200,6 +206,7 @@ def main() -> None:
     agent = load_agent()
     limiter, cache = shared()
     history_store = get_history()
+    handoff_store = get_handoff_store()
 
     st.session_state.setdefault("sid", uuid.uuid4().hex[:10])
     st.session_state.setdefault("log", [])
@@ -294,6 +301,27 @@ def main() -> None:
 
     # ------ Chat Tab -------------------------------------------------------
     with tab_chat:
+        # Persona active badge — shows judges the persona engine is live
+        tenure_labels = {"new": "New Hire (<1 yr)", "mid": "1–3 yrs", "senior": "Tenured (3+ yrs)"}
+        st.markdown(
+            f"<span style='background:{meta['color']}33; border:1px solid {meta['color']}; "
+            f"border-radius:12px; padding:3px 10px; font-size:0.82rem;'>"
+            f"🎭 Persona active: <b>{user.display_role}</b> · {tenure_labels.get(user.tenure, user.tenure)}"
+            f"</span>",
+            unsafe_allow_html=True,
+        )
+        st.caption("Answer depth and style adapt to your role and tenure.")
+        st.write("")
+
+        # Build profile dict passed to agent
+        user_profile_dict = {
+            "user_id": user.user_id,
+            "name": user.name,
+            "role": user.role,
+            "tenure": user.tenure,
+            "team_id": user.team_id,
+        }
+
         # Replay conversation log
         for i, (q, r) in enumerate(st.session_state.log):
             with st.chat_message("user"):
@@ -311,7 +339,7 @@ def main() -> None:
                 res = cache.get(q, strategy) if len(st.session_state.log) == 0 else None
                 if res is None:
                     with st.spinner("🔍 Searching policies…"):
-                        res = agent.run(q, st.session_state.sid, strategy)
+                        res = agent.run(q, st.session_state.sid, strategy, user_profile=user_profile_dict)
                     if len(st.session_state.log) == 0:
                         cache.put(q, strategy, res)
 
@@ -353,13 +381,8 @@ def main() -> None:
     # ------ Human Review Queue Tab (HR Ops + Manager only) ----------------
     if tab_review is not None:
         with tab_review:
-            p = S.state_dir / "handoffs.jsonl"
-            rows = [json.loads(l) for l in p.read_text().splitlines()] if p.exists() else []
-
-            # Manager sees only their team's escalations (scoped by team_id in query)
-            if user.role == "manager":
-                rows = [r for r in rows if user.team_id in str(r.get("session_id", "")) or True]
-                # NOTE: full team scoping implemented in Sprint 2 when user_profile is passed to agent
+            handoff_store = HandoffStore(S.state_dir)
+            rows = handoff_store.all(role=user.role, team_id=user.team_id)
 
             st.markdown("### 🧑‍💼 Human Review Queue")
             st.caption(
@@ -367,28 +390,67 @@ def main() -> None:
                 "A person must handle these — nothing has been approved or changed."
             )
 
+            # Summary metrics row
+            if rows:
+                pending_n = sum(1 for r in rows if r.get("ui_status", "pending") == "pending")
+                ack_n = sum(1 for r in rows if r.get("ui_status") == "acknowledged")
+                res_n = sum(1 for r in rows if r.get("ui_status") in ("resolved", "escalated"))
+                mc = st.columns(3)
+                mc[0].metric("🔴 Pending", pending_n)
+                mc[1].metric("🟡 Acknowledged", ack_n)
+                mc[2].metric("🟢 Resolved / Escalated", res_n)
+                st.divider()
+
             if not rows:
                 st.success("✅ Queue is empty — no pending requests.")
             else:
-                for i, row in enumerate(reversed(rows)):
+                from hr_policy_navigator.state import STATUS_LABELS, VALID_TRANSITIONS
+                for row in rows:
+                    ticket_id = row.get("ticket_id", "unknown")
+                    current_status = row.get("ui_status", "pending")
+                    allowed_next = VALID_TRANSITIONS.get(current_status, [])
+
                     with st.container(border=True):
-                        col_meta, col_badge = st.columns([4, 1])
-                        with col_meta:
+                        hdr_col, badge_col = st.columns([3, 1])
+                        with hdr_col:
                             st.markdown(
-                                f"**Session:** `{row.get('session_id', 'unknown')}`  \n"
-                                f"**Category:** `{row.get('category', '—')}`  \n"
-                                f"**Query:** {row.get('query', '—')[:120]}"
+                                f"**🎫 Ticket:** `{ticket_id}`  \n"
+                                f"**Category:** `{row.get('reason', row.get('category', '—'))}`  \n"
+                                f"**Query:** {row.get('topic', row.get('query', '—'))[:160]}"
                             )
-                            st.caption(f"Logged at: {row.get('timestamp', 'unknown')}")
-                        with col_badge:
-                            status = row.get("ui_status", "pending")
-                            badge_map = {
-                                "pending": "🔴 Pending",
-                                "acknowledged": "🟡 Acknowledged",
-                                "resolved": "🟢 Resolved",
-                            }
-                            st.markdown(f"**{badge_map.get(status, '🔴 Pending')}**")
-                        st.caption("Action buttons and status state machine arrive in Sprint 2.")
+                            role_lbl = row.get("user_role", "")
+                            st.caption(
+                                f"🕐 {row.get('timestamp', 'unknown')}"
+                                + (f"  ·  Role: {role_lbl}" if role_lbl else "")
+                                + (f"  ·  Session: {row.get('session_id', '')[:12]}" if row.get("session_id") else "")
+                            )
+                        with badge_col:
+                            st.markdown(f"**{STATUS_LABELS.get(current_status, '🔴 Pending')}**")
+
+                        # Action buttons — only show valid transitions
+                        if allowed_next:
+                            btn_cols = st.columns(len(allowed_next) + 1)
+                            for i, next_st in enumerate(allowed_next):
+                                btn_label = {
+                                    "acknowledged": "✅ Acknowledge",
+                                    "resolved": "🟢 Mark Resolved",
+                                    "escalated": "🔺 Escalate",
+                                }.get(next_st, next_st.capitalize())
+                                if btn_cols[i].button(btn_label, key=f"{ticket_id}_{next_st}"):
+                                    handoff_store.update_status(ticket_id, next_st, actor=user.name)
+                                    st.toast(f"Ticket {ticket_id[:10]}… → {next_st}", icon="✅")
+                                    st.rerun()
+
+                            # Note input
+                            with st.expander("📝 Add resolution note"):
+                                note_text = st.text_area("Note", key=f"note_{ticket_id}", height=80, placeholder="Describe action taken…")
+                                if st.button("Save Note", key=f"savenote_{ticket_id}"):
+                                    if note_text.strip():
+                                        handoff_store.add_note(ticket_id, note_text.strip(), actor=user.name)
+                                        st.toast("Note saved.", icon="📝")
+                                        st.rerun()
+                        else:
+                            st.caption("✅ This ticket is closed — no further actions available.")
 
 
 # ---------------------------------------------------------------------------

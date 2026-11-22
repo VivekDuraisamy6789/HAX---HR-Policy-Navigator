@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from .config import Settings
 from .guardrails import REFUSAL_TEXT, redact_pii, sanitize_chunk, screen_query
 from .llm import Budget, BudgetExceeded, JSONFailure, LLMClient, LLMError
-from .prompts import ANSWER_SCHEMA, PLAN_SCHEMA, PLANNER_SYSTEM, answer_messages
+from .prompts import ANSWER_SCHEMA, PLAN_SCHEMA, PLANNER_SYSTEM, answer_messages_personalized
 from .retrieval import PolicyCorpus
 from .state import SessionStore
 from .text_utils import tokenize
@@ -71,12 +71,22 @@ class Copilot:
         self.tools: ToolRegistry = build_tools(corpus, Path(self.s.state_dir) / "handoffs.jsonl", check_claims)
 
     # ------------------------------------------------------------------ public API
-    def run(self, query: str, session_id: str = "default", strategy: Optional[str] = None) -> Dict[str, Any]:
+    def run(self, query: str, session_id: str = "default", strategy: Optional[str] = None,
+            user_profile: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Run a query. user_profile may carry {user_id, role, tenure, team_id, name}."""
         strategy = strategy or self.s.strategy
-        trace = self.tracer.start("query", query=redact_pii(query)[0], strategy=strategy, session=session_id)
+        profile = user_profile or {}
+        trace = self.tracer.start(
+            "query",
+            query=redact_pii(query)[0],
+            strategy=strategy,
+            session=session_id,
+            user_role=profile.get("role", ""),
+            user_tenure=profile.get("tenure", ""),
+        )
         t0 = time.perf_counter()
         try:
-            result = self._run(query, session_id, strategy, trace)
+            result = self._run(query, session_id, strategy, trace, profile)
         except BudgetExceeded as e:
             result = self._result("error_budget", f"I ran out of my processing budget for this question ({e}). Please ask a narrower question.")
         except LLMError as e:
@@ -93,7 +103,8 @@ class Copilot:
         return result
 
     # ---------------------------------------------------------------- orchestration
-    def _run(self, raw_query: str, sid: str, strategy: str, trace) -> Dict[str, Any]:
+    def _run(self, raw_query: str, sid: str, strategy: str, trace, profile: Dict[str, Any] = None) -> Dict[str, Any]:
+        profile = profile or {}
         query, pii = redact_pii(raw_query.strip()[:1000])
         if pii:
             trace.data["meta"]["pii_redacted"] = pii
@@ -106,7 +117,11 @@ class Copilot:
             sp["attrs"]["category"] = scr.category
         if not scr.allowed:
             if scr.handoff:
-                self._call("escalate_to_human", {"topic": query[:200], "reason": scr.category}, trace)
+                self._call("escalate_to_human", {
+                    "topic": query[:200], "reason": scr.category,
+                    "session_id": sid, "user_id": profile.get("user_id", ""),
+                    "user_role": profile.get("role", ""), "team_id": profile.get("team_id", ""),
+                }, trace)
             res = self._result("refused", REFUSAL_TEXT[scr.category], refusal_category=scr.category)
             self._remember(sid, query, res)
             return res
@@ -123,7 +138,11 @@ class Copilot:
         if plan["intent"] in ("consequential_action", "out_of_scope", "needs_clarification"):
             cat = {"consequential_action": "consequential_action", "out_of_scope": "out_of_scope"}.get(plan["intent"])
             if cat == "consequential_action":
-                self._call("escalate_to_human", {"topic": query[:200], "reason": "planner:consequential_action"}, trace)
+                self._call("escalate_to_human", {
+                    "topic": query[:200], "reason": "planner:consequential_action",
+                    "session_id": sid, "user_id": profile.get("user_id", ""),
+                    "user_role": profile.get("role", ""), "team_id": profile.get("team_id", ""),
+                }, trace)
             text = REFUSAL_TEXT[cat] if cat else "Could you add a bit more detail (which policy or situation do you mean)?"
             res = self._result("refused" if cat else "abstained", text, refusal_category=cat or "clarify")
             self._remember(sid, query, res)
@@ -137,7 +156,7 @@ class Copilot:
             return res
 
         with trace.span("generate", strategy) as sp:
-            ans = self._generate(llm, strategy, plan["rewritten_query"], evidence, queries, trace)
+            ans = self._generate(llm, strategy, plan["rewritten_query"], evidence, queries, trace, profile)
             sp["attrs"]["answerable"] = ans.get("answerable")
 
         if strategy == "baseline":
@@ -216,8 +235,9 @@ class Copilot:
         return evidence, info
 
     # ------------------------------------------------------------------- generator
-    def _answer_once(self, llm, strategy, question, evidence, temperature=0.1, sub="") -> Dict[str, Any]:
-        msgs = answer_messages(strategy, question, evidence, self.s.context_chars, sub)
+    def _answer_once(self, llm, strategy, question, evidence, temperature=0.1, sub="",
+                     role: Optional[str] = None, tenure: Optional[str] = None) -> Dict[str, Any]:
+        msgs = answer_messages_personalized(strategy, question, evidence, self.s.context_chars, sub, role=role, tenure=tenure)
         return self._json_with_shots(llm, msgs[0]["content"], msgs[1:-1], msgs[-1]["content"], temperature)
 
     def _json_with_shots(self, llm, system, shots, user, temperature):
@@ -241,12 +261,14 @@ class Copilot:
                                        {"role": "user", "content": f"Invalid: {err[:250]}. Return ONLY the corrected JSON."}]
         raise JSONFailure(f"answer JSON invalid after repairs: {err}")
 
-    def _generate(self, llm, strategy, question, evidence, queries, trace) -> Dict[str, Any]:
+    def _generate(self, llm, strategy, question, evidence, queries, trace, profile: Dict[str, Any] = None) -> Dict[str, Any]:
+        role = (profile or {}).get("role")
+        tenure = (profile or {}).get("tenure")
         if strategy == "selfconsistency":
             cands = []
             for _ in range(3):
                 try:
-                    cands.append(self._answer_once(llm, strategy, question, evidence, temperature=0.7))
+                    cands.append(self._answer_once(llm, strategy, question, evidence, temperature=0.7, role=role, tenure=tenure))
                 except (JSONFailure, BudgetExceeded):
                     continue
             if not cands:
@@ -255,14 +277,14 @@ class Copilot:
         if strategy == "decomposition" and len(queries) > 1:
             notes = []
             for q in queries:
-                sub_ev = OrderedDict((k, v) for k, v in evidence.items())  # shared pool; notes keep it focused
+                sub_ev = OrderedDict((k, v) for k, v in evidence.items())
                 try:
-                    a = self._answer_once(llm, "structured", q, sub_ev)
+                    a = self._answer_once(llm, "structured", q, sub_ev, role=role, tenure=tenure)
                     notes.append(f"- {q}: {a['answer']} (cited {', '.join(s for c in a['claims'] for s in c['sources'])})")
                 except JSONFailure:
                     notes.append(f"- {q}: (could not answer)")
-            return self._answer_once(llm, "structured", question, evidence, sub="\n".join(notes))
-        return self._answer_once(llm, strategy, question, evidence)
+            return self._answer_once(llm, "structured", question, evidence, sub="\n".join(notes), role=role, tenure=tenure)
+        return self._answer_once(llm, strategy, question, evidence, role=role, tenure=tenure)
 
     @staticmethod
     def _vote(cands: List[dict], evidence) -> dict:
