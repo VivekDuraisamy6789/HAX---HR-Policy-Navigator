@@ -78,6 +78,9 @@ As required by the syllabus, our primary objective in Week 1 was to document the
 *Key Insight for Week 1:*  
 Without a document retrieval layer, a standalone $\le$8B model cannot reliably answer proprietary enterprise policies (accuracy caps at $\le 37.5\%$). This establishes the empirical baseline to beat as we introduce RAG in Week 2 and the Multi-Agent control loop in Week 3.
 
+*Why Zero-Shot Accuracy (37.5%) Appears Higher than Structured Few-Shot (12.5%):*  
+This is a critical empirical insight: Zero-Shot's higher score is an **illusion of parametric memory**. Lacking reference documents, Zero-Shot relied on pre-trained generic assumptions about standard US tech benefits (which happened to match Sourcegraph on basic questions like hire-date eligibility). However, on unanswerable questions, Zero-Shot hallucinated policies with false confidence. In contrast, **Structured Few-Shot was penalized for being disciplined**: its in-context demonstrations taught it to abstain when context documents are missing, so it conservatively refused to guess, producing fewer hallucinations but lower raw recall.
+
 ---
 
 ### 5. Roadmap to Address These Failures in Weeks 2–4
