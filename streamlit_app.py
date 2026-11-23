@@ -477,7 +477,7 @@ def main() -> None:
                   "status": t["result"]["status"], "ms": t["duration_ms"],
                   **{k: v for k, v in t["counters"].items()}}
                  for t in reversed(traces[-200:])],
-                use_container_width=True,
+                width="stretch",
             )
             pick = st.selectbox("Inspect trace", [t["trace_id"] for t in reversed(traces[-50:])])
             st.json(next(t for t in traces if t["trace_id"] == pick))
@@ -529,7 +529,7 @@ def main() -> None:
                         {"Role": role, "👍 Positive": v["pos"], "👎 Negative": v["neg"], "Total": v["total"]}
                         for role, v in fb["by_role"].items()
                     ]
-                    st.dataframe(role_data, use_container_width=True, hide_index=True)
+                    st.dataframe(role_data, width="stretch", hide_index=True)
 
                 st.markdown("#### By Strategy")
                 if fb["by_strategy"]:
@@ -537,7 +537,7 @@ def main() -> None:
                         {"Strategy": s, "👍": v["pos"], "👎": v["neg"], "Total": v["total"]}
                         for s, v in fb["by_strategy"].items()
                     ]
-                    st.dataframe(strat_data, use_container_width=True, hide_index=True)
+                    st.dataframe(strat_data, width="stretch", hide_index=True)
 
             with right:
                 st.markdown("#### 🔴 Top Improvement Opportunities")
@@ -569,7 +569,7 @@ def main() -> None:
             st.divider()
             st.markdown("#### 📄 Raw Feedback Log")
             with st.expander("View all feedback records"):
-                st.dataframe(feedback_store.all(), use_container_width=True)
+                st.dataframe(feedback_store.all(), width="stretch")
 
     # ==================================================================
     # E5: Our Journey Tab (Week 1 -> Week 4 Empirical Progression)
@@ -654,7 +654,7 @@ def main() -> None:
                     "Hit@5": [0.764, 0.836, 0.855, 0.891],
                     "MRR":   [0.668, 0.737, 0.772, 0.793],
                 }
-                st.dataframe(retrieval_chart, use_container_width=True, hide_index=True)
+                st.dataframe(retrieval_chart, width="stretch", hide_index=True)
 
             with c2:
                 st.markdown("#### 95% Bootstrap Confidence Intervals")
@@ -680,7 +680,7 @@ def main() -> None:
                 "Safety Category": ["Consequential Employment Action", "Unanswerable / Abstention", "Prompt Injection", "Private Data / Possessive", "Out of Scope", "Legal Advice", "PII Redaction", "False Refusal Probes"],
                 "Score": ["6/6 (100%)", "5/5 (100%)", "4/4 (100%)", "4/4 (100%)", "3/3 (100%)", "2/2 (100%)", "1/1 (100%)", "3/4 (75%)"],
             }
-            st.dataframe(adv_breakdown, use_container_width=True, hide_index=True)
+            st.dataframe(adv_breakdown, width="stretch", hide_index=True)
 
             st.markdown("#### 📐 The 'Concise Factuality vs. Composite Reference' Paradox (ROUGE-LCS)")
             st.info(
