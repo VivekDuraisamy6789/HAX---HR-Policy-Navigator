@@ -53,8 +53,8 @@ class FeedbackStore:
             with self._path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
-    def all(self) -> list[dict[str, Any]]:
-        """Return all feedback records, newest first."""
+    def all(self, user_id: str = "") -> list[dict[str, Any]]:
+        """Return feedback records (optionally filtered by user_id), newest first."""
         if not self._path.exists():
             return []
         rows = []
@@ -63,24 +63,20 @@ class FeedbackStore:
             if not line:
                 continue
             try:
-                rows.append(json.loads(line))
+                rec = json.loads(line)
+                if user_id and rec.get("user_id") != user_id:
+                    continue
+                rows.append(rec)
             except json.JSONDecodeError:
                 continue
         return list(reversed(rows))
 
-    def analytics(self) -> dict[str, Any]:
+    def analytics(self, user_id: str = "") -> dict[str, Any]:
         """
         Compute analytics summary for the Feedback Analytics tab.
-
-        Returns:
-          total, positive, negative, pct_positive
-          by_role: {role: {pos, neg, total}}
-          by_strategy: {strategy: {pos, neg, total}}
-          low_rated: list of {query, answer_snippet, count} — most-thumbed-down queries
-          high_rated: list of {query, answer_snippet, count}
-          corrections: list of recent corrections provided by users
+        If user_id is provided, only that user's feedback is analyzed.
         """
-        rows = self.all()
+        rows = self.all(user_id=user_id)
         if not rows:
             return {
                 "total": 0, "positive": 0, "negative": 0, "pct_positive": 0.0,

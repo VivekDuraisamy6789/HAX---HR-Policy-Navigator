@@ -81,6 +81,7 @@ class Copilot:
             query=redact_pii(query)[0],
             strategy=strategy,
             session=session_id,
+            user_id=profile.get("user_id", ""),
             user_role=profile.get("role", ""),
             user_tenure=profile.get("tenure", ""),
         )

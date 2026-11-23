@@ -33,6 +33,35 @@ class ChatHistory:
         d.mkdir(parents=True, exist_ok=True)
         return d
 
+    def _titles_path(self, user_id: str) -> Path:
+        return self._user_dir(user_id) / "titles.json"
+
+    def get_titles(self, user_id: str) -> dict[str, str]:
+        """Return mapping of session_id -> custom title for the user."""
+        p = self._titles_path(user_id)
+        if not p.exists():
+            return {}
+        try:
+            return json.loads(p.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return {}
+
+    def rename_session(self, user_id: str, session_id: str, title: str) -> None:
+        """Assign or update a custom title for a chat session."""
+        title = title.strip()
+        if not title:
+            return
+        with self._lock:
+            titles = self.get_titles(user_id)
+            titles[session_id] = title
+            p = self._titles_path(user_id)
+            p.write_text(json.dumps(titles, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def get_title(self, user_id: str, session_id: str, default: str = "") -> str:
+        """Get custom title for session or return default."""
+        titles = self.get_titles(user_id)
+        return titles.get(session_id, default)
+
     def _session_path(self, user_id: str, session_id: str) -> Path:
         date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         filename = f"{session_id}_{date_str}.jsonl"
@@ -65,11 +94,12 @@ class ChatHistory:
             with path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
-    def list_sessions(self, user_id: str) -> list[dict[str, Any]]:
-        """Return metadata for all sessions within retention window, newest first."""
+    def list_sessions(self, user_id: str, limit: int = 3) -> list[dict[str, Any]]:
+        """Return metadata for up to `limit` newest sessions within retention window."""
         cutoff = datetime.now(timezone.utc) - timedelta(days=self.RETENTION_DAYS)
         sessions = []
         user_dir = self._user_dir(user_id)
+        titles = self.get_titles(user_id)
         for p in sorted(user_dir.glob("*.jsonl"), reverse=True):
             try:
                 lines = [json.loads(l) for l in p.read_text(encoding="utf-8").splitlines() if l.strip()]
@@ -80,15 +110,21 @@ class ChatHistory:
             first_ts = datetime.fromisoformat(lines[0]["ts"])
             if first_ts < cutoff:
                 continue
+            sid = lines[0]["session_id"]
+            first_q = lines[0]["query"][:60] + ("…" if len(lines[0]["query"]) > 60 else "")
+            title = titles.get(sid) or first_q
             sessions.append({
-                "session_id": lines[0]["session_id"],
+                "session_id": sid,
+                "title": title,
                 "file": str(p),
                 "date": first_ts.strftime("%b %d, %Y"),
                 "time": first_ts.strftime("%H:%M"),
                 "turn_count": len(lines),
-                "first_query": lines[0]["query"][:60] + ("…" if len(lines[0]["query"]) > 60 else ""),
+                "first_query": first_q,
                 "lines": lines,
             })
+            if len(sessions) >= limit:
+                break
         return sessions
 
     def load_session(self, file_path: str) -> list[tuple[str, dict[str, Any]]]:
