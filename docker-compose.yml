@@ -1,11 +1,23 @@
 services:
-  app:
-    build: .
-    ports: ["8501:8501"]
-    env_file: .env
-    volumes:               # persist traces, session memory, human-review queue and the embedding cache
+  hr-policy-navigator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hr-policy-navigator
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      # Persist traces, session history, human-review queue, and cache
       - ./traces:/app/traces
       - ./state:/app/state
       - ./.cache:/app/.cache
       - ./certs:/app/certs:ro
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8501/_stcore/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
