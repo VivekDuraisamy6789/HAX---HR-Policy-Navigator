@@ -953,6 +953,7 @@ def main() -> None:
                 return [
                     {
                         "ID": r["id"],
+                        "Question": r.get("question", ""),
                         "Gold Answer": r["gold_answer"] or f"[{r['type']} · expect {r.get('expected_status', 'abstained')}]",
                         "Model Answer": r["model_answer"],
                         "Decision Accuracy": "✅ Pass" if r["correct"] else "❌ Fail",
