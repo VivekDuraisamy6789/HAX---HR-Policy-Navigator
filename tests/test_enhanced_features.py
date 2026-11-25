@@ -96,6 +96,12 @@ def test_eval_runner_all_weeks_mock():
     }
     report = generate_week_wise_report(res, n_domain=2, n_adv=1, model_name="mock")
     assert "## 1. Week 1:" in report
+    assert "### 1.1 Domain Queries" in report
+    assert "### 1.2 Adversarial & Safety Queries" in report
+    adv_section = report.split("### 1.2 Adversarial & Safety Queries")[1].split("---")[0]
+    assert "ROUGE-LCS F1" not in adv_section
+    assert res["week1"]["strategies"]["zero_shot"]["system_prompt"]
+    assert len(res["week1"]["strategies"]["zero_shot"]["rows"]) == 3
     assert "## 2. Week 2:" in report
     assert "## 3. Week 3:" in report
     assert "## 4. Week 4:" in report

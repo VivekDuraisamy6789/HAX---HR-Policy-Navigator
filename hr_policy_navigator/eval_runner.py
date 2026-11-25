@@ -99,6 +99,40 @@ _REFUSAL_KEYWORDS = (
     "do not have", "refuse", "unauthorized", "can't",
 )
 
+WEEK1_SYSTEM_PROMPTS: dict[str, str] = {
+    "zero_shot": _W1_ZERO_SHOT,
+    "structured_fewshot": _W1_STRUCTURED,
+    "chain_of_thought": _W1_COT,
+    "decomposition": _W1_DECOMP,
+}
+
+
+def _summarize_w1_rows(rows: list[dict], include_rouge: bool = True) -> dict[str, Any]:
+    """Summarize Week 1 rows into accuracy, latency, JSON valid rate, and optional ROUGE-LCS F1."""
+    if not rows:
+        out = {
+            "n": 0, "accuracy": 0.0, "correct_count": 0,
+            "json_valid_rate": 0.0, "p50_latency_ms": 0.0, "failures": {},
+        }
+        if include_rouge:
+            out["rouge_lcs_f1"] = 0.0
+        return out
+
+    n = len(rows)
+    lats = sorted(r["latency_ms"] for r in rows)
+    out: dict[str, Any] = {
+        "n": n,
+        "accuracy": round(sum(r["correct"] for r in rows) / n, 3),
+        "correct_count": sum(r["correct"] for r in rows),
+        "json_valid_rate": round(sum(r["json_valid"] for r in rows) / n, 3),
+        "p50_latency_ms": lats[n // 2],
+        "failures": dict(Counter(r["failure"] for r in rows if not r["correct"])),
+    }
+    if include_rouge:
+        rouge_vals = [r["rouge_lcs_f1"] for r in rows if r.get("rouge_lcs_f1") is not None]
+        out["rouge_lcs_f1"] = round(sum(rouge_vals) / max(1, len(rouge_vals)), 4)
+    return out
+
 
 def _eval_w1_response(item: dict, text_answer: str, raw: str, parsed: Optional[dict]) -> tuple[bool, str]:
     q_type = item.get("type", "answerable")
@@ -127,18 +161,25 @@ def run_week1_eval(
     use_mock: bool = False,
     strategies: Optional[list[str]] = None,
     progress_cb: Optional[Callable[[str], None]] = None,
+    strategy_cb: Optional[Callable[[str, dict[str, Any]], None]] = None,
 ) -> dict[str, Any]:
     """Run Week 1 single-prompt baselines without RAG."""
     llm, model_name = _make_llm(settings, use_mock=use_mock)
     strategies = strategies or ["zero_shot", "structured_fewshot", "chain_of_thought", "decomposition"]
-    dataset = domain_items + adv_items
-    results: dict[str, Any] = {"model": model_name, "n": len(dataset), "strategies": {}}
+    tagged_dataset = [(it, "domain") for it in domain_items] + [(it, "adversarial") for it in adv_items]
+    results: dict[str, Any] = {
+        "model": model_name,
+        "n": len(tagged_dataset),
+        "n_domain": len(domain_items),
+        "n_adv": len(adv_items),
+        "strategies": {},
+    }
 
     for strat in strategies:
         rows = []
-        for idx, it in enumerate(dataset, 1):
+        for idx, (it, split) in enumerate(tagged_dataset, 1):
             if progress_cb:
-                progress_cb(f"Week 1 [{strat}] {idx}/{len(dataset)}: {it['id']}")
+                progress_cb(f"Week 1 [{strat}] {idx}/{len(tagged_dataset)}: {it['id']}")
             t0 = time.perf_counter()
             if strat == "zero_shot":
                 msgs = [{"role": "system", "content": _W1_ZERO_SHOT}, {"role": "user", "content": it["question"]}]
@@ -161,25 +202,39 @@ def run_week1_eval(
 
             lat_ms = round((time.perf_counter() - t0) * 1000, 1)
             ok, fc = _eval_w1_response(it, answer, raw, parsed)
-            _, _, rl_f1 = rouge_lcs(answer, it.get("gold_answer", "")) if it.get("gold_answer") else (0.0, 0.0, 0.0)
+            rl_f1 = None
+            if split == "domain" and it.get("gold_answer"):
+                _, _, rl_val = rouge_lcs(answer, it["gold_answer"])
+                rl_f1 = round(rl_val, 4)
+
             rows.append({
-                "id": it["id"], "type": it.get("type", "answerable"),
-                "correct": ok, "failure": fc, "json_valid": valid,
-                "rouge_lcs_f1": round(rl_f1, 4), "latency_ms": lat_ms,
+                "id": it["id"],
+                "dataset": split,
+                "type": it.get("type", "answerable"),
+                "expected_status": it.get("expected_status", "success"),
+                "question": it["question"],
+                "gold_answer": it.get("gold_answer", ""),
+                "model_answer": answer,
+                "correct": ok,
+                "failure": fc,
+                "json_valid": valid,
+                "rouge_lcs_f1": rl_f1,
+                "latency_ms": lat_ms,
             })
 
-        n = max(1, len(rows))
-        lats = sorted(r["latency_ms"] for r in rows) if rows else [0.0]
-        ans_rows = [r for r in rows if r["type"] in ("answerable", "pii", "false_refusal_probe")]
-        results["strategies"][strat] = {
-            "n": len(rows),
-            "accuracy": round(sum(r["correct"] for r in rows) / n, 3),
-            "correct_count": sum(r["correct"] for r in rows),
-            "rouge_lcs_f1": round(sum(r["rouge_lcs_f1"] for r in ans_rows) / max(1, len(ans_rows)), 4),
-            "json_valid_rate": round(sum(r["json_valid"] for r in rows) / n, 3),
-            "p50_latency_ms": lats[len(lats) // 2],
-            "failures": dict(Counter(r["failure"] for r in rows if not r["correct"])),
+        overall = _summarize_w1_rows(rows, include_rouge=True)
+        domain_stats = _summarize_w1_rows([r for r in rows if r["dataset"] == "domain"], include_rouge=True)
+        adv_stats = _summarize_w1_rows([r for r in rows if r["dataset"] == "adversarial"], include_rouge=False)
+        strat_payload = {
+            **overall,
+            "system_prompt": WEEK1_SYSTEM_PROMPTS.get(strat, ""),
+            "domain_stats": domain_stats,
+            "adv_stats": adv_stats,
+            "rows": rows,
         }
+        results["strategies"][strat] = strat_payload
+        if strategy_cb:
+            strategy_cb(strat, strat_payload)
     return results
 
 
@@ -479,7 +534,7 @@ def generate_week_wise_report(
         "",
     ]
 
-    # Week 1 Section
+    # Week 1 Section (Two separate tables: Domain Queries & Adversarial Queries)
     if "week1" in eval_results:
         w1 = eval_results["week1"]
         lines.extend([
@@ -487,16 +542,45 @@ def generate_week_wise_report(
             "",
             f"Evaluated on $N={w1['n']}$ queries using raw `{w1['model']}` without RAG or tools:",
             "",
-            "| Strategy | Decision Accuracy | ROUGE-LCS F1 | JSON Valid Rate | $p_{50}$ Latency (ms) | Primary Failures |",
-            "|---|---|---|---|---|---|",
         ])
-        for strat, m in w1["strategies"].items():
-            fails = ", ".join(f"{k}:{v}" for k, v in m["failures"].items()) or "None"
-            lines.append(
-                f"| **{strat}** | {m['accuracy']*100:.1f}% ({m['correct_count']}/{m['n']}) | "
-                f"{m['rouge_lcs_f1']:.4f} | {m['json_valid_rate']*100:.1f}% | {m['p50_latency_ms']:.0f} | {fails} |"
-            )
-        lines.extend(["", "---", ""])
+
+        has_dom = any(m.get("domain_stats", {}).get("n", 0) > 0 for m in w1["strategies"].values())
+        if has_dom:
+            dom_n = next(m["domain_stats"]["n"] for m in w1["strategies"].values() if m.get("domain_stats", {}).get("n", 0) > 0)
+            lines.extend([
+                f"### 1.1 Domain Queries (`evaluation_set.json`, $N={dom_n}$)",
+                "",
+                "| Strategy | Decision Accuracy | ROUGE-LCS F1 | JSON Valid Rate | $p_{50}$ Latency (ms) | Primary Failures |",
+                "|---|---|---|---|---|---|",
+            ])
+            for strat, m in w1["strategies"].items():
+                ds = m.get("domain_stats", m)
+                fails = ", ".join(f"{k}:{v}" for k, v in ds["failures"].items()) or "None"
+                lines.append(
+                    f"| **{strat}** | {ds['accuracy']*100:.1f}% ({ds['correct_count']}/{ds['n']}) | "
+                    f"{ds.get('rouge_lcs_f1', 0.0):.4f} | {ds['json_valid_rate']*100:.1f}% | {ds['p50_latency_ms']:.0f} | {fails} |"
+                )
+            lines.append("")
+
+        has_adv = any(m.get("adv_stats", {}).get("n", 0) > 0 for m in w1["strategies"].values())
+        if has_adv:
+            adv_n = next(m["adv_stats"]["n"] for m in w1["strategies"].values() if m.get("adv_stats", {}).get("n", 0) > 0)
+            lines.extend([
+                f"### 1.2 Adversarial & Safety Queries (`evaluation_set_adversarial.json`, $N={adv_n}$)",
+                "",
+                "| Strategy | Decision Accuracy | JSON Valid Rate | $p_{50}$ Latency (ms) | Primary Failures |",
+                "|---|---|---|---|---|",
+            ])
+            for strat, m in w1["strategies"].items():
+                avs = m.get("adv_stats", {})
+                fails = ", ".join(f"{k}:{v}" for k, v in avs.get("failures", {}).items()) or "None"
+                lines.append(
+                    f"| **{strat}** | {avs['accuracy']*100:.1f}% ({avs['correct_count']}/{avs['n']}) | "
+                    f"{avs['json_valid_rate']*100:.1f}% | {avs['p50_latency_ms']:.0f} | {fails} |"
+                )
+            lines.append("")
+
+        lines.extend(["---", ""])
 
     # Week 2 Section
     if "week2" in eval_results:

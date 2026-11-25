@@ -202,9 +202,11 @@ def render_login() -> None:
 
     with col_form:
         st.markdown("### Sign in")
-        username = st.text_input("Username", placeholder="e.g. emp_bob")
-        password = st.text_input("Password", type="password", placeholder="••••••")
-        if st.button("Sign In", type="primary", use_container_width=True):
+        with st.form("login_form"):
+            username = st.text_input("Username", placeholder="e.g. emp_bob")
+            password = st.text_input("Password", type="password", placeholder="••••••")
+            submitted = st.form_submit_button("Sign In", type="primary", use_container_width=True)
+        if submitted:
             profile = authenticate(username, password)
             if profile:
                 st.session_state.user = profile
@@ -938,6 +940,7 @@ def main() -> None:
     if tab_eval_run is not None:
         with tab_eval_run:
             from hr_policy_navigator.eval_runner import (
+                WEEK1_SYSTEM_PROMPTS,
                 generate_week_wise_report,
                 load_eval_datasets,
                 run_week1_eval,
@@ -945,6 +948,32 @@ def main() -> None:
                 run_week3_eval,
                 run_week4_eval,
             )
+
+            def _format_w1_grid(rows: list[dict]) -> list[dict]:
+                return [
+                    {
+                        "ID": r["id"],
+                        "Gold Answer": r["gold_answer"] or f"[{r['type']} · expect {r.get('expected_status', 'abstained')}]",
+                        "Model Answer": r["model_answer"],
+                        "Decision Accuracy": "✅ Pass" if r["correct"] else "❌ Fail",
+                        "ROUGE-LCS F1": f"{r['rouge_lcs_f1']:.4f}" if r.get("rouge_lcs_f1") is not None else "—",
+                        "Valid JSON": "✅" if r["json_valid"] else "❌",
+                        "Latency (ms)": r["latency_ms"],
+                        "Primary Failures": r["failure"] or "—",
+                    }
+                    for r in rows
+                ]
+
+            def _render_w1_grids(w1_res: dict) -> None:
+                for strat_name, strat_data in w1_res.get("strategies", {}).items():
+                    st.markdown(f"#### `{strat_name}`")
+                    sys_prompt = strat_data.get("system_prompt") or WEEK1_SYSTEM_PROMPTS.get(strat_name, "")
+                    if sys_prompt:
+                        st.caption("System Prompt:")
+                        st.code(sys_prompt, language="text")
+                    grid_rows = _format_w1_grid(strat_data.get("rows", []))
+                    if grid_rows:
+                        st.dataframe(grid_rows, width="stretch", hide_index=True)
 
             st.markdown("### 🧪 Evaluation Runner & Week-Wise Report Generator")
             st.caption(
@@ -1014,33 +1043,52 @@ def main() -> None:
                     run_all = eval_scope.startswith("Run All")
 
                     with st.status("Running evaluation suite…", expanded=True) as status_box:
-                        def _cb(msg: str) -> None:
-                            status_box.write(msg)
+                        run_scroll = st.container(height=420)
+                        with run_scroll:
+                            log_area = st.empty()
+                            log_lines: list[str] = []
 
-                        if run_all or eval_scope.startswith("Week 1"):
-                            _cb("▶ Starting Week 1: Single-Prompt Baselines…")
-                            eval_results["week1"] = run_week1_eval(
-                                domain_slice, adv_slice, S, use_mock=use_mock, progress_cb=_cb
-                            )
+                            def _cb(msg: str) -> None:
+                                log_lines.append(msg)
+                                log_area.text("\n".join(log_lines[-20:]))
 
-                        if run_all or eval_scope.startswith("Week 2"):
-                            _cb("▶ Starting Week 2: Retrieval Evaluation…")
-                            eval_results["week2"] = run_week2_eval(
-                                domain_slice, S, chunkings=w2_chunks or ["heading_cap"], progress_cb=_cb
-                            )
+                            def _w1_strat_cb(strat_name: str, strat_payload: dict) -> None:
+                                st.markdown(f"#### `{strat_name}`")
+                                sys_p = strat_payload.get("system_prompt") or WEEK1_SYSTEM_PROMPTS.get(strat_name, "")
+                                if sys_p:
+                                    st.caption("System Prompt:")
+                                    st.code(sys_p, language="text")
+                                st.dataframe(
+                                    _format_w1_grid(strat_payload.get("rows", [])),
+                                    width="stretch",
+                                    hide_index=True,
+                                )
 
-                        if run_all or eval_scope.startswith("Week 3"):
-                            _cb("▶ Starting Week 3: Multi-Agent E2E Evaluation…")
-                            eval_results["week3"] = run_week3_eval(
-                                domain_slice, adv_slice, S, use_mock=use_mock,
-                                strategies=w3_strats or ["decomposition"], progress_cb=_cb
-                            )
+                            if run_all or eval_scope.startswith("Week 1"):
+                                _cb("▶ Starting Week 1: Single-Prompt Baselines…")
+                                eval_results["week1"] = run_week1_eval(
+                                    domain_slice, adv_slice, S, use_mock=use_mock,
+                                    progress_cb=_cb, strategy_cb=_w1_strat_cb,
+                                )
 
-                        if run_all or eval_scope.startswith("Week 4"):
-                            _cb("▶ Starting Week 4: Responsible AI Injection Suite…")
-                            eval_results["week4"] = run_week4_eval(
-                                S, use_mock=use_mock, progress_cb=_cb
-                            )
+                            if run_all or eval_scope.startswith("Week 2"):
+                                _cb("▶ Starting Week 2: Retrieval Evaluation…")
+                                eval_results["week2"] = run_week2_eval(
+                                    domain_slice, S, chunkings=w2_chunks or ["heading_cap"], progress_cb=_cb
+                                )
+
+                            if run_all or eval_scope.startswith("Week 3"):
+                                _cb("▶ Starting Week 3: Multi-Agent E2E Evaluation…")
+                                eval_results["week3"] = run_week3_eval(
+                                    domain_slice, adv_slice, S, use_mock=use_mock,
+                                    strategies=w3_strats or ["decomposition"], progress_cb=_cb
+                                )
+
+                            if run_all or eval_scope.startswith("Week 4"):
+                                _cb("▶ Starting Week 4: Responsible AI Injection Suite…")
+                                eval_results["week4"] = run_week4_eval(
+                                    S, use_mock=use_mock, progress_cb=_cb
+                                )
 
                         model_lbl = "mock" if use_mock or not S.has_model else S.model
                         report_md = generate_week_wise_report(
@@ -1054,9 +1102,15 @@ def main() -> None:
                         report_path.write_text(report_md, encoding="utf-8")
                         (out_dir / "latest_week_wise_report.md").write_text(report_md, encoding="utf-8")
 
+                        st.session_state["last_eval_results"] = eval_results
                         st.session_state["last_eval_report"] = report_md
                         st.session_state["last_eval_path"] = str(report_path)
                         status_box.update(label="✅ Evaluation complete!", state="complete", expanded=False)
+
+            if st.session_state.get("last_eval_results", {}).get("week1"):
+                with st.expander("📋 Strategy Grids & System Prompts (Week 1)", expanded=True):
+                    with st.container(height=450):
+                        _render_w1_grids(st.session_state["last_eval_results"]["week1"])
 
             if st.session_state.get("last_eval_report"):
                 st.divider()
