@@ -973,13 +973,7 @@ def main() -> None:
                     sys_prompt = strat_data.get("system_prompt") or WEEK1_SYSTEM_PROMPTS.get(strat_name, "")
                     if sys_prompt:
                         st.caption("System Prompt:")
-                        st.markdown(
-                            "<pre style='white-space:pre-wrap; word-wrap:break-word; overflow-wrap:anywhere; "
-                            "background:rgba(128,128,128,0.1); padding:10px 12px; border-radius:6px; "
-                            "font-size:0.82rem; line-height:1.45; border:1px solid rgba(128,128,128,0.2); "
-                            f"margin-bottom:10px;'>{_html.escape(sys_prompt)}</pre>",
-                            unsafe_allow_html=True,
-                        )
+                        st.code(sys_prompt, language="text")
                     grid_rows = _format_w1_grid(strat_data.get("rows", []))
                     if grid_rows:
                         headers = list(grid_rows[0].keys())
