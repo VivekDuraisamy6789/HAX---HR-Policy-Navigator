@@ -190,3 +190,59 @@ Running `chunk_document(..., "heading_cap")` on `sourcegraph_files/benefits-pay-
 | **`#0`** *(Standard Section)* | 101 | `Health benefits at Sourcegraph > Eligibility` | US-based Teammates are eligible for health benefits, which are determined jointly by the People and Finance teams on an annual basis... |
 | **`#6`** *(Oversized Split Part 1)* | 217 | `Health benefits at Sourcegraph > **2024 Benefit plans**` | US-based teammates can use this Rippling tool to review insurance plan options as PDFs... |
 | **`#7`** *(Oversized Split Part 2)* | 26 | `Health benefits at Sourcegraph > **2024 Benefit plans**` | - Our 401k Plan is administered by Human Interest. You can view or change your elections via the Human Interest App... |
+
+---
+
+# `max_words` Setting in `heading_cap` & How It Was Arrived At
+
+In `chunk_document()` (`hr_policy_navigator/chunking.py`), the default settings for `heading_cap` are:
+
+* **`max_words = 220`**
+* **`min_words = 40`** *(sections shorter than 40 words are merged forward)*
+* **Fallback window overlap:** If a single paragraph or table exceeds 220 words, `_split_paragraphs()` falls back to a 220-word sliding window with `max_words // 7` (**31 words**, ~14% overlap).
+
+## How `max_words = 220` Was Arrived At
+
+1. **Embedding Model 512-Token Limit (`bge-small-en-v1.5` & `bge-reranker-base`):**
+   * Both the hosted `bge-small-en-v1.5` embedder and `BAAI/bge-reranker-base` have a hard **512-token** context ceiling (exceeding it triggers HTTP `422`/`512` errors in `hr_policy_navigator/retrieval.py`).
+   * With Markdown formatting, URLs, and the prepended `"Doc title > heading breadcrumb"` (~10–20 words), `1 word` averages `~1.3–1.5 BPE tokens`.
+   * Capping at **`220 words`** keeps chunks around **300–380 tokens**—safely below the 512-token ceiling (and aligned with the 800-character truncation guard in `OpenAIEmbedder._truncate()`).
+
+2. **`<8B` LLM Context Budget (`TOP_K = 6`):**
+   * The Executor passes up to `TOP_K = 6` chunks to `Qwen/Qwen3-8B`.
+   * $6 \times 220 \text{ words} \approx 1,320 \text{ words}$ (~1,800–2,000 tokens), keeping retrieved evidence focused and preventing attention dilution on an 8B model.
+
+3. **Empirical Ablation Balance (`fixed_200` vs. `fixed_500` vs. `heading`):**
+   * `fixed_500` (~500 words) diluted search specificity and risked clipping against the 512-token limit.
+   * `heading` (no cap) left giant sections intact, hurting dense retrieval precision.
+   * `max_words = 220` anchored `heading_cap` right around the ~200-word sweet spot while respecting heading and paragraph boundaries—producing the top retrieval scores (**0.709 Hit@1**, **0.891 Hit@5**, **0.793 MRR**).
+
+---
+
+# Retrieval Modes & Metrics Explained (`bm25`, `dense`, `hybrid`, `hybrid_rerank`)
+
+## 1. Working Example Query (`Q01-03`)
+* **Query:** *"What is the deadline for US new hires to enroll in insurance after joining?"*
+* **Gold Document (`expected_sources`):** `benefits-pay-perks/benefits-perks/benefits.md`
+* **Target Chunk (`#3` / `#12`):** `"US-based new hires have 30 days from their start date to enroll in insurance coverage through Rippling..."`
+
+1. **`bm25` (Lexical / Keyword Search):** Tokenizes & stems the query (`"deadlin"`, `"us"`, `"new"`, `"hire"`, `"enrol"`, `"insur"`, `"join"`), weights rare terms via IDF, and matches exact keywords directly in `benefits.md#3` and `#12`. Great for exact HR terms (`"401k"`, `"Rippling"`), but misses pure synonyms (`"step away"` vs `"step out"`).
+2. **`dense` (Semantic Vector Search):** Encodes the query into a 384-d vector via `bge-small-en-v1.5` and computes cosine similarity against all chunk vectors. Understands semantically that *"deadline ... after joining"* matches *"30 days from your start date to enroll"*.
+3. **`hybrid` (Reciprocal Rank Fusion — RRF, $k=60$):** Runs both `bm25` and `dense` (`pool=30` each) and fuses their rankings:
+   $$\text{RRF\_Score}(c) = \frac{1}{60 + \text{rank}_{\text{bm25}}(c) + 1} + \frac{1}{60 + \text{rank}_{\text{dense}}(c) + 1}$$
+4. **`hybrid_rerank` (Hybrid + `LexicalReranker`):** Rescores top `hybrid` hits by combining body IDF coverage (`0.45`), heading/title IDF coverage (`0.25`), bigram phrase hits (`0.15`), and normalized RRF prior (`0.15`).
+
+---
+
+## 2. Retrieval Metrics Explained (3-Query Example)
+
+Suppose we evaluate **3 queries** where the first gold document appears at **Rank 1**, **Rank 4**, and **Rank 7** *(outside Top-5)*:
+
+| Metric | Formula | 3-Query Calculation | Score |
+|---|---|---|---|
+| **Hit@1** | Fraction of queries with $\ge 1$ gold doc in **Top-1** | `(1 + 0 + 0) / 3` | **0.333** |
+| **Hit@3** | Fraction of queries with $\ge 1$ gold doc in **Top-3** | `(1 + 0 + 0) / 3` | **0.333** |
+| **Hit@5** | Fraction of queries with $\ge 1$ gold doc in **Top-5** | `(1 + 1 + 0) / 3` | **0.667** |
+| **Doc Recall@5** | Average of $\frac{\|\text{gold} \cap \text{top}_5\|}{\|\text{gold}\|}$ per query | `(1/1 + 1/1 + 0/1) / 3` | **0.667** |
+| **MRR** | Average of $\frac{1}{\text{first\_gold\_rank}}$ *(0 if not found)* | `(1/1 + 1/4 + 1/7) / 3` | **0.464** |
+| **Hit@5 95% CI** | 95% CI of `Hit@5` via **theme-clustered bootstrap** (1,000 resamples of topic themes) | e.g., across 11 themes on 55 queries | e.g., **`[0.782, 0.982]`** |
