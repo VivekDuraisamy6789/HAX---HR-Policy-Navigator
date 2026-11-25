@@ -1070,15 +1070,24 @@ def main() -> None:
                     help="Run with FakeModel for fast offline plumbing checks, or disable to call the live Qwen3-8B endpoint.",
                 )
 
-            if st.button("🚀 Run Evaluation", type="primary", key="btn_run_eval"):
+            run_clicked = st.button("🚀 Run Evaluation", type="primary", key="btn_run_eval")
+            status_placeholder = st.empty()
+            results_placeholder = st.empty()
+
+            if run_clicked:
                 if n_domain == 0 and n_adv == 0 and "Week 4" not in eval_scope:
                     st.warning("Select at least 1 domain query or adversarial query.")
                 else:
+                    st.session_state.pop("last_eval_results", None)
+                    st.session_state.pop("last_eval_report", None)
+                    st.session_state.pop("last_eval_path", None)
+                    results_placeholder.empty()
+
                     domain_slice, adv_slice = load_eval_datasets(int(n_domain), int(n_adv))
                     eval_results: dict = {}
                     run_all = eval_scope.startswith("Run All")
 
-                    with st.status("Running evaluation suite…", expanded=True) as status_box:
+                    with status_placeholder.status("Running evaluation suite…", expanded=True) as status_box:
                         run_scroll = st.container(height=260)
                         with run_scroll:
                             log_area = st.empty()
@@ -1131,24 +1140,26 @@ def main() -> None:
                         st.session_state["last_eval_path"] = str(report_path)
                         status_box.update(label="✅ Evaluation complete!", state="complete", expanded=False)
 
-            if st.session_state.get("last_eval_results", {}).get("week1"):
-                with st.expander("📋 Strategy Grids & System Prompts (Week 1)", expanded=True):
-                    _render_w1_grids(st.session_state["last_eval_results"]["week1"])
+            if st.session_state.get("last_eval_results") or st.session_state.get("last_eval_report"):
+                with results_placeholder.container():
+                    if st.session_state.get("last_eval_results", {}).get("week1"):
+                        with st.expander("📋 Strategy Grids & System Prompts (Week 1)", expanded=True):
+                            _render_w1_grids(st.session_state["last_eval_results"]["week1"])
 
-            if st.session_state.get("last_eval_report"):
-                st.divider()
-                dl_col1, dl_col2 = st.columns([3, 1])
-                with dl_col1:
-                    st.success(f"Report saved to `{st.session_state.get('last_eval_path', 'eval_runs/latest_week_wise_report.md')}`")
-                with dl_col2:
-                    st.download_button(
-                        "⬇️ Download Report (.md)",
-                        data=st.session_state["last_eval_report"],
-                        file_name="week_wise_eval_report.md",
-                        mime="text/markdown",
-                        use_container_width=True,
-                    )
-                st.markdown(st.session_state["last_eval_report"])
+                    if st.session_state.get("last_eval_report"):
+                        st.divider()
+                        dl_col1, dl_col2 = st.columns([3, 1])
+                        with dl_col1:
+                            st.success(f"Report saved to `{st.session_state.get('last_eval_path', 'eval_runs/latest_week_wise_report.md')}`")
+                        with dl_col2:
+                            st.download_button(
+                                "⬇️ Download Report (.md)",
+                                data=st.session_state["last_eval_report"],
+                                file_name="week_wise_eval_report.md",
+                                mime="text/markdown",
+                                use_container_width=True,
+                            )
+                        st.markdown(st.session_state["last_eval_report"])
 
 
 # ---------------------------------------------------------------------------
