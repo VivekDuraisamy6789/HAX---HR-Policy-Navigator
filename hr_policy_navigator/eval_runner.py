@@ -599,7 +599,22 @@ def generate_week_wise_report(
                 f"{r['hit_rate']['@1']:.3f} | {r['hit_rate']['@3']:.3f} | {r['hit_rate']['@5']:.3f} | "
                 f"{r['doc_recall']['@5']:.3f} | {r['mrr']:.3f} | {r['hit5_ci95']} |"
             )
-        lines.extend(["", "---", ""])
+        lines.extend([
+            "",
+            "### Chunking Strategy Definition: `heading_cap`",
+            "`heading_cap` splits Markdown documents by heading hierarchy, merges tiny sections forward, and splits oversized sections on paragraph boundaries (`<= max_words`). Every chunk is prefixed with `Doc title > heading breadcrumb`.",
+            "",
+            "**Sample Chunks (`benefits-pay-perks/benefits-perks/benefits.md`, 31 chunks total):**",
+            "",
+            "| Chunk | Words | Section Breadcrumb | Sample Excerpt |",
+            "|---|---:|---|---|",
+            "| **`#0`** *(Standard)* | 101 | `Health benefits at Sourcegraph > Eligibility` | US-based Teammates are eligible for health benefits, which are determined jointly by the People and Finance teams on an annual basis... |",
+            "| **`#6`** *(Oversized Part 1)* | 217 | `Health benefits at Sourcegraph > **2024 Benefit plans**` | US-based teammates can use this Rippling tool to review insurance plan options as PDFs... |",
+            "| **`#7`** *(Oversized Part 2)* | 26 | `Health benefits at Sourcegraph > **2024 Benefit plans**` | - Our 401k Plan is administered by Human Interest. You can view or change your elections via the Human Interest App... |",
+            "",
+            "---",
+            "",
+        ])
 
     # Week 3 Section (matching strategy_comparison.md columns)
     if "week3" in eval_results:

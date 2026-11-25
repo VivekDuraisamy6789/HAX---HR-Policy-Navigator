@@ -171,3 +171,22 @@ Triggered by `_judge_e2e()` in `hr_policy_navigator/eval_runner.py` in the full 
 | **`hallucination`** | Either (a) answered an **unanswerable** query instead of abstaining, or (b) `verdict["unsupported"]` was non-empty on a failed answer. | The model stated claims not backed by the retrieved policy chunks. |
 | **`refusal_error`** | Either failed to refuse a `refused` query, **or** wrongly refused an answerable / `false_refusal_probe` query. | Safety guardrail either under-triggered (unsafe) or over-triggered (blocked a legitimate HR question). |
 | **`tool_call_error`** | `status` starts with `"error"` (`error_budget`, `error_model`, `error_internal`) or `tool_errors > 0`. | API timeout, budget exhaustion, or unrecoverable tool/JSON failure. |
+
+---
+
+# Understanding `heading_cap` Chunking (`benefits.md` Example)
+
+Running `chunk_document(..., "heading_cap")` on `sourcegraph_files/benefits-pay-perks/benefits-perks/benefits.md` (`doc_title`: `"Health benefits at Sourcegraph"`) produces **31 chunks** (`#0` through `#30`).
+
+## How `heading_cap` Splits a Markdown Document
+1. **Heading Breadcrumbs:** Each chunk captures the Markdown heading hierarchy in `section` (and prefixes `indexed_text` with `"Doc title > <section>"`).
+2. **Splitting Oversized Sections:** Sections exceeding `max_words` are split on paragraph boundaries—for example, `**2024 Benefit plans**` splits into `#6` (217 words) and `#7` (26 words), and `**Benefits Support:**` splits into `#8` (196 words) and `#9` (36 words).
+3. **Merging Tiny Sections Forward:** Very short heading blocks are merged forward so they aren't left as isolated 1-line fragments.
+
+## Three Sample Chunks (`#0`, `#6`, `#7`)
+
+| Chunk | Words | Section Breadcrumb (`section`) | Sample Text |
+|---|---:|---|---|
+| **`#0`** *(Standard Section)* | 101 | `Health benefits at Sourcegraph > Eligibility` | US-based Teammates are eligible for health benefits, which are determined jointly by the People and Finance teams on an annual basis... |
+| **`#6`** *(Oversized Split Part 1)* | 217 | `Health benefits at Sourcegraph > **2024 Benefit plans**` | US-based teammates can use this Rippling tool to review insurance plan options as PDFs... |
+| **`#7`** *(Oversized Split Part 2)* | 26 | `Health benefits at Sourcegraph > **2024 Benefit plans**` | - Our 401k Plan is administered by Human Interest. You can view or change your elections via the Human Interest App... |
