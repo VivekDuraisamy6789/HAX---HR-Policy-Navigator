@@ -29,6 +29,16 @@ S = Settings()
 # Role metadata
 # ---------------------------------------------------------------------------
 _ROLE_META = {
+    "sys_admin": {
+        "icon": "🛡️", "label": "System Administrator",
+        "hint": "Unrestricted superuser access · All tabs, traces, feedback, HITL queue & eval_run",
+        "color": "#8e44ad",
+        "sample_queries": [
+            "What is the full termination policy with all escalation steps?",
+            "How many PTO days do I get?",
+            "Can I fire John Doe?  ← triggers safe HITL refusal",
+        ],
+    },
     "hr_ops": {
         "icon": "🏢", "label": "HR Operations",
         "hint": "Full access · HITL queue visible · Verbatim policy answers",
@@ -207,7 +217,11 @@ def render_login() -> None:
     with col_hint:
         st.markdown("### Demo Accounts")
         for u in demo_users():
-            role_key = "hr_ops" if "hr" in u["role"].lower() else ("manager" if "manager" in u["role"].lower() else "associate")
+            rl = u["role"].lower()
+            role_key = (
+                "sys_admin" if "system" in rl
+                else ("hr_ops" if "hr" in rl else ("manager" if "manager" in rl else "associate"))
+            )
             meta = _ROLE_META[role_key]
             st.markdown(
                 f"""<div style='border-left:4px solid {meta["color"]}; padding:6px 12px; margin-bottom:8px; border-radius:4px; background:#1a1a2e22;'>
@@ -386,23 +400,29 @@ def main() -> None:
     # Tabs
     # ------------------------------------------------------------------
     tab_labels = ["💬 Ask", "📊 Traces", "👍 Feedback"]
-    if user.role == "hr_ops":
+    if user.role in ("hr_ops", "sys_admin"):
         tab_labels.append("🚀 Our Journey")
-    if user.role in ("hr_ops", "manager"):
+    if user.role in ("hr_ops", "manager", "sys_admin"):
         tab_labels.append("🧑‍💼 Human Review Queue")
+    if user.role == "sys_admin":
+        tab_labels.append("🧪 eval_run")
 
     tabs = st.tabs(tab_labels)
-    tab_chat    = tabs[0]
-    tab_traces  = tabs[1]
-    tab_fb      = tabs[2]
-    tab_journey = None
-    tab_review  = None
+    tab_chat     = tabs[0]
+    tab_traces   = tabs[1]
+    tab_fb       = tabs[2]
+    tab_journey  = None
+    tab_review   = None
+    tab_eval_run = None
     _tab_i = 3
-    if user.role == "hr_ops":
+    if user.role in ("hr_ops", "sys_admin"):
         tab_journey = tabs[_tab_i]
         _tab_i += 1
-    if user.role in ("hr_ops", "manager"):
+    if user.role in ("hr_ops", "manager", "sys_admin"):
         tab_review = tabs[_tab_i]
+        _tab_i += 1
+    if user.role == "sys_admin":
+        tab_eval_run = tabs[_tab_i]
 
     # ==================================================================
     # E6: Voice Input helpers (rendered inside chat tab)
@@ -520,9 +540,9 @@ def main() -> None:
     # ==================================================================
     with tab_traces:
         all_traces = load_traces(S.trace_dir)
-        if user.role == "hr_ops":
+        if user.role in ("hr_ops", "sys_admin"):
             traces = all_traces
-            st.caption("Viewing all system traces (HR Operations admin view).")
+            st.caption(f"Viewing all system traces ({user.display_role} view).")
         else:
             user_sessions = {s["session_id"] for s in history_store.list_sessions(user.user_id, limit=20)}
             user_sessions.add(st.session_state.sid)
@@ -558,11 +578,11 @@ def main() -> None:
     # ==================================================================
     with tab_fb:
         st.markdown("### 👍 RLHF Feedback Analytics")
-        if user.role == "hr_ops":
+        if user.role in ("hr_ops", "sys_admin"):
             fb = feedback_store.analytics()
             raw_feedback = feedback_store.all()
             st.caption(
-                "Viewing feedback across all users (HR Operations admin view). "
+                f"Viewing feedback across all users ({user.display_role} view). "
                 "Negative-rated queries are flagged as improvement opportunities."
             )
         else:
@@ -911,6 +931,147 @@ def main() -> None:
                                         st.rerun()
                         else:
                             st.caption("✅ This ticket is closed — no further actions available.")
+
+    # ==================================================================
+    # Eval Run Tab (sys_admin only)
+    # ==================================================================
+    if tab_eval_run is not None:
+        with tab_eval_run:
+            from hr_policy_navigator.eval_runner import (
+                generate_week_wise_report,
+                load_eval_datasets,
+                run_week1_eval,
+                run_week2_eval,
+                run_week3_eval,
+                run_week4_eval,
+            )
+
+            st.markdown("### 🧪 Evaluation Runner & Week-Wise Report Generator")
+            st.caption(
+                "Run Week 1–4 benchmarks on configurable slices of `evaluation_set.json` and "
+                "`evaluation_set_adversarial.json`, and generate a markdown report matching `strategy_comparison.md`."
+            )
+
+            all_domain, all_adv = load_eval_datasets()
+            max_domain = len(all_domain)
+            max_adv = len(all_adv)
+
+            cfg_col1, cfg_col2, cfg_col3 = st.columns([1, 1, 1.2])
+            with cfg_col1:
+                n_domain = st.number_input(
+                    f"Questions from `evaluation_set.json` (max {max_domain})",
+                    min_value=0, max_value=max_domain, value=min(10, max_domain), step=1,
+                    key="eval_n_domain",
+                )
+            with cfg_col2:
+                n_adv = st.number_input(
+                    f"Questions from `evaluation_set_adversarial.json` (max {max_adv})",
+                    min_value=0, max_value=max_adv, value=min(5, max_adv), step=1,
+                    key="eval_n_adv",
+                )
+            with cfg_col3:
+                eval_scope = st.selectbox(
+                    "Evaluation Scope",
+                    [
+                        "Run All (Week 1 → Week 4)",
+                        "Week 1: Prompt Baselines (No RAG)",
+                        "Week 2: Retrieval Evaluation",
+                        "Week 3: Multi-Agent E2E + ROUGE-LCS",
+                        "Week 4: Injection Defense Suite",
+                    ],
+                    key="eval_scope_select",
+                )
+
+            opt_col1, opt_col2, opt_col3 = st.columns([1.4, 1.2, 1])
+            with opt_col1:
+                w3_strats = st.multiselect(
+                    "Week 3 Strategies",
+                    ["baseline", "structured", "selfconsistency", "decomposition"],
+                    default=["decomposition"],
+                    key="eval_w3_strats",
+                )
+            with opt_col2:
+                w2_chunks = st.multiselect(
+                    "Week 2 Chunking",
+                    ["heading_cap", "fixed_500", "fixed_200", "heading"],
+                    default=["heading_cap"],
+                    key="eval_w2_chunks",
+                )
+            with opt_col3:
+                use_mock = st.toggle(
+                    "Mock Model (Offline)",
+                    value=not S.has_model,
+                    key="eval_use_mock",
+                    help="Run with FakeModel for fast offline plumbing checks, or disable to call the live Qwen3-8B endpoint.",
+                )
+
+            if st.button("🚀 Run Evaluation", type="primary", key="btn_run_eval"):
+                if n_domain == 0 and n_adv == 0 and "Week 4" not in eval_scope:
+                    st.warning("Select at least 1 question from `evaluation_set.json` or `evaluation_set_adversarial.json`.")
+                else:
+                    domain_slice, adv_slice = load_eval_datasets(int(n_domain), int(n_adv))
+                    eval_results: dict = {}
+                    run_all = eval_scope.startswith("Run All")
+
+                    with st.status("Running evaluation suite…", expanded=True) as status_box:
+                        def _cb(msg: str) -> None:
+                            status_box.write(msg)
+
+                        if run_all or eval_scope.startswith("Week 1"):
+                            _cb("▶ Starting Week 1: Single-Prompt Baselines…")
+                            eval_results["week1"] = run_week1_eval(
+                                domain_slice, adv_slice, S, use_mock=use_mock, progress_cb=_cb
+                            )
+
+                        if run_all or eval_scope.startswith("Week 2"):
+                            _cb("▶ Starting Week 2: Retrieval Evaluation…")
+                            eval_results["week2"] = run_week2_eval(
+                                domain_slice, S, chunkings=w2_chunks or ["heading_cap"], progress_cb=_cb
+                            )
+
+                        if run_all or eval_scope.startswith("Week 3"):
+                            _cb("▶ Starting Week 3: Multi-Agent E2E Evaluation…")
+                            eval_results["week3"] = run_week3_eval(
+                                domain_slice, adv_slice, S, use_mock=use_mock,
+                                strategies=w3_strats or ["decomposition"], progress_cb=_cb
+                            )
+
+                        if run_all or eval_scope.startswith("Week 4"):
+                            _cb("▶ Starting Week 4: Responsible AI Injection Suite…")
+                            eval_results["week4"] = run_week4_eval(
+                                S, use_mock=use_mock, progress_cb=_cb
+                            )
+
+                        model_lbl = "mock" if use_mock or not S.has_model else S.model
+                        report_md = generate_week_wise_report(
+                            eval_results, int(n_domain), int(n_adv), model_lbl
+                        )
+                        out_dir = Path("eval_runs")
+                        out_dir.mkdir(exist_ok=True)
+                        from datetime import datetime, timezone
+                        ts_tag = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+                        report_path = out_dir / f"week_wise_eval_report_{ts_tag}.md"
+                        report_path.write_text(report_md, encoding="utf-8")
+                        (out_dir / "latest_week_wise_report.md").write_text(report_md, encoding="utf-8")
+
+                        st.session_state["last_eval_report"] = report_md
+                        st.session_state["last_eval_path"] = str(report_path)
+                        status_box.update(label="✅ Evaluation complete!", state="complete", expanded=False)
+
+            if st.session_state.get("last_eval_report"):
+                st.divider()
+                dl_col1, dl_col2 = st.columns([3, 1])
+                with dl_col1:
+                    st.success(f"Report saved to `{st.session_state.get('last_eval_path', 'eval_runs/latest_week_wise_report.md')}`")
+                with dl_col2:
+                    st.download_button(
+                        "⬇️ Download Report (.md)",
+                        data=st.session_state["last_eval_report"],
+                        file_name="week_wise_eval_report.md",
+                        mime="text/markdown",
+                        use_container_width=True,
+                    )
+                st.markdown(st.session_state["last_eval_report"])
 
 
 # ---------------------------------------------------------------------------

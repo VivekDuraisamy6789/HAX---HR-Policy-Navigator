@@ -4,6 +4,7 @@ Provides a simple credential table with four demo personas covering all roles
 used in the capstone presentation. No external dependency required.
 
 Roles:
+  sys_admin    — System Administrator: unrestricted access to all tabs, traces, feedback, HITL, and eval_run
   hr_ops       — HR Operations: full access including HITL queue management
   manager      — People Manager: team-scoped view of HITL queue, manager-layer answers
   associate    — Employee (tenured 3+ yrs): concise direct answers
@@ -31,6 +32,17 @@ class UserProfile:
 # Demo user table — four personas for capstone presentation
 # ---------------------------------------------------------------------------
 _USER_DB: dict[str, dict] = {
+    "sys_admin": {
+        "password": "sys123",
+        "profile": UserProfile(
+            user_id="u000",
+            name="System Admin",
+            role="sys_admin",
+            tenure="senior",
+            team_id="sys_admin",
+            display_role="System Administrator",
+        ),
+    },
     "hr_admin": {
         "password": "hr123",
         "profile": UserProfile(
