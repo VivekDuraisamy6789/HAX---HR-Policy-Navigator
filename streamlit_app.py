@@ -973,7 +973,13 @@ def main() -> None:
                     sys_prompt = strat_data.get("system_prompt") or WEEK1_SYSTEM_PROMPTS.get(strat_name, "")
                     if sys_prompt:
                         st.caption("System Prompt:")
-                        st.code(sys_prompt, language="text")
+                        st.markdown(
+                            "<pre style='white-space:pre-wrap; word-wrap:break-word; overflow-wrap:anywhere; "
+                            "background:rgba(128,128,128,0.1); padding:10px 12px; border-radius:6px; "
+                            "font-size:0.82rem; line-height:1.45; border:1px solid rgba(128,128,128,0.2); "
+                            f"margin-bottom:10px;'>{_html.escape(sys_prompt)}</pre>",
+                            unsafe_allow_html=True,
+                        )
                     grid_rows = _format_w1_grid(strat_data.get("rows", []))
                     if grid_rows:
                         headers = list(grid_rows[0].keys())
@@ -1013,8 +1019,8 @@ def main() -> None:
 
             st.markdown("### 🧪 Evaluation Runner & Week-Wise Report Generator")
             st.caption(
-                "Run Week 1–4 benchmarks on configurable slices of `evaluation_set.json` and "
-                "`evaluation_set_adversarial.json`, and generate a markdown report matching `strategy_comparison.md`."
+                "Run Week 1–4 benchmarks on configurable slices of domain queries and "
+                "adversarial queries, and generate a markdown report matching `strategy_comparison.md`."
             )
 
             all_domain, all_adv = load_eval_datasets()
@@ -1024,13 +1030,13 @@ def main() -> None:
             cfg_col1, cfg_col2, cfg_col3 = st.columns([1, 1, 1.2])
             with cfg_col1:
                 n_domain = st.number_input(
-                    f"Questions from `evaluation_set.json` (max {max_domain})",
+                    f"Domain queries (max {max_domain})",
                     min_value=0, max_value=max_domain, value=min(10, max_domain), step=1,
                     key="eval_n_domain",
                 )
             with cfg_col2:
                 n_adv = st.number_input(
-                    f"Questions from `evaluation_set_adversarial.json` (max {max_adv})",
+                    f"Adversarial queries (max {max_adv})",
                     min_value=0, max_value=max_adv, value=min(5, max_adv), step=1,
                     key="eval_n_adv",
                 )
@@ -1072,7 +1078,7 @@ def main() -> None:
 
             if st.button("🚀 Run Evaluation", type="primary", key="btn_run_eval"):
                 if n_domain == 0 and n_adv == 0 and "Week 4" not in eval_scope:
-                    st.warning("Select at least 1 question from `evaluation_set.json` or `evaluation_set_adversarial.json`.")
+                    st.warning("Select at least 1 domain query or adversarial query.")
                 else:
                     domain_slice, adv_slice = load_eval_datasets(int(n_domain), int(n_adv))
                     eval_results: dict = {}

@@ -527,7 +527,7 @@ def generate_week_wise_report(
         f"**Track:** Track B — API-Side Capstone (Hosted `<8B` Inference API: `{model_name}`)  ",
         "**Project:** Multi-Agent Operations Copilot (HR Policy Navigator)  ",
         f"**Run Timestamp:** {now_str}  ",
-        f"**Benchmark Slice:** `{n_domain}` domain queries (`evaluation_set.json`) + `{n_adv}` adversarial queries (`evaluation_set_adversarial.json`) = **{n_domain + n_adv} total queries**  ",
+        f"**Benchmark Slice:** `{n_domain}` domain queries + `{n_adv}` adversarial queries = **{n_domain + n_adv} total queries**  ",
         "**Evaluator Directive Alignment:** Presents **Decision/Fact Accuracy** alongside **ROUGE-LCS F1 Score**, retrieval **Hit@k / MRR**, and **Prompt Injection Defense**.",
         "",
         "---",
@@ -548,7 +548,7 @@ def generate_week_wise_report(
         if has_dom:
             dom_n = next(m["domain_stats"]["n"] for m in w1["strategies"].values() if m.get("domain_stats", {}).get("n", 0) > 0)
             lines.extend([
-                f"### 1.1 Domain Queries (`evaluation_set.json`, $N={dom_n}$)",
+                f"### 1.1 Domain Queries ($N={dom_n}$)",
                 "",
                 "| Strategy | Decision Accuracy | ROUGE-LCS F1 | JSON Valid Rate | $p_{50}$ Latency (ms) | Primary Failures |",
                 "|---|---|---|---|---|---|",
@@ -566,7 +566,7 @@ def generate_week_wise_report(
         if has_adv:
             adv_n = next(m["adv_stats"]["n"] for m in w1["strategies"].values() if m.get("adv_stats", {}).get("n", 0) > 0)
             lines.extend([
-                f"### 1.2 Adversarial & Safety Queries (`evaluation_set_adversarial.json`, $N={adv_n}$)",
+                f"### 1.2 Adversarial & Safety Queries ($N={adv_n}$)",
                 "",
                 "| Strategy | Decision Accuracy | JSON Valid Rate | $p_{50}$ Latency (ms) | Primary Failures |",
                 "|---|---|---|---|---|",
