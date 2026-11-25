@@ -103,6 +103,10 @@ def test_eval_runner_all_weeks_mock():
     assert res["week1"]["strategies"]["zero_shot"]["system_prompt"]
     assert len(res["week1"]["strategies"]["zero_shot"]["rows"]) == 3
     assert "## 2. Week 2:" in report
+    assert "Why `max_words = 220`" in report
+    assert "Chunking Strategy Definition: `fixed_500`" in report
+    assert "Chunking Strategy Definition: `fixed_200`" in report
+    assert "Chunking Strategy Definition: `heading`" in report
     assert "## 3. Week 3:" in report
     assert "## 4. Week 4:" in report
     assert "ROUGE-LCS F1 (Generation)" in report
