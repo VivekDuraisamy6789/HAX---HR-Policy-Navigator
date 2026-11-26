@@ -103,6 +103,11 @@ def test_eval_runner_all_weeks_mock():
     assert res["week1"]["strategies"]["zero_shot"]["system_prompt"]
     assert len(res["week1"]["strategies"]["zero_shot"]["rows"]) == 3
     assert "## 2. Week 2:" in report
+    assert "$p_{50}$ Latency (ms)" in report
+    first_w2_run = next(iter(res["week2"]["runs"].values()))
+    assert "p50_latency_ms" in first_w2_run
+    assert len(first_w2_run["rows"]) == 2
+    assert "retrieved_chunks" in first_w2_run["rows"][0]
     assert "Why `max_words = 220`" in report
     assert "Chunking Strategy Definition: `fixed_500`" in report
     assert "Chunking Strategy Definition: `fixed_200`" in report

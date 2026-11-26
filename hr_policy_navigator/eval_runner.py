@@ -295,22 +295,52 @@ def run_week2_eval(
             per_q5: list[float] = []
             themes: list[str] = []
             misses: list[dict] = []
+            rows: list[dict] = []
 
             for it in items:
                 gold = set(it["expected_sources"])
-                order = _doc_ranking(corpus.search(it["question"], top_k=40, mode=mode, pool=30, max_per_doc=40))
+                t0 = time.perf_counter()
+                hits = corpus.search(it["question"], top_k=40, mode=mode, pool=30, max_per_doc=40)
+                lat_ms = round((time.perf_counter() - t0) * 1000, 1)
+                order = _doc_ranking(hits)
                 first = next((r for r, p in enumerate(order) if p in gold), None)
-                mrr += 1 / (first + 1) if first is not None else 0.0
+                q_mrr = round(1 / (first + 1), 3) if first is not None else 0.0
+                mrr += q_mrr
                 per_q5.append(1.0 if first is not None and first < 5 else 0.0)
                 themes.append(it.get("theme", it["id"]))
+
+                q_hits: dict[int, float] = {}
+                q_doc_rec_5 = 0.0
                 for k in ks:
                     got = gold & set(order[:k])
-                    rec[k] += 1.0 if got else 0.0
-                    all_rec[k] += len(got) / len(gold)
+                    q_hits[k] = 1.0 if got else 0.0
+                    rec[k] += q_hits[k]
+                    frac = len(got) / len(gold)
+                    all_rec[k] += frac
+                    if k == 5:
+                        q_doc_rec_5 = round(frac, 3)
+
                 if first is None or first >= 5:
                     misses.append({"id": it["id"], "q": it["question"], "gold": sorted(gold), "top3": order[:3]})
 
+                rows.append({
+                    "id": it["id"],
+                    "question": it["question"],
+                    "expected_sources": sorted(gold),
+                    "retrieved_chunks": [f"{h.chunk.chunk_id} ({h.chunk.section[:45]})" for h in hits[:5]],
+                    "chunking": ch,
+                    "mode": mode,
+                    "hit1": q_hits[1],
+                    "hit3": q_hits[3],
+                    "hit5": q_hits[5],
+                    "doc_recall_5": q_doc_rec_5,
+                    "mrr": q_mrr,
+                    "latency_ms": lat_ms,
+                })
+
             n = len(items)
+            lats = sorted(r["latency_ms"] for r in rows) if rows else [0.0]
+            ci95 = _bootstrap_ci(per_q5, themes)
             results["runs"][f"{ch}|{mode}"] = {
                 "chunking": ch,
                 "mode": mode,
@@ -319,8 +349,10 @@ def run_week2_eval(
                 "hit_rate": {f"@{k}": round(rec[k] / n, 3) for k in ks},
                 "doc_recall": {f"@{k}": round(all_rec[k] / n, 3) for k in ks},
                 "mrr": round(mrr / n, 3),
-                "hit5_ci95": _bootstrap_ci(per_q5, themes),
+                "hit5_ci95": ci95,
+                "p50_latency_ms": lats[n // 2],
                 "miss_count": len(misses),
+                "rows": rows,
             }
     return results
 
@@ -590,14 +622,14 @@ def generate_week_wise_report(
             "",
             f"Evaluated on $N={w2['n']}$ domain queries with gold `expected_sources`:",
             "",
-            "| Chunking | Retrieval Mode | Chunks | Hit@1 | Hit@3 | Hit@5 | Doc Recall@5 | MRR | Hit@5 95% CI |",
-            "|---|---|---|---|---|---|---|---|---|",
+            "| Chunking | Retrieval Mode | Chunks | Hit@1 | Hit@3 | Hit@5 | Doc Recall@5 | MRR | Hit@5 95% CI | $p_{50}$ Latency (ms) |",
+            "|---|---|---|---|---|---|---|---|---|---|",
         ])
         for _key, r in w2["runs"].items():
             lines.append(
                 f"| `{r['chunking']}` | **{r['mode']}** | {r['chunks']} | "
                 f"{r['hit_rate']['@1']:.3f} | {r['hit_rate']['@3']:.3f} | {r['hit_rate']['@5']:.3f} | "
-                f"{r['doc_recall']['@5']:.3f} | {r['mrr']:.3f} | {r['hit5_ci95']} |"
+                f"{r['doc_recall']['@5']:.3f} | {r['mrr']:.3f} | {r['hit5_ci95']} | {r.get('p50_latency_ms', 0.0):.1f} |"
             )
         lines.extend([
             "",

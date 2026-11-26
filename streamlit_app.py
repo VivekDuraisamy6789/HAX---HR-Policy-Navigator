@@ -965,51 +965,93 @@ def main() -> None:
                     for r in rows
                 ]
 
-            def _render_w1_grids(w1_res: dict) -> None:
+            def _render_wrapped_table(grid_rows: list[dict], col_styles: dict[str, str]) -> None:
                 import html as _html
 
+                if not grid_rows:
+                    return
+                headers = list(grid_rows[0].keys())
+                ths = "".join(
+                    f"<th style='padding:8px 10px; border-bottom:2px solid rgba(128,128,128,0.35); "
+                    f"text-align:left; white-space:nowrap; background:rgba(128,128,128,0.1);'>{_html.escape(h)}</th>"
+                    for h in headers
+                )
+                trs = []
+                for row in grid_rows:
+                    tds = "".join(
+                        f"<td style='padding:8px 10px; border-bottom:1px solid rgba(128,128,128,0.2); "
+                        f"vertical-align:top; {col_styles.get(h, '')}'>{_html.escape(str(row[h]))}</td>"
+                        for h in headers
+                    )
+                    trs.append(f"<tr>{tds}</tr>")
+                table_html = (
+                    "<div style='overflow-x:auto; width:100%; border:1px solid rgba(128,128,128,0.25); "
+                    "border-radius:6px; margin-bottom:16px;'>"
+                    "<table style='width:100%; border-collapse:collapse; font-size:0.84rem; line-height:1.45;'>"
+                    f"<thead><tr>{ths}</tr></thead>"
+                    f"<tbody>{''.join(trs)}</tbody>"
+                    "</table></div>"
+                )
+                st.markdown(table_html, unsafe_allow_html=True)
+
+            def _render_w1_grids(w1_res: dict) -> None:
+                col_styles = {
+                    "ID": "white-space:nowrap; font-weight:600;",
+                    "Question": "min-width:180px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Gold Answer": "min-width:240px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Model Answer": "min-width:240px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Decision Accuracy": "white-space:nowrap;",
+                    "ROUGE-LCS F1": "white-space:nowrap;",
+                    "Valid JSON": "white-space:nowrap; text-align:center;",
+                    "Latency (ms)": "white-space:nowrap; text-align:right;",
+                    "Primary Failures": "min-width:130px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                }
                 for strat_name, strat_data in w1_res.get("strategies", {}).items():
                     st.markdown(f"#### `{strat_name}`")
                     sys_prompt = strat_data.get("system_prompt") or WEEK1_SYSTEM_PROMPTS.get(strat_name, "")
                     if sys_prompt:
                         st.caption("System Prompt:")
                         st.code(sys_prompt, language="text")
-                    grid_rows = _format_w1_grid(strat_data.get("rows", []))
-                    if grid_rows:
-                        headers = list(grid_rows[0].keys())
-                        col_styles = {
-                            "ID": "white-space:nowrap; font-weight:600;",
-                            "Question": "min-width:180px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
-                            "Gold Answer": "min-width:240px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
-                            "Model Answer": "min-width:240px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
-                            "Decision Accuracy": "white-space:nowrap;",
-                            "ROUGE-LCS F1": "white-space:nowrap;",
-                            "Valid JSON": "white-space:nowrap; text-align:center;",
-                            "Latency (ms)": "white-space:nowrap; text-align:right;",
-                            "Primary Failures": "min-width:130px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
-                        }
-                        ths = "".join(
-                            f"<th style='padding:8px 10px; border-bottom:2px solid rgba(128,128,128,0.35); "
-                            f"text-align:left; white-space:nowrap; background:rgba(128,128,128,0.1);'>{_html.escape(h)}</th>"
-                            for h in headers
-                        )
-                        trs = []
-                        for row in grid_rows:
-                            tds = "".join(
-                                f"<td style='padding:8px 10px; border-bottom:1px solid rgba(128,128,128,0.2); "
-                                f"vertical-align:top; {col_styles.get(h, '')}'>{_html.escape(str(row[h]))}</td>"
-                                for h in headers
-                            )
-                            trs.append(f"<tr>{tds}</tr>")
-                        table_html = (
-                            "<div style='overflow-x:auto; width:100%; border:1px solid rgba(128,128,128,0.25); "
-                            "border-radius:6px; margin-bottom:16px;'>"
-                            "<table style='width:100%; border-collapse:collapse; font-size:0.84rem; line-height:1.45;'>"
-                            f"<thead><tr>{ths}</tr></thead>"
-                            f"<tbody>{''.join(trs)}</tbody>"
-                            "</table></div>"
-                        )
-                        st.markdown(table_html, unsafe_allow_html=True)
+                    _render_wrapped_table(_format_w1_grid(strat_data.get("rows", [])), col_styles)
+
+            def _format_w2_grid(run_data: dict) -> list[dict]:
+                ci_str = str(run_data.get("hit5_ci95", "—"))
+                return [
+                    {
+                        "ID": r["id"],
+                        "Question": r.get("question", ""),
+                        "expected_sources": ", ".join(r.get("expected_sources", [])),
+                        "retrieved chunks": "\n".join(r.get("retrieved_chunks", [])),
+                        "Retrieval Mode": r.get("mode", run_data.get("mode", "")),
+                        "Hit@1": f"{r['hit1']:.3f}",
+                        "Hit@3": f"{r['hit3']:.3f}",
+                        "Hit@5": f"{r['hit5']:.3f}",
+                        "Doc Recall@5": f"{r['doc_recall_5']:.3f}",
+                        "MRR": f"{r['mrr']:.3f}",
+                        "Hit@5 95% CI": ci_str,
+                        "Latency (ms)": r.get("latency_ms", 0.0),
+                    }
+                    for r in run_data.get("rows", [])
+                ]
+
+            def _render_w2_grids(w2_res: dict) -> None:
+                col_styles = {
+                    "ID": "white-space:nowrap; font-weight:600;",
+                    "Question": "min-width:180px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "expected_sources": "min-width:180px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "retrieved chunks": "min-width:240px; white-space:pre-wrap; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Retrieval Mode": "white-space:nowrap; font-weight:600;",
+                    "Hit@1": "white-space:nowrap; text-align:right;",
+                    "Hit@3": "white-space:nowrap; text-align:right;",
+                    "Hit@5": "white-space:nowrap; text-align:right;",
+                    "Doc Recall@5": "white-space:nowrap; text-align:right;",
+                    "MRR": "white-space:nowrap; text-align:right;",
+                    "Hit@5 95% CI": "white-space:nowrap; text-align:center;",
+                    "Latency (ms)": "white-space:nowrap; text-align:right;",
+                }
+                for run_key, run_data in w2_res.get("runs", {}).items():
+                    st.markdown(f"#### `{run_key}`")
+                    _render_wrapped_table(_format_w2_grid(run_data), col_styles)
 
             st.markdown("### 🧪 Evaluation Runner & Week-Wise Report Generator")
             st.caption(
@@ -1145,6 +1187,10 @@ def main() -> None:
                     if st.session_state.get("last_eval_results", {}).get("week1"):
                         with st.expander("📋 Strategy Grids & System Prompts (Week 1)", expanded=True):
                             _render_w1_grids(st.session_state["last_eval_results"]["week1"])
+
+                    if st.session_state.get("last_eval_results", {}).get("week2"):
+                        with st.expander("📋 Strategy Grids & Retrieval Evaluation (Week 2)", expanded=True):
+                            _render_w2_grids(st.session_state["last_eval_results"]["week2"])
 
                     if st.session_state.get("last_eval_report"):
                         st.divider()
