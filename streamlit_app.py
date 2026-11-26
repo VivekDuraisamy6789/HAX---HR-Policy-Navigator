@@ -180,10 +180,15 @@ def _inject_css() -> None:
             border: none !important;
             border-radius: 6px 6px 0 0 !important;
             box-shadow: none !important;
-            padding: 6px 10px !important;
+            padding: 6px 6px !important;
             min-height: 2.2rem !important;
             font-weight: 500 !important;
             color: #475569 !important;
+            white-space: nowrap !important;
+        }
+        .st-key-sticky_nav_tabs button p {
+            white-space: nowrap !important;
+            overflow: visible !important;
         }
         .st-key-sticky_nav_tabs button[data-testid="stBaseButton-secondary"]:hover {
             background: #F1F5F9 !important;
@@ -578,7 +583,10 @@ def main() -> None:
         active_tab = st.session_state["active_tab"]
 
         with st.container(key="sticky_nav_tabs"):
-            nav_cols = st.columns([max(1.0, len(lbl) * 0.13 + 0.5) for _, lbl, _ in nav_items] + [2.0])
+            col_weights = [max(1.5, len(lbl) * 0.14 + 0.95) for _, lbl, _ in nav_items]
+            if len(nav_items) < 5:
+                col_weights.append(max(1.0, (5 - len(nav_items)) * 1.4))
+            nav_cols = st.columns(col_weights, gap="small")
             for idx, (t_id, t_lbl, t_ico) in enumerate(nav_items):
                 with nav_cols[idx]:
                     if st.button(

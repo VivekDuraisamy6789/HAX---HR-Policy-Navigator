@@ -4,7 +4,7 @@
 [![Evaluation Benchmark](https://img.shields.io/badge/Frozen%20Benchmark-84%20Queries%20(100%25%20Completion)-blue)](eval_runs/summary.json)
 [![Adversarial Safety](https://img.shields.io/badge/Adversarial%20Refusal-96.6%25-success)](eval_runs/summary.json)
 [![Prompt Injection Defense](https://img.shields.io/badge/Injection%20Defense-87.5%25-success)](eval_runs/injection.json)
-[![Branch](https://img.shields.io/badge/Active%20Branch-Amit--Enhanced-orange)](https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator/tree/Amit-Enhanced)
+[![Branch](https://img.shields.io/badge/Active%20Branch-main%20%7C%20Amit--Enhanced-orange)](https://github.com/bhardwaj-amit79/HR-Policy-Navigator)
 
 **Course:** Executive Post Graduate Programme in Generative AI and Agentic AI  
 **Track:** Track B — API-Side Capstone (Hosted $\le$8B Inference API, No Direct GPU Access, No Fine-Tuning)  
@@ -107,9 +107,9 @@ Beyond baseline Week 4 requirements, `Amit-Enhanced` introduces enterprise-grade
 5. **🧑‍💼 Human-in-the-Loop Review Queue:**
    * Styled state-machine tickets: `🔴 Pending` $\to$ `🟡 Acknowledged` $\to$ `🟢 Resolved / 🔺 Escalated`.
    * Role-gated visibility (HR Ops sees full queue; Managers see team-scoped escalations).
-6. **🚀 "Our Journey" Interactive Presentation Tab:**
-   * Built-in presentation deck showing Week 1 $\to$ Week 4 progression.
-   * Live side-by-side comparison arena (Week 1 raw LLM hallucination vs Week 4 copilot).
+6. **Interactive Evaluation Runner & Bird's Eye View:**
+   * **Evaluation Runner:** Configurable Week 1–4 benchmark execution with per-strategy grids, Question Type (`Domain` / `Adversarial`), Week 1 vs Week 3 detailed comparison, and downloadable Markdown reports.
+   * **Bird's Eye View:** Live single-query side-by-side comparison arena across selectable Week 1 and Week 3 strategies (Custom, Domain, or Adversarial queries).
 7. **💬 Persistent Chat History:**
    * Thread-safe JSONL session store with 7-day privacy retention and sidebar session loader.
 
@@ -120,10 +120,10 @@ Beyond baseline Week 4 requirements, `Amit-Enhanced` introduces enterprise-grade
 ### Option A — Run Locally with Virtualenv
 
 ```powershell
-# 1. Clone & switch to active branch
-git clone https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator.git
-cd HAX---HR-Policy-Navigator
-git checkout Amit-Enhanced
+# 1. Clone & checkout branch
+git clone https://github.com/bhardwaj-amit79/HR-Policy-Navigator.git
+cd HR-Policy-Navigator
+git checkout main   # or: git checkout Amit-Enhanced
 
 # 2. Setup environment
 python -m venv .venv
@@ -158,7 +158,7 @@ The container automatically packages SSL certificates (`certs/ca-bundle.crt`), m
 | Username | Password | Role | Persona Description |
 |---|---|---|---|
 | `sys_admin` | `sys123` | System Administrator | Unrestricted superuser access (all tabs, global traces/feedback, Evaluation Runner, Bird's Eye View) |
-| `hr_admin` | `hr123` | HR Operations | Full policy verbatim, exception clauses, full HITL queue manager, Our Journey |
+| `hr_admin` | `hr123` | HR Operations | Full policy verbatim, exception clauses, full HITL queue manager |
 | `mgr_alice` | `mgr123` | People Manager | Manager vs employee obligations, team-scoped review queue |
 | `emp_bob` | `emp123` | Associate (New Hire) | Step-by-step onboarding, acronym definitions, quick tips |
 | `emp_carol` | `emp456` | Associate (Tenured) | Direct, concise answers for experienced employees |
@@ -168,8 +168,8 @@ The container automatically packages SSL certificates (`certs/ca-bundle.crt`), m
 ## 📁 Repository Structure
 
 ```
-HAX---HR-Policy-Navigator/
-├── streamlit_app.py                # Main UI (Login, Ask, Traces, Feedback, Journey, HITL)
+HR-Policy-Navigator/
+├── streamlit_app.py                # Main UI (Login, Ask, Traces, Feedback, HITL, Evaluation Runner, Bird's Eye View)
 ├── Dockerfile                      # Production container spec
 ├── docker-compose.yml              # Volume mounts for traces, state, cache, certs
 ├── requirements.txt                # Core dependencies + pyttsx3

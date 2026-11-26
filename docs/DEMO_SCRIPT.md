@@ -11,11 +11,11 @@
 ## ⏱️ Master 10-Minute Presentation Timeline
 
 ```
-[00:00 - 02:00]  1. Problem Formulation & The $\le$8B Small-Model Paradox
+[00:00 - 02:00]  1. Problem Formulation & The <=8B Small-Model Paradox
 [02:00 - 04:30]  2. Live Product Walkthrough & Persona Personalization
 [04:30 - 06:30]  3. Responsible AI & Adversarial Red-Teaming (Live Injections & HITL)
-[06:30 - 08:30]  4. Empirical Progression Arc (Week 1 -> Week 4 in "Our Journey" Tab)
-[08:30 - 10:00]  5. Production Architecture, RLHF Loop & Examiner Viva Defense
+[06:30 - 08:30]  4. Empirical Progression & Live Strategy Arena (Evaluation Runner & Bird's Eye View)
+[08:30 - 10:00]  5. Trace Dashboard (Langfuse + UI), RLHF Loop & Examiner Viva Defense
 ```
 
 ---
@@ -85,37 +85,36 @@
 
 ---
 
-### Segment 4: The Empirical Progression Arc in "Our Journey" Tab (06:30 – 08:30)
+### Segment 4: Empirical Progression & Live Comparison Arena (06:30 – 08:30)
 
-* **Screen Action:** Switch to the **🚀 Our Journey** tab.
+* **Screen Action:** Sign in as `sys_admin` (`sys123`), open **Bird's Eye View** first, then switch to **Evaluation Runner**.
 * **Speaker Script:**
-  > *"Mentor Gunjan gave us a strict directive during our check-in: 'I want numbers first. Recall@k for retrieval, Decision Accuracy, and ROUGE-LCS F1 score for generation.'
-  > 
-  > Let's look at how our system systematically advanced over the 4-week curriculum."*
+  > *"Mentor Gunjan gave us a clear directive: present Decision Accuracy alongside ROUGE-LCS F1, retrieval Hit@k/MRR, and adversarial safety. Let's inspect this both live on a single query and across the full 84-query benchmark."*
 
-* **Highlight Tab Panels:**
-  1. **Week 1 vs. Week 4 Side-by-Side Arena:**
-     * Select *"Consequential Action"* case: Show how Week 1 raw Qwen3-8B happily generated a fake termination letter, whereas Week 4 safely routes to the human review queue.
-     * Select *"Standing Desk Stipend"* case: Show Week 1 hallucinating a fake $500 stipend, whereas Week 4 Critic verifies zero citations and abstains cleanly (*"Not found in documents"*).
-  2. **Retrieval Ablation Chart:**
-     * Point out the jump from Dense alone (`Hit@1: 0.582, MRR: 0.668`) to Hybrid + Reranker (`Hit@1: 0.709, Hit@5: 0.891, MRR: 0.793`).
-     * Explain the 95% bootstrap confidence interval: `[0.782, 0.982]`.
+* **Highlight Panels:**
+  1. **Bird's Eye View (Live Week 1 vs Week 3 Arena):**
+     * Pick *"Standing desk stipend"* (`A04`/`A03` or custom unanswerable query) or *"How many PTO days do I get?"*, select Week 1 & Week 3 strategies, and run live: show Week 1 hallucinating vs Week 3 abstaining/citing cleanly.
+  2. **Evaluation Runner (Week 1–4 Full Benchmark):**
+     * Point out the 84-query frozen benchmark (`55` domain + `29` adversarial) + 8 Week 4 injection vectors:
+       - Week 2 Hybrid + Lexical Reranker: **0.709 Hit@1 · 0.891 Hit@5 · 0.787 MRR** (95% CI `[0.782, 0.982]`).
+       - Week 3 Adversarial Refusal: rises from **44.8%–69.0%** (Week 1) to **93.1% (27/29)** on `decomposition` with **0 hallucinations**.
+       - Week 4 Injection Defense: **87.5% (7/8 attacks blocked)**.
   3. **The ROUGE-LCS F1 Paradox (Mentor Gunjan's Directive):**
-     * Address Gunjan's specific metric request: *"Our macro ROUGE-LCS F1 is 0.1981. This is not an error—it is an empirical mathematical reality. In `evaluation_set.json`, 5 queries share a 65-token composite paragraph. When our copilot outputs an exact 17-token factual sentence, LCS recall is mathematically bounded to $\le 0.25$, even though factual accuracy is 100% and citation accuracy is 78.2%."*
+     * Explain why macro ROUGE-LCS F1 is **~0.197**: 5 queries per policy theme share a ~65-token composite paragraph, whereas our copilot emits concise 1-sentence cited answers, mathematically capping LCS recall around ~0.20–0.26 even when facts and `[S#]` citations are exact.
 
 ---
 
-### Segment 5: Serving Architecture, RLHF Loop & Viva Defense (08:30 – 10:00)
+### Segment 5: Observability (Traces + Langfuse), RLHF Loop & Viva Defense (08:30 – 10:00)
 
-* **Screen Action:** Switch to **👍 Feedback Tab**, then **📊 Traces Tab**.
+* **Screen Action:** Switch to **Feedback Tab**, then **Traces Tab**, then open **Local Langfuse (`http://localhost:3000`)**.
 * **Speaker Script:**
-  > *"Finally, let's examine production serving and continuous learning:
-  > 
-  > 1. **RLHF Continuous Improvement:** In our Feedback tab, every thumbs-down aggregates real user signal. Our offline analytics script clusters negative feedback by policy section, surfacing candidate prompt patches without retraining weights.
-  > 2. **Observability & Guarded Serving:** In the Traces tab, every turn provides hierarchical span tracking, $p_{50}$ latency (5.94s), token usage (avg 3,505), and cost ($0.00019/query). A sliding-window RateLimiter (10 req/min) and LRU ResponseCache (900s TTL) prevent endpoint denial of service.
-  > 3. **Containerized Deployment:** The entire system runs under a single command: `docker compose up --build`, packaging all SSL certificates, model bridges, and volumes.
-  > 
-  > We have achieved 60/60 passing unit tests and 100% completion across all 84 benchmark queries. We are open for examiner questions."*
+  > *"Finally, let's examine observability, production serving, and continuous learning:
+  >
+  > 1. **RLHF Continuous Improvement:** In our Feedback tab, `Helpful` / `Improve` ratings and suggested corrections log to `state/feedback_log.jsonl`, grouped by role and strategy.
+  > 2. **Dual-Layer Observability:** Every query writes a full span trace (`guard -> planner -> tool -> generate -> critic`) to `traces/traces.jsonl` (shown in the **Traces** tab) and mirrors OpenTelemetry observations to **Langfuse** (`http://localhost:3000`) with latency, token counts, and JSON repair events.
+  > 3. **Production Serving & Tests:** A sliding-window `RateLimiter` (20 req/min default) and LRU `ResponseCache` (900s TTL) guard the API, packaged cleanly with `docker compose up --build`.
+  >
+  > We have **64/64 passing unit tests** and completed the full 84-query + Week 4 evaluation suite. We are open for examiner questions."*
 
 ---
 
@@ -141,8 +140,9 @@
 
 ## 📋 Pre-Demo Checklist
 
-- [ ] `.venv\Scripts\pytest tests` passes (60/60).
+- [ ] `.venv\Scripts\pytest tests` passes (`64/64`).
 - [ ] Streamlit is running: `http://localhost:8501`.
+- [ ] Local Langfuse is running: `http://localhost:3000`.
 - [ ] Browser window zoomed to 110% for clear projection.
-- [ ] Audio volume turned on for Read Aloud (TTS) demonstration.
-- [ ] Demo credentials open on notepad: `hr_admin/hr123`, `mgr_alice/mgr123`, `emp_bob/emp123`, `emp_carol/emp456`.
+- [ ] Audio volume turned on for Read Aloud (`Read` TTS) demonstration.
+- [ ] Demo credentials ready: `sys_admin/sys123`, `hr_admin/hr123`, `mgr_alice/mgr123`, `emp_bob/emp123`, `emp_carol/emp456`.

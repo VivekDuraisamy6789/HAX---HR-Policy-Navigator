@@ -20,9 +20,9 @@
 ### Step 1 — Clone & Switch Branch
 
 ```powershell
-git clone https://github.com/VivekDuraisamy6789/HAX---HR-Policy-Navigator.git
-cd HAX---HR-Policy-Navigator
-git checkout Amit-Enhanced
+git clone https://github.com/bhardwaj-amit79/HR-Policy-Navigator.git
+cd HR-Policy-Navigator
+git checkout main   # or: git checkout Amit-Enhanced
 ```
 
 ### Step 2 — Create Virtual Environment
@@ -83,7 +83,7 @@ Open **http://localhost:8501**. All volumes (`./traces`, `./state`, `./.cache`, 
 | Username | Password | Role | Persona |
 |----------|----------|------|---------|
 | `sys_admin` | `sys123` | System Administrator | Unrestricted superuser (all tabs, Evaluation Runner, Bird's Eye View) |
-| `hr_admin` | `hr123` | HR Operations | Full access, HITL queue manager, Our Journey |
+| `hr_admin` | `hr123` | HR Operations | Full access, HITL queue manager |
 | `mgr_alice` | `mgr123` | People Manager | Team-scoped view, manager-layer answers |
 | `emp_bob` | `emp123` | Associate (New Hire) | Step-by-step answers, 0–1 yr tenure |
 | `emp_carol` | `emp456` | Associate (Tenured) | Concise direct answers, 3+ yr tenure |
@@ -94,13 +94,12 @@ Open **http://localhost:8501**. All volumes (`./traces`, `./state`, `./.cache`, 
 
 | Tab | What It Shows | Who Can See |
 |-----|---------------|-------------|
-| **Ask** | Main chat UI — multi-turn, voice input, read aloud, session rename (last 3) | All |
-| **Traces** | p50/p95 latency, tool calls, JSON repair metrics, full trace tree | User-scoped (All for HR Ops & System Admin) |
-| **Feedback** | RLHF thumbs ratings, top-rated and low-rated queries | User-scoped (All for HR Ops & System Admin) |
-| **Our Journey** | Week 1→4 progression — live demo of system evolution | HR Ops + System Admin |
+| **Ask** | Main chat UI — multi-turn, voice input, read aloud, on-demand section reader, session rename | All |
+| **Traces** | p50/p95 latency, tool calls, JSON repair metrics, per-span execution table | User-scoped (All for HR Ops & System Admin) |
+| **Feedback** | RLHF Helpful / Improve ratings, top-rated and low-rated queries | User-scoped (All for HR Ops & System Admin) |
 | **Human Review Queue** | Consequential requests pending human action | HR Ops + Manager + System Admin |
 | **Evaluation Runner** | Week 1–4 benchmark runner & week-wise report generator | System Admin |
-| **Bird's Eye View** | Single-query Week 1 vs Week 3 live comparison across all strategies | System Admin |
+| **Bird's Eye View** | Single-query Week 1 vs Week 3 live comparison across selectable strategies | System Admin |
 
 ---
 
