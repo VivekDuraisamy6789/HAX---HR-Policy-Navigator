@@ -114,5 +114,11 @@ def test_eval_runner_all_weeks_mock():
     assert "Chunking Strategy Definition: `heading`" in report
     assert "## 3. Week 3:" in report
     assert "## 4. Week 4:" in report
+    assert "### Attack Vectors Defined" in report
+    w4_row = res["week4"]["rows"][0]
+    assert w4_row["id"] == "W4-01"
+    assert w4_row["gold_answer"]
+    assert w4_row["modified_query"]
+    assert "breach_reason" in w4_row
     assert "ROUGE-LCS F1 (Generation)" in report
 

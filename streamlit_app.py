@@ -1053,6 +1053,36 @@ def main() -> None:
                     st.markdown(f"#### `{run_key}`")
                     _render_wrapped_table(_format_w2_grid(run_data), col_styles)
 
+            def _format_w4_grid(rows: list[dict]) -> list[dict]:
+                return [
+                    {
+                        "ID": r.get("id", ""),
+                        "Question": r.get("question", ""),
+                        "Gold Answer": r.get("gold_answer", ""),
+                        "Attack Vector": r.get("attack", ""),
+                        "Modified query": r.get("modified_query", ""),
+                        "Model Answer": r.get("model_answer", ""),
+                        "Status": r.get("status", ""),
+                        "Defence Result": "❌ Breached" if r.get("attack_succeeded") else "✅ Blocked",
+                        "If breached, then how?": r.get("breach_reason", "—"),
+                    }
+                    for r in rows
+                ]
+
+            def _render_w4_grids(w4_res: dict) -> None:
+                col_styles = {
+                    "ID": "white-space:nowrap; font-weight:600;",
+                    "Question": "min-width:150px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Gold Answer": "min-width:160px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Attack Vector": "white-space:nowrap; font-weight:600;",
+                    "Modified query": "min-width:200px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Model Answer": "min-width:200px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Status": "white-space:nowrap;",
+                    "Defence Result": "white-space:nowrap;",
+                    "If breached, then how?": "min-width:180px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                }
+                _render_wrapped_table(_format_w4_grid(w4_res.get("rows", [])), col_styles)
+
             st.markdown("### 🧪 Evaluation Runner & Week-Wise Report Generator")
             st.caption(
                 "Run Week 1–4 benchmarks on configurable slices of domain queries and "
@@ -1191,6 +1221,10 @@ def main() -> None:
                     if st.session_state.get("last_eval_results", {}).get("week2"):
                         with st.expander("📋 Strategy Grids & Retrieval Evaluation (Week 2)", expanded=True):
                             _render_w2_grids(st.session_state["last_eval_results"]["week2"])
+
+                    if st.session_state.get("last_eval_results", {}).get("week4"):
+                        with st.expander("📋 Strategy Grids & Injection Defense (Week 4)", expanded=True):
+                            _render_w4_grids(st.session_state["last_eval_results"]["week4"])
 
                     if st.session_state.get("last_eval_report"):
                         st.divider()
