@@ -1053,6 +1053,50 @@ def main() -> None:
                     st.markdown(f"#### `{run_key}`")
                     _render_wrapped_table(_format_w2_grid(run_data), col_styles)
 
+            def _format_w3_grid(strat_name: str, strat_data: dict) -> list[dict]:
+                return [
+                    {
+                        "ID": r["id"],
+                        "Question": r.get("question", ""),
+                        "Gold Answer": r.get("gold_answer") or f"[{r.get('type', '')} · expect {r.get('expected_status', 'abstained')}]",
+                        "Strategy": r.get("strategy", strat_name),
+                        "Model Answer": r.get("model_answer", ""),
+                        "Decision Accuracy": "✅ Pass" if r.get("correct") else "❌ Fail",
+                        "ROUGE-LCS F1": f"{r['rouge_lcs_f1']:.4f}" if r.get("rouge_lcs_f1") is not None else "—",
+                        "Retrieval Hit in Context": (
+                            "✅" if r["retrieval_hit"] else "❌"
+                        ) if r.get("retrieval_hit") is not None else "—",
+                        "Tool Calls": r.get("tool_calls", 0),
+                        "LLM Calls": r.get("llm_calls", 0),
+                        "Tokens": r.get("tokens", 0),
+                        "Cost (USD)": f"${r.get('cost_usd', 0.0):.6f}",
+                        "JSON Repairs": r.get("json_repairs", 0),
+                        "Latency": r.get("latency_ms", 0.0),
+                    }
+                    for r in strat_data.get("rows", [])
+                ]
+
+            def _render_w3_grids(w3_res: dict) -> None:
+                col_styles = {
+                    "ID": "white-space:nowrap; font-weight:600;",
+                    "Question": "min-width:170px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Gold Answer": "min-width:220px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Strategy": "white-space:nowrap; font-weight:600;",
+                    "Model Answer": "min-width:220px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Decision Accuracy": "white-space:nowrap;",
+                    "ROUGE-LCS F1": "white-space:nowrap; text-align:right;",
+                    "Retrieval Hit in Context": "white-space:nowrap; text-align:center;",
+                    "Tool Calls": "white-space:nowrap; text-align:right;",
+                    "LLM Calls": "white-space:nowrap; text-align:right;",
+                    "Tokens": "white-space:nowrap; text-align:right;",
+                    "Cost (USD)": "white-space:nowrap; text-align:right;",
+                    "JSON Repairs": "white-space:nowrap; text-align:right;",
+                    "Latency": "white-space:nowrap; text-align:right;",
+                }
+                for strat_name, strat_data in w3_res.get("strategies", {}).items():
+                    st.markdown(f"#### `{strat_name}`")
+                    _render_wrapped_table(_format_w3_grid(strat_name, strat_data), col_styles)
+
             def _format_w4_grid(rows: list[dict]) -> list[dict]:
                 return [
                     {
@@ -1214,6 +1258,10 @@ def main() -> None:
                     if st.session_state.get("last_eval_results", {}).get("week2"):
                         with st.expander("📋 Strategy Grids & Retrieval Evaluation (Week 2)", expanded=True):
                             _render_w2_grids(st.session_state["last_eval_results"]["week2"])
+
+                    if st.session_state.get("last_eval_results", {}).get("week3"):
+                        with st.expander("📋 Strategy Grids & Multi-Agent E2E (Week 3)", expanded=True):
+                            _render_w3_grids(st.session_state["last_eval_results"]["week3"])
 
                     if st.session_state.get("last_eval_results", {}).get("week4"):
                         with st.expander("📋 Strategy Grids & Injection Defense (Week 4)", expanded=True):

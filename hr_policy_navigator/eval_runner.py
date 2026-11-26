@@ -425,11 +425,20 @@ def run_week3_eval(
             rows.append({
                 "id": it["id"],
                 "type": it.get("type", "answerable"),
+                "expected_status": it.get("expected_status", "success"),
                 "question": it["question"],
+                "gold_answer": it.get("gold_answer", ""),
+                "strategy": strat,
+                "model_answer": res["answer"],
                 "status": res["status"],
                 "correct": ok,
                 "failure": fc,
-                "rouge_lcs_f1": round(rl_f1, 4),
+                "rouge_lcs_f1": round(rl_f1, 4) if it.get("gold_answer") else None,
+                "retrieval_hit": (
+                    bool(set(res.get("retrieved", [])) & set(it.get("expected_sources", [])))
+                    if it.get("expected_sources")
+                    else None
+                ),
                 "latency_ms": res["latency_ms"],
                 "tool_calls": res["tool_calls"],
                 "llm_calls": res["llm_calls"],
@@ -448,7 +457,8 @@ def run_week3_eval(
             by_type[r["type"]][0] += int(r["correct"])
             by_type[r["type"]][1] += 1
         ans_rows = [r for r in rows if r["expected_sources"] and r["type"] in ("answerable", "pii", "false_refusal_probe")]
-        mean_rouge = round(sum(r["rouge_lcs_f1"] for r in ans_rows) / max(1, len(ans_rows)), 4) if ans_rows else 0.0
+        rouge_vals = [r["rouge_lcs_f1"] for r in ans_rows if r.get("rouge_lcs_f1") is not None]
+        mean_rouge = round(sum(rouge_vals) / max(1, len(rouge_vals)), 4) if rouge_vals else 0.0
 
         results["strategies"][strat] = {
             "model": model_name,

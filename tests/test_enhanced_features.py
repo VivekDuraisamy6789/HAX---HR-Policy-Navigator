@@ -113,6 +113,11 @@ def test_eval_runner_all_weeks_mock():
     assert "Chunking Strategy Definition: `fixed_200`" in report
     assert "Chunking Strategy Definition: `heading`" in report
     assert "## 3. Week 3:" in report
+    w3_row = res["week3"]["strategies"]["decomposition"]["rows"][0]
+    assert w3_row["strategy"] == "decomposition"
+    assert "gold_answer" in w3_row
+    assert "model_answer" in w3_row
+    assert "retrieval_hit" in w3_row
     assert "## 4. Week 4:" in report
     assert "### Attack Vectors Defined" in report
     w4_row = res["week4"]["rows"][0]
