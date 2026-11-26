@@ -119,6 +119,10 @@ def test_eval_runner_all_weeks_mock():
     assert "model_answer" in w3_row
     assert "retrieval_hit" in w3_row
     assert "## 4. Week 4:" in report
+    assert "## 5. Week 1 vs Week 3 Comparison" in report
+    assert "### 5.1 Summary Split by Query Type" in report
+    assert "### 5.2 Week 1 vs Week 3 Detailed Comparison" in report
+    assert "## 6. Evaluation Methodology Note" in report
     assert "### Attack Vectors Defined" in report
     w4_row = res["week4"]["rows"][0]
     assert w4_row["id"] == "W4-01"

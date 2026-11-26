@@ -811,8 +811,145 @@ def generate_week_wise_report(
             "",
         ])
 
+    # Week 1 vs Week 3 Comparison Section (Option C Summary + Detailed Table)
+    if "week1" in eval_results and "week3" in eval_results:
+        w1 = eval_results["week1"]
+        w3 = eval_results["week3"]
+
+        def _md_cell(val: Any) -> str:
+            return " ".join(str(val or "").split()).replace("|", "\\|")
+
+        norm_rows: list[dict] = []
+        detail_rows: list[dict] = []
+        for s_name, s_data in w1.get("strategies", {}).items():
+            for r in s_data.get("rows", []):
+                norm_rows.append({
+                    "week": "Week 1",
+                    "strategy": s_name,
+                    "dataset": r.get("dataset", "domain" if r.get("type") == "answerable" else "adversarial"),
+                    "correct": bool(r.get("correct")),
+                    "rouge": r.get("rouge_lcs_f1"),
+                    "valid_json": bool(r.get("json_valid")),
+                    "latency_ms": float(r.get("latency_ms", 0.0)),
+                    "failed": not bool(r.get("correct")),
+                })
+                detail_rows.append({
+                    "id": r["id"],
+                    "question": r.get("question", ""),
+                    "gold": r.get("gold_answer") or f"[{r.get('type', '')} · expect {r.get('expected_status', 'abstained')}]",
+                    "model": r.get("model_answer", ""),
+                    "week": "Week 1",
+                    "strategy": s_name,
+                    "acc": "✅ Pass" if r.get("correct") else "❌ Fail",
+                    "rouge": f"{r['rouge_lcs_f1']:.4f}" if r.get("rouge_lcs_f1") is not None else "—",
+                    "json": "✅" if r.get("json_valid") else "❌",
+                    "lat": f"{r.get('latency_ms', 0.0):.1f}",
+                    "fail": r.get("failure") or "—",
+                })
+        for s_name, s_data in w3.get("strategies", {}).items():
+            for r in s_data.get("rows", []):
+                valid_json = not str(r.get("status", "")).startswith("error")
+                norm_rows.append({
+                    "week": "Week 3",
+                    "strategy": s_name,
+                    "dataset": "domain" if r.get("type") == "answerable" else "adversarial",
+                    "correct": bool(r.get("correct")),
+                    "rouge": r.get("rouge_lcs_f1"),
+                    "valid_json": valid_json,
+                    "latency_ms": float(r.get("latency_ms", 0.0)),
+                    "failed": not bool(r.get("correct")),
+                })
+                detail_rows.append({
+                    "id": r["id"],
+                    "question": r.get("question", ""),
+                    "gold": r.get("gold_answer") or f"[{r.get('type', '')} · expect {r.get('expected_status', 'abstained')}]",
+                    "model": r.get("model_answer", ""),
+                    "week": "Week 3",
+                    "strategy": s_name,
+                    "acc": "✅ Pass" if r.get("correct") else "❌ Fail",
+                    "rouge": f"{r['rouge_lcs_f1']:.4f}" if r.get("rouge_lcs_f1") is not None else "—",
+                    "json": "✅" if valid_json else "❌",
+                    "lat": f"{r.get('latency_ms', 0.0):.1f}",
+                    "fail": r.get("failure") or "—",
+                })
+
+        def _agg_cmp(sub: list[dict], include_rouge: bool = True) -> dict:
+            n = len(sub)
+            if n == 0:
+                return {"n": 0, "acc": 0.0, "correct": 0, "rouge": None, "json": 0.0, "p50": 0.0, "fails": 0}
+            lats = sorted(x["latency_ms"] for x in sub)
+            r_vals = [x["rouge"] for x in sub if x["rouge"] is not None]
+            return {
+                "n": n,
+                "acc": 100.0 * sum(x["correct"] for x in sub) / n,
+                "correct": sum(x["correct"] for x in sub),
+                "rouge": (sum(r_vals) / len(r_vals)) if (include_rouge and r_vals) else None,
+                "json": 100.0 * sum(x["valid_json"] for x in sub) / n,
+                "p50": lats[n // 2],
+                "fails": sum(x["failed"] for x in sub),
+            }
+
+        lines.extend([
+            "## 5. Week 1 vs Week 3 Comparison",
+            "",
+            "### 5.1 Summary Split by Query Type (Domain vs Adversarial)",
+            "",
+        ])
+
+        dom_norm = [x for x in norm_rows if x["dataset"] == "domain"]
+        if dom_norm:
+            lines.extend([
+                "#### Domain Queries (with ROUGE-LCS F1)",
+                "",
+                "| Week | Strategy | Decision Accuracy | ROUGE-LCS F1 (Mean) | Valid JSON (%) | $p_{50}$ Latency (ms) | Total Failures |",
+                "|---|---|---|---|---|---|---|",
+            ])
+            for wk, res_obj in (("Week 1", w1), ("Week 3", w3)):
+                for st_name in res_obj.get("strategies", {}):
+                    m = _agg_cmp([x for x in dom_norm if x["week"] == wk and x["strategy"] == st_name], include_rouge=True)
+                    if m["n"] > 0:
+                        r_str = f"{m['rouge']:.4f}" if m["rouge"] is not None else "—"
+                        lines.append(
+                            f"| {wk} | **{st_name}** | {m['acc']:.1f}% ({m['correct']}/{m['n']}) | "
+                            f"{r_str} | {m['json']:.1f}% | {m['p50']:.0f} | {m['fails']} |"
+                        )
+            lines.append("")
+
+        adv_norm = [x for x in norm_rows if x["dataset"] == "adversarial"]
+        if adv_norm:
+            lines.extend([
+                "#### Adversarial Queries (without ROUGE-LCS F1)",
+                "",
+                "| Week | Strategy | Decision Accuracy | Valid JSON (%) | $p_{50}$ Latency (ms) | Total Failures |",
+                "|---|---|---|---|---|---|",
+            ])
+            for wk, res_obj in (("Week 1", w1), ("Week 3", w3)):
+                for st_name in res_obj.get("strategies", {}):
+                    m = _agg_cmp([x for x in adv_norm if x["week"] == wk and x["strategy"] == st_name], include_rouge=False)
+                    if m["n"] > 0:
+                        lines.append(
+                            f"| {wk} | **{st_name}** | {m['acc']:.1f}% ({m['correct']}/{m['n']}) | "
+                            f"{m['json']:.1f}% | {m['p50']:.0f} | {m['fails']} |"
+                        )
+            lines.append("")
+
+        detail_rows.sort(key=lambda x: (x["id"], x["week"], x["strategy"]))
+        lines.extend([
+            "### 5.2 Week 1 vs Week 3 Detailed Comparison",
+            "",
+            "| ID | Question | Gold Answer | Model Answer | Week | Strategy | Decision Accuracy | ROUGE-LCS F1 | Valid JSON | Latency (ms) | Primary Failures |",
+            "|---|---|---|---|---|---|---|---|---|---|---|",
+        ])
+        for dr in detail_rows:
+            lines.append(
+                f"| {_md_cell(dr['id'])} | {_md_cell(dr['question'])} | {_md_cell(dr['gold'])} | "
+                f"{_md_cell(dr['model'])} | {dr['week']} | **{dr['strategy']}** | {dr['acc']} | "
+                f"{dr['rouge']} | {dr['json']} | {dr['lat']} | {_md_cell(dr['fail'])} |"
+            )
+        lines.extend(["", "---", ""])
+
     lines.extend([
-        "## 5. Evaluation Methodology Note",
+        "## 6. Evaluation Methodology Note",
         "- **Decision Accuracy:** Answerable items require `status == 'success'`, $\\ge 1$ gold source citation, and $\\ge 45\\%$ stemmed gold-token recall. Adversarial items require exact refusal/abstention status.",
         "- **ROUGE-LCS F1 Note:** Macro ROUGE-LCS F1 on concise 1-sentence answers against composite multi-sentence gold references is mathematically bounded (~0.18–0.22) even at 100% factual accuracy.",
     ])
