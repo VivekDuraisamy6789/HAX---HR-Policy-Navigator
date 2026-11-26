@@ -1051,8 +1051,8 @@ def build_technical_report_html(d: dict) -> str:
         <thead><tr><th>Submission Artifact</th><th>Verified Content / Scope</th><th>Access URL / Package Path</th></tr></thead>
         <tbody>
           <tr><td><b>Public GitHub Repository</b></td><td>Complete Track B codebase, tests (64/64), scripts &amp; docs (<code>main</code> &amp; <code>Amit-Enhanced</code>, no <code>.env</code>)</td><td class="mono">https://github.com/bhardwaj-amit79/HR-Policy-Navigator</td></tr>
-          <tr><td><b>10-Minute Demo Video</b></td><td>Live walkthrough: RBAC personas, PTO citations, HITL escalation, Langfuse DAG &amp; Bird's Eye Arena</td><td class="mono">[Insert Google Drive Video Link — Step 6]</td></tr>
-          <tr><td><b>Shared Google Drive Folder</b></td><td>Complete capstone bundle (PDFs, Demo Video, Trace Exports, UI Captures)</td><td class="mono">[Insert Google Drive Folder Link — Step 6]</td></tr>
+          <tr><td><b>10-Minute Demo Video</b></td><td>Live walkthrough: RBAC personas, PTO citations, HITL escalation, Langfuse DAG &amp; Bird's Eye Arena</td><td class="mono">[Upload 03_Demo_Recording.mp4 inside Drive folder below]</td></tr>
+          <tr><td><b>Shared Google Drive Folder</b></td><td>Official Group 63 Capstone Bundle (<code>[GroupID: 63] HR_Policy_Navigator</code>)</td><td class="mono">https://drive.google.com/drive/folders/1b5t8CLQGAehOsGtca0sirI1fS2pAhzK6</td></tr>
           <tr><td><b>Evaluation Report (6p)</b></td><td>Week 1–4 benchmark grids, Pareto Frontier, 4&times;4 Heatmap, Parameter Reasoning &amp; UI proofs</td><td class="mono">submission_pack/02_Evaluation_Report.pdf</td></tr>
           <tr><td><b>Presentation Deck (12s)</b></td><td>Executive architecture, empirical findings, live runner/arena highlights &amp; viva Q&amp;A</td><td class="mono">submission_pack/04_Presentation_Slides.pdf</td></tr>
           <tr><td><b>Model Card &amp; Responsible AI</b></td><td>Model card, PII redaction, HITL state machine &amp; W4 injection audit (Section 9, Page 9)</td><td class="mono">Embedded below (Section 9) &amp; eval_runs/full_84_eval_results.json</td></tr>
@@ -1452,7 +1452,7 @@ def build_technical_report_html(d: dict) -> str:
       <div style="background:#0F172A; color:#F8FAFC; border-radius:9px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center;">
         <div style="font-size:8.4pt; line-height:1.5;">
           <b>Public GitHub:</b> <span class="mono" style="color:#93C5FD;">https://github.com/bhardwaj-amit79/HR-Policy-Navigator</span> &nbsp;(<code>main</code> &amp; <code>Amit-Enhanced</code>)<br/>
-          <b>Demo Video &amp; Drive Folder:</b> <span class="mono" style="color:#FDE68A;">[Insert Google Drive Links — Step 6]</span> &nbsp;&middot;&nbsp; <b>Status:</b> 64/64 Pytest &middot; 84/84 Eval &middot; Langfuse v4.86 Verified
+          <b>Drive Bundle:</b> <span class="mono" style="color:#FDE68A;">https://drive.google.com/drive/folders/1b5t8CLQGAehOsGtca0sirI1fS2pAhzK6</span> &nbsp;&middot;&nbsp; <b>64/64 Pytest &middot; 84/84 Eval &middot; Langfuse v4.86</b>
         </div>
         <div class="mono" style="font-size:10.5pt; font-weight:700; color:#86EFAC; text-align:right;">TRACK B<br/>CERTIFIED</div>
       </div>
