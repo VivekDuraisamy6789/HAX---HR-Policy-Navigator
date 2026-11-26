@@ -1015,14 +1015,14 @@ def build_technical_report_html(d: dict) -> str:
 
     # Page 1: Cover, Abstract & Portal Submission Links
     p1 = _rpt_page(1, "Cover & Executive Abstract", f"""
-      <div style="background:linear-gradient(135deg,#0F172A 0%,#1E3A8A 100%); color:#F8FAFC; border-radius:10px; padding:18px 20px; margin-bottom:10px;">
-        <div class="mono" style="font-size:8pt; color:#93C5FD; letter-spacing:0.06em; font-weight:700; margin-bottom:5px;">
+      <div style="background:linear-gradient(135deg,#0F172A 0%,#1E3A8A 100%); color:#F8FAFC; border-radius:10px; padding:14px 18px; margin-bottom:8px;">
+        <div class="mono" style="font-size:7.8pt; color:#93C5FD; letter-spacing:0.06em; font-weight:700; margin-bottom:4px;">
           EXECUTIVE POST GRADUATE PROGRAMME IN GENERATIVE AI &amp; AGENTIC AI &middot; CAPSTONE TRACK B (&le;8B API)
         </div>
-        <h1 style="font-size:21pt; color:#FFFFFF; line-height:1.15; margin-bottom:6px;">
+        <h1 style="font-size:20pt; color:#FFFFFF; line-height:1.14; margin-bottom:5px;">
           HR Policy Navigator: Multi-Agent Operations Copilot on a Hosted &le;8B Inference API
         </h1>
-        <div style="font-size:9.2pt; color:#CBD5E1;">
+        <div style="font-size:8.8pt; color:#CBD5E1;">
           <b>Authors:</b> Amit Bhardwaj, Vivek Duraisamy &amp; Team &nbsp;&middot;&nbsp;
           <b>Mentor:</b> Dr. Gunjan Balde &nbsp;&middot;&nbsp;
           <b>Branches:</b> <code>main</code> &amp; <code>Amit-Enhanced</code> &nbsp;&middot;&nbsp;
@@ -1030,33 +1030,33 @@ def build_technical_report_html(d: dict) -> str:
         </div>
       </div>
 
-      <div class="kpi-grid" style="grid-template-columns: repeat(6, 1fr); gap:8px; margin-bottom:10px;">
-        <div class="kpi" style="border-top-color:#15803D;"><div class="lbl">Adv Safety</div><div class="val ok" style="font-size:13.5pt;">93.1%</div><div class="sub">27/29 decomp (+48.3pp)</div></div>
-        <div class="kpi" style="border-top-color:#15803D;"><div class="lbl">Hallucinations</div><div class="val ok" style="font-size:13.5pt;">0 / 84</div><div class="sub">All 4 W3 strategies</div></div>
-        <div class="kpi"><div class="lbl">Completion</div><div class="val" style="font-size:13.5pt;">100.0%</div><div class="sub">98.8% on decomp</div></div>
-        <div class="kpi"><div class="lbl">Retrieval Hit@5</div><div class="val blue" style="font-size:13.5pt;">0.891</div><div class="sub">MRR 0.787 &middot; CI [.782,.982]</div></div>
-        <div class="kpi" style="border-top-color:#15803D;"><div class="lbl">W4 Defense</div><div class="val ok" style="font-size:13.5pt;">87.5%</div><div class="sub">7/8 poisoned blocked</div></div>
-        <div class="kpi"><div class="lbl">Tests &amp; p50</div><div class="val" style="font-size:13.5pt;">64/64</div><div class="sub">5.38s &middot; $0.000186/q</div></div>
+      <div class="kpi-grid" style="grid-template-columns: repeat(6, 1fr); gap:8px; margin-bottom:8px;">
+        <div class="kpi" style="border-top-color:#15803D; padding:7px 9px;"><div class="lbl">Adv Safety</div><div class="val ok" style="font-size:13pt;">93.1%</div><div class="sub">27/29 decomp (+48.3pp)</div></div>
+        <div class="kpi" style="border-top-color:#15803D; padding:7px 9px;"><div class="lbl">Hallucinations</div><div class="val ok" style="font-size:13pt;">0 / 84</div><div class="sub">All 4 W3 strategies</div></div>
+        <div class="kpi" style="padding:7px 9px;"><div class="lbl">Completion</div><div class="val" style="font-size:13pt;">100.0%</div><div class="sub">98.8% on decomp</div></div>
+        <div class="kpi" style="padding:7px 9px;"><div class="lbl">Retrieval Hit@5</div><div class="val blue" style="font-size:13pt;">0.891</div><div class="sub">MRR 0.787 &middot; CI [.782,.982]</div></div>
+        <div class="kpi" style="border-top-color:#15803D; padding:7px 9px;"><div class="lbl">W4 Defense</div><div class="val ok" style="font-size:13pt;">87.5%</div><div class="sub">7/8 poisoned blocked</div></div>
+        <div class="kpi" style="padding:7px 9px;"><div class="lbl">Tests &amp; p50</div><div class="val" style="font-size:13pt;">64/64</div><div class="sub">5.38s &middot; $0.000186/q</div></div>
       </div>
 
-      <div class="card-tint" style="margin-bottom:10px;">
+      <div class="card-tint" style="margin-bottom:8px; padding:8px 11px;">
         <div class="sub-h" style="margin-top:0;">Abstract</div>
-        <p style="margin-bottom:0;">
+        <p style="margin-bottom:0; font-size:8.4pt; line-height:1.35;">
           Deploying operational copilots strictly on edge-class (&le;8B) inference APIs exposes severe failure modes: broken JSON schemas, fabricated leave stipends, mangled directory paths, attention decay past 4k tokens, and vulnerability to indirect passage injections. We engineered <b>HR Policy Navigator</b> over the <b>1,151-document Sourcegraph Employee Handbook</b> (151 authentic pages + 1,000 consistency-validated synthetic docs) using only hosted <code>Qwen/Qwen3-8B</code> and <code>bge-small-en-v1.5</code> (384d) endpoints—with zero model weights, zero fine-tuning, and zero frontier fallbacks. By offloading complexity into deterministic 0-token PII/action pre-guards, hybrid BM25 + Dense RRF (<code>k=60</code>) + lexical reranking over 3,686 <code>heading_cap</code> chunks, <code>&lt;350</code>-token micro-prompts with short <code>[S#]</code> citation handles, a 4-stage JSON repair cascade, and an algorithmic Critic (<code>SUPPORT_THRESHOLD=0.60</code>), the <code>decomposition</code> agent elevates adversarial safety from <b>44.8% (W1) to 93.1% (27/29)</b> with <b>0/84 hallucinations</b>, <b>76.4%–78.2%</b> exact gold citations, <b>87.5% (7/8)</b> injection defense, <b>5.38s</b> median latency, and <b>64/64</b> passing pytest tests. The shipped Streamlit platform adds 5 RBAC personas, offline Whisper/pyttsx3 voice I/O, audited HITL ticket tracking, RLHF feedback analytics, dual tracing (Langfuse v4.86.0 + JSONL), interactive Evaluation Runner, and Bird's Eye View Arena.
         </p>
       </div>
 
-      <h2 class="sec-h">Single-Portal Artifact &amp; Link Hub (All Capstone Requirements)</h2>
-      <table style="font-size:7.9pt; margin-bottom:0;">
-        <thead><tr><th>Submission Artifact</th><th>Verified Content / Scope</th><th>Access URL / Package Path</th></tr></thead>
+      <h2 class="sec-h" style="margin:6px 0 4px 0;">Single-Portal Artifact &amp; Link Hub (All Capstone Requirements)</h2>
+      <table class="tbl-tight" style="font-size:7.6pt; margin-bottom:0;">
+        <thead><tr><th style="width:19%;">Submission Artifact</th><th style="width:37%;">Verified Content / Scope</th><th style="width:44%;">Access URL / Package Path</th></tr></thead>
         <tbody>
-          <tr><td><b>Public GitHub Repository</b></td><td>Complete Track B codebase, tests (64/64), scripts &amp; docs (<code>main</code> &amp; <code>Amit-Enhanced</code>, no <code>.env</code>)</td><td class="mono">https://github.com/bhardwaj-amit79/HR-Policy-Navigator</td></tr>
-          <tr><td><b>10-Minute Demo Video</b></td><td>Live walkthrough: RBAC personas, PTO citations, HITL escalation, Langfuse DAG &amp; Bird's Eye Arena</td><td class="mono">[Upload 03_Demo_Recording.mp4 inside Drive folder below]</td></tr>
-          <tr><td><b>Shared Google Drive Folder</b></td><td>Official Group 63 Capstone Bundle (<code>[GroupID: 63] HR_Policy_Navigator</code>)</td><td class="mono">https://drive.google.com/drive/folders/1b5t8CLQGAehOsGtca0sirI1fS2pAhzK6</td></tr>
-          <tr><td><b>Evaluation Report (6p)</b></td><td>Week 1–4 benchmark grids, Pareto Frontier, 4&times;4 Heatmap, Parameter Reasoning &amp; UI proofs</td><td class="mono">submission_pack/02_Evaluation_Report.pdf</td></tr>
-          <tr><td><b>Presentation Deck (12s)</b></td><td>Executive architecture, empirical findings, live runner/arena highlights &amp; viva Q&amp;A</td><td class="mono">submission_pack/04_Presentation_Slides.pdf</td></tr>
-          <tr><td><b>Model Card &amp; Responsible AI</b></td><td>Model card, PII redaction, HITL state machine &amp; W4 injection audit (Section 9, Page 9)</td><td class="mono">Embedded below (Section 9) &amp; eval_runs/full_84_eval_results.json</td></tr>
-          <tr><td><b>Trace Dashboard &amp; Git Log</b></td><td>Langfuse v4.86.0 DAG (~876 obs), 1,137+ offline JSONL traces &amp; 57 chronological commits</td><td class="mono">submission_pack/05_Trace_Dashboard/ &amp; 07_Progress/git_history/</td></tr>
+          <tr><td><b>Public GitHub Repository</b></td><td>Track B codebase, 64/64 tests, scripts &amp; docs (<code>main</code> &amp; <code>Amit-Enhanced</code>, no <code>.env</code>)</td><td class="mono" style="word-break:break-all;">https://github.com/bhardwaj-amit79/HR-Policy-Navigator</td></tr>
+          <tr><td><b>10-Minute Demo Video</b></td><td>Live walkthrough: RBAC personas, PTO citations, HITL, Langfuse DAG &amp; Arena</td><td class="mono">[Upload 03_Demo_Recording.mp4 inside Drive folder below]</td></tr>
+          <tr><td><b>Shared Google Drive Folder</b></td><td>Official Group 63 Capstone Bundle (<code>[GroupID: 63] HR_Policy_Navigator</code>)</td><td class="mono" style="word-break:break-all;">https://drive.google.com/drive/folders/1b5t8CLQGAehOsGtca0sirI1fS2pAhzK6</td></tr>
+          <tr><td><b>Evaluation Report (6p)</b></td><td>Week 1–4 grids, Pareto Frontier, 4&times;4 Heatmap, Parameter Rationale &amp; UI proofs</td><td class="mono">submission_pack/02_Evaluation_Report.pdf</td></tr>
+          <tr><td><b>Presentation Deck (12s)</b></td><td>Executive architecture, empirical findings, live runner/arena &amp; viva Q&amp;A</td><td class="mono">submission_pack/04_Presentation_Slides.pdf</td></tr>
+          <tr><td><b>Model Card &amp; Resp. AI</b></td><td>Model card, PII redaction, HITL queue &amp; W4 injection audit (Section 9)</td><td class="mono">Embedded below (Section 9) &amp; full_84_eval_results.json</td></tr>
+          <tr><td><b>Trace Dashboard &amp; Git Log</b></td><td>Langfuse v4.86.0 DAG (~876 obs), 1,137+ JSONL traces &amp; 57 git commits</td><td class="mono">submission_pack/05_Trace_Dashboard/ &amp; 07_Progress/git_history/</td></tr>
         </tbody>
       </table>
     """, cover=True)
