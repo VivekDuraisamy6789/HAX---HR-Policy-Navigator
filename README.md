@@ -1,6 +1,6 @@
 # HR Policy Navigator — Multi-Agent Operations Copilot (Track B)
 
-[![Test Suite](https://img.shields.io/badge/Unit%20Tests-60%2F60%20Passing-brightgreen)](tests)
+[![Test Suite](https://img.shields.io/badge/Unit%20Tests-64%2F64%20Passing-brightgreen)](tests)
 [![Evaluation Benchmark](https://img.shields.io/badge/Frozen%20Benchmark-84%20Queries%20(100%25%20Completion)-blue)](eval_runs/summary.json)
 [![Adversarial Safety](https://img.shields.io/badge/Adversarial%20Refusal-96.6%25-success)](eval_runs/summary.json)
 [![Prompt Injection Defense](https://img.shields.io/badge/Injection%20Defense-87.5%25-success)](eval_runs/injection.json)
@@ -70,11 +70,11 @@
 
 ## 🏆 Verified Empirical Achievements
 
-Evaluated on the frozen 84-query benchmark (55 domain queries across 11 policy themes + 29 adversarial/safety probes) and 60 unit tests:
+Evaluated on the frozen 84-query benchmark (55 domain queries across 11 policy themes + 29 adversarial/safety probes) and 64 unit tests:
 
 | Metric | Result | Description / Significance |
 |---|---|---|
-| **Unit Test Suite** | **60 / 60 Passed** (100%) | Complete regression suite running in 18s |
+| **Unit Test Suite** | **64 / 64 Passed** (100%) | Complete regression suite running in ~27s |
 | **Task Completion Rate** | **100.0%** (84 / 84) | Zero unhandled crashes, infinite loops, or JSON decode breaks |
 | **Adversarial Refusal** | **96.6%** (28 / 29) | Refuses consequential actions (6/6), private data (4/4), injections (4/4) |
 | **Gold Citation Rate** | **78.2%** (43 / 55) | Cites the exact gold policy file in context |
@@ -157,7 +157,8 @@ The container automatically packages SSL certificates (`certs/ca-bundle.crt`), m
 
 | Username | Password | Role | Persona Description |
 |---|---|---|---|
-| `hr_admin` | `hr123` | HR Operations | Full policy verbatim, exception clauses, full HITL queue manager |
+| `sys_admin` | `sys123` | System Administrator | Unrestricted superuser access (all tabs, global traces/feedback, Evaluation Runner, Bird's Eye View) |
+| `hr_admin` | `hr123` | HR Operations | Full policy verbatim, exception clauses, full HITL queue manager, Our Journey |
 | `mgr_alice` | `mgr123` | People Manager | Manager vs employee obligations, team-scoped review queue |
 | `emp_bob` | `emp123` | Associate (New Hire) | Step-by-step onboarding, acronym definitions, quick tips |
 | `emp_carol` | `emp456` | Associate (Tenured) | Direct, concise answers for experienced employees |
@@ -198,7 +199,7 @@ HAX---HR-Policy-Navigator/
 │   └── strategy_comparison.md      # Gunjan two-column Decision Accuracy vs ROUGE-LCS table
 ├── eval_runs/                      # Frozen benchmark evaluation outputs
 ├── scripts/                        # Automated evaluation, synthetic scaling & ablation scripts
-└── tests/                          # 60 unit tests covering agents, tools, serving & safety
+└── tests/                          # 64 unit tests covering agents, tools, serving & safety
 ```
 
 ---
@@ -206,7 +207,7 @@ HAX---HR-Policy-Navigator/
 ## 🧪 Evaluation Commands
 
 ```powershell
-# Run 60 unit tests
+# Run 64 unit tests
 .venv\Scripts\pytest tests -q
 
 # Run retrieval ablation (BM25 vs Dense vs Hybrid vs Reranker)

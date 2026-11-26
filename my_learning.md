@@ -306,3 +306,101 @@ An **Attack Vector** in Indirect Prompt Injection is the specific adversarial te
 2. **Untrusted Data Quarantine:** Wraps chunks in `<evidence>` tags and instructs the system prompt to treat sources as untrusted data.
 3. **Critic Verification:** Drops ungrounded claims that fail lexical overlap.
 * **Why `EVASIVE_polite` can breach:** Polite or paraphrased phrasing can either evade regex patterns or partially leak the injected canary/claim (`PWNED-8`) into the `<8B` model's summary if the model follows the polite request inside the retrieved text.
+
+---
+
+# Why We Don't Need FAISS (In-Memory NumPy Matrix vs. Vector DB)
+
+At our corpus scale (**1,151 docs / 3,686 chunks**), adding FAISS provides **zero practical benefit** and introduces unnecessary complexity.
+
+## 1. Will FAISS Improve Retrieval Latency?
+**No (virtually 0 ms difference).**
+* **Current implementation (`dense_rank()` in `hr_policy_navigator/retrieval.py`):**
+  ```python
+  sims = self.matrix @ self.embedder.encode_query(query)
+  ```
+  `self.matrix` is only **`3,686 × 384` floats (~11 MB in RAM)**. A NumPy BLAS matrix-vector multiply over 3,686 vectors takes **~0.5–1.5 ms**.
+* **Where the real latency actually is:**
+  * **Query time:** `self.embedder.encode_query(query)` makes an HTTPS call to the embedding endpoint (**~100–400 ms** if uncached).
+  * **First-time indexing:** `OpenAIEmbedder._embed()` sends batches of 16 chunks over HTTPS and checkpoints `.cache/embeddings/*.json` (~45 MB) to disk.
+  * **FAISS does NOT speed up either of those**—it only replaces the ~1 ms NumPy dot product.
+
+## 2. Will FAISS Impact the Evaluation Runner?
+* **Accuracy / Hit@k / MRR / ROUGE-LCS F1:** **Zero improvement.** Exact FAISS (`IndexFlatIP`) computes the exact same inner product as `self.matrix @ q_vec`, producing identical rankings. (Approximate indices like `IVF`/`HNSW` can actually *lower* Hit@k.)
+* **Eval Runner Speed:** **No noticeable change**, because vector similarity is < 1% of total runtime compared to network `/embeddings` + `/chat/completions` calls.
+
+## 3. Alignment with Mentor Gunjan's Directive & When to Scale
+* Mentor Gunjan explicitly advised: for ~1,000 lightweight documents, an in-memory matrix with persistent disk caching is fast and effective—avoid infrastructure bloat (heavy external vector DBs) that distracts from empirical metrics.
+* **When would you switch to FAISS?** Only when scaling past **100,000+ to millions of chunks**, where brute-force NumPy `O(N · d)` matrix multiplication exceeds ~20–50 ms per query or RAM limits.
+
+---
+
+# Langfuse & LangGraph in Our Architecture
+
+## 1. Langfuse — *Already Integrated (Optional Mirror)*
+* **Status:** Local JSONL tracing (`traces/traces.jsonl`) is always on and powers the **Traces** tab. `langfuse>=2.0.0` is in `requirements.txt`, and `Tracer` (`hr_policy_navigator/tracing.py`) automatically mirrors every query trace and nested span (`guard`, `planner`, `tool`, `generate`, `critic`) to Langfuse whenever `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, and `LANGFUSE_HOST` are set in `.env`.
+
+## 2. LangGraph — *Not Used (Intentionally Avoided)*
+* **Status:** Our multi-agent loop (`Guard -> Planner -> Executor -> Generator -> Critic`) is a custom, lightweight Python state machine in `hr_policy_navigator/agent.py`.
+* **Why LangGraph is avoided on `<8B` models (`Qwen/Qwen3-8B`):**
+  1. **Context Saturation:** Heavy frameworks inject 2,000–3,000+ tokens of boilerplate prompts and scratchpads, causing attention decay and JSON schema failures on 8B models.
+  2. **Deterministic Control:** Our handrolled loop enforces 0-token regex pre-guards, a 4-stage JSON repair cascade, duplicate-query loop guards, and non-LLM Critic claim verification.
+* **When LangGraph makes sense:** Only when migrating to large frontier models (`70B+` / Gemini / GPT-4) with complex multi-branch or long-running async workflows.
+
+---
+
+# How the "Human Review Queue" Works (HITL Escalation Workflow)
+
+The **Human Review Queue** is a Human-in-the-Loop (HITL) safety and escalation workflow ensuring the copilot never executes consequential HR decisions or gives legal advice—instead logging them for a human reviewer.
+
+## 1. How a Ticket Gets Created (2 Entry Points in `Copilot._run()`)
+1. **Deterministic Pre-Guard (`screen_query()` in `hr_policy_navigator/guardrails.py`):**
+   * **`legal_advice`** *(e.g., "Should I sue for wrongful termination?")* $\to$ `handoff=True`
+   * **`consequential_action`** *(e.g., "Can you fire John Smith?" or "Approve my raise")* $\to$ `handoff=True`
+   * Blocked **before** the LLM runs (0 LLM tokens spent), returning a safe refusal and notifying the user that human follow-up was recorded. *(Note: `injection` and `private_data` are refused directly without creating a ticket.)*
+2. **Planner LLM Second Opinion (`hr_policy_navigator/agent.py`):**
+   * If a subtle employment-action directive passes regex screening, `_plan()` classifies `intent == "consequential_action"` and calls `escalate_to_human` (`reason="planner:consequential_action"`).
+
+## 2. Where Tickets Are Stored
+`escalate_to_human` appends a JSON record to `state/handoffs.jsonl` with:
+* `ticket_id`, `topic` (query snippet), `reason` (category), `timestamp`
+* User context: `session_id`, `user_id`, `user_role`, `team_id`
+* Initial state: `ui_status: "pending"`
+
+## 3. Who Can View the Queue (RBAC)
+Controlled in `HandoffStore.all()` (`hr_policy_navigator/state.py`) and `streamlit_app.py`:
+* **Associate (`associate`):** Tab is **hidden**.
+* **People Manager (`manager`):** Sees the tab, **filtered to their own `team_id`**.
+* **HR Operations (`hr_ops`) & System Admin (`sys_admin`):** See **all tickets** across the entire organization.
+
+## 4. Ticket Lifecycle State Machine (`VALID_TRANSITIONS`)
+* **🔴 Pending** $\to$ `Acknowledge`, `Mark Resolved`, or `Escalate`
+* **🟡 Acknowledged** $\to$ `Mark Resolved` or `Escalate`
+* **🔺 Escalated** $\to$ `Mark Resolved`
+* **🟢 Resolved** *(terminal — no further transitions)*
+
+Reviewers can attach timestamped **resolution notes** (`add_note()`), and every transition logs `updated_by` and `last_updated` back to `state/handoffs.jsonl`.
+
+---
+
+# How Feedback Works (RLHF Quality Loop Without Fine-Tuning)
+
+The **Feedback** system implements a Human-in-the-Loop quality monitoring loop tailored to our Track B constraint (hosted `<8B` API, no model weight fine-tuning).
+
+## 1. What It Captures (in the `Ask` Tab)
+* Every answer has **👍 (`+1`)** and **👎 (`-1`)** buttons, plus an optional **"What should the answer have been?"** correction box on 👎.
+* `FeedbackStore.save()` (`hr_policy_navigator/feedback.py`) logs `ts`, `trace_id`, `user_id`, `user_role`, `query`, `answer_snippet`, `rating`, `correction`, and `strategy` to `state/feedback_log.jsonl`.
+
+## 2. What the `👍 Feedback` Tab Shows
+* **RBAC Privacy:** Regular users see only their own ratings; **HR Operations (`hr_ops`)** and **System Admin (`sys_admin`)** see global analytics across all users.
+* **Actionable Insights:**
+  * **Satisfaction %** across all rated answers
+  * **By Role** & **By Strategy** breakdowns
+  * **Top Improvement Opportunities:** Clusters the most frequently thumbed-down queries
+  * **User Corrections:** Surfaces exact better answers suggested by users
+
+## 3. How It Drives Improvements (Offline Cycle)
+Feedback does **not** automatically retrain weights or rewrite prompts at runtime. Instead, it drives an offline engineering cycle:
+1. Identify weak queries & user corrections in **👍 Feedback** (and inspect their `trace_id` in **📊 Traces** / **Langfuse**).
+2. Refine prompts in `hr_policy_navigator/prompts.py`, fix retrieval/synonym gaps, or update missing handbook docs.
+3. Re-run **Evaluation Runner** to verify accuracy and safety improve without regressions.
