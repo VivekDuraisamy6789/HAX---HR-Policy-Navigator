@@ -1285,7 +1285,28 @@ def main() -> None:
                                 mime="text/markdown",
                                 use_container_width=True,
                             )
-                        st.markdown(st.session_state["last_eval_report"])
+                        report_text = st.session_state["last_eval_report"]
+                        if "<details>" in report_text and "</details>" in report_text:
+                            import re as _re
+                            m_det = _re.search(
+                                r"<details>\s*<summary>.*?</summary>\s*(.*?)\s*</details>",
+                                report_text,
+                                _re.S,
+                            )
+                            if m_det:
+                                before_det = report_text[: m_det.start()].strip()
+                                inner_det = m_det.group(1).strip()
+                                after_det = report_text[m_det.end() :].strip()
+                                if before_det:
+                                    st.markdown(before_det)
+                                with st.expander("📋 5.2 Week 1 vs Week 3 Detailed Comparison (Click to expand)", expanded=False):
+                                    st.markdown(inner_det)
+                                if after_det:
+                                    st.markdown(after_det)
+                            else:
+                                st.markdown(report_text)
+                        else:
+                            st.markdown(report_text)
 
     # ==================================================================
     # Bird's Eye View Tab (sys_admin only)

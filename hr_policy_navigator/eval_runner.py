@@ -937,6 +937,9 @@ def generate_week_wise_report(
         lines.extend([
             "### 5.2 Week 1 vs Week 3 Detailed Comparison",
             "",
+            "<details>",
+            "<summary>Click to expand Week 1 vs Week 3 Detailed Comparison</summary>",
+            "",
             "| ID | Question | Gold Answer | Model Answer | Week | Strategy | Decision Accuracy | ROUGE-LCS F1 | Valid JSON | Latency (ms) | Primary Failures |",
             "|---|---|---|---|---|---|---|---|---|---|---|",
         ])
@@ -946,7 +949,7 @@ def generate_week_wise_report(
                 f"{_md_cell(dr['model'])} | {dr['week']} | **{dr['strategy']}** | {dr['acc']} | "
                 f"{dr['rouge']} | {dr['json']} | {dr['lat']} | {_md_cell(dr['fail'])} |"
             )
-        lines.extend(["", "---", ""])
+        lines.extend(["", "</details>", "", "---", ""])
 
     lines.extend([
         "## 6. Evaluation Methodology Note",
