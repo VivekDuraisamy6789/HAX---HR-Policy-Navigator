@@ -76,11 +76,49 @@ class Tracer:
         if self._lf_client is not None:
             try:
                 d = trace.data
-                t = self._lf_client.trace(id=d["trace_id"], name=d["name"], input=d["meta"].get("query"),
-                                          output=d.get("result", {}).get("answer"), metadata=d["counters"])
-                for sp in d["spans"]:
-                    t.span(name=f"{sp['kind']}:{sp['name']}", metadata=sp["attrs"], level="ERROR" if sp.get("status") == "error" else "DEFAULT")
-                self._lf_client.flush()
+                if hasattr(self._lf_client, "start_as_current_observation"):
+                    # Langfuse SDK v3+ / v5+ (OpenTelemetry-based)
+                    kind_map = {
+                        "guard": "guardrail",
+                        "tool": "tool",
+                        "llm": "generation",
+                        "planner": "chain",
+                        "generate": "chain",
+                        "critic": "evaluator",
+                    }
+                    meta = {
+                        **(d.get("meta") or {}),
+                        **(d.get("counters") or {}),
+                        "local_trace_id": d["trace_id"],
+                        "duration_ms": d.get("duration_ms"),
+                        "status": d.get("result", {}).get("status"),
+                    }
+                    with self._lf_client.start_as_current_observation(
+                        name=d["name"],
+                        as_type="agent",
+                        input=d["meta"].get("query"),
+                        output=d.get("result", {}).get("answer"),
+                        metadata=meta,
+                    ) as root:
+                        for sp in d["spans"]:
+                            obs_type = kind_map.get(sp.get("kind", ""), "span")
+                            child = root.start_observation(
+                                name=f"{sp['kind']}:{sp['name']}",
+                                as_type=obs_type,
+                                metadata={**(sp.get("attrs") or {}), "duration_ms": sp.get("duration_ms")},
+                                level="ERROR" if sp.get("status") == "error" else "DEFAULT",
+                                status_message=sp.get("error"),
+                            )
+                            child.end()
+                        root.update(output=d.get("result", {}).get("answer"))
+                    self._lf_client.flush()
+                elif hasattr(self._lf_client, "trace"):
+                    # Legacy Langfuse SDK v2
+                    t = self._lf_client.trace(id=d["trace_id"], name=d["name"], input=d["meta"].get("query"),
+                                              output=d.get("result", {}).get("answer"), metadata=d["counters"])
+                    for sp in d["spans"]:
+                        t.span(name=f"{sp['kind']}:{sp['name']}", metadata=sp["attrs"], level="ERROR" if sp.get("status") == "error" else "DEFAULT")
+                    self._lf_client.flush()
             except Exception:
                 pass
 
