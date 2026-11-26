@@ -1119,7 +1119,7 @@ def main() -> None:
                     key="eval_scope_select",
                 )
 
-            opt_col1, opt_col2, opt_col3 = st.columns([1.4, 1.2, 1])
+            opt_col1, opt_col2 = st.columns([1.2, 1])
             with opt_col1:
                 w3_strats = st.multiselect(
                     "Week 3 Strategies",
@@ -1133,13 +1133,6 @@ def main() -> None:
                     ["heading_cap", "fixed_500", "fixed_200", "heading"],
                     default=["heading_cap"],
                     key="eval_w2_chunks",
-                )
-            with opt_col3:
-                use_mock = st.toggle(
-                    "Mock Model (Offline)",
-                    value=not S.has_model,
-                    key="eval_use_mock",
-                    help="Run with FakeModel for fast offline plumbing checks, or disable to call the live Qwen3-8B endpoint.",
                 )
 
             run_clicked = st.button("🚀 Run Evaluation", type="primary", key="btn_run_eval")
@@ -1172,7 +1165,7 @@ def main() -> None:
                             if run_all or eval_scope.startswith("Week 1"):
                                 _cb("▶ Starting Week 1: Single-Prompt Baselines…")
                                 eval_results["week1"] = run_week1_eval(
-                                    domain_slice, adv_slice, S, use_mock=use_mock,
+                                    domain_slice, adv_slice, S, use_mock=False,
                                     progress_cb=_cb,
                                 )
 
@@ -1185,17 +1178,17 @@ def main() -> None:
                             if run_all or eval_scope.startswith("Week 3"):
                                 _cb("▶ Starting Week 3: Multi-Agent E2E Evaluation…")
                                 eval_results["week3"] = run_week3_eval(
-                                    domain_slice, adv_slice, S, use_mock=use_mock,
+                                    domain_slice, adv_slice, S, use_mock=False,
                                     strategies=w3_strats or ["decomposition"], progress_cb=_cb
                                 )
 
                             if run_all or eval_scope.startswith("Week 4"):
                                 _cb("▶ Starting Week 4: Responsible AI Injection Suite…")
                                 eval_results["week4"] = run_week4_eval(
-                                    S, use_mock=use_mock, progress_cb=_cb
+                                    S, use_mock=False, progress_cb=_cb
                                 )
 
-                        model_lbl = "mock" if use_mock or not S.has_model else S.model
+                        model_lbl = S.model if S.has_model else "mock"
                         report_md = generate_week_wise_report(
                             eval_results, int(n_domain), int(n_adv), model_lbl
                         )
