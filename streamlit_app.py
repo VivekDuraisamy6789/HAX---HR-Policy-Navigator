@@ -1151,6 +1151,170 @@ def main() -> None:
                 }
                 _render_wrapped_table(rows, col_styles)
 
+            def _render_w1_w3_summaries(w1_res: dict, w3_res: dict) -> None:
+                norm_rows: list[dict] = []
+                for strat_name, strat_data in w1_res.get("strategies", {}).items():
+                    for r in strat_data.get("rows", []):
+                        norm_rows.append({
+                            "week": "Week 1",
+                            "strategy": strat_name,
+                            "dataset": r.get("dataset", "domain" if r.get("type") == "answerable" else "adversarial"),
+                            "correct": bool(r.get("correct")),
+                            "rouge": r.get("rouge_lcs_f1"),
+                            "valid_json": bool(r.get("json_valid")),
+                            "latency_ms": float(r.get("latency_ms", 0.0)),
+                            "failed": not bool(r.get("correct")),
+                        })
+                for strat_name, strat_data in w3_res.get("strategies", {}).items():
+                    for r in strat_data.get("rows", []):
+                        norm_rows.append({
+                            "week": "Week 3",
+                            "strategy": strat_name,
+                            "dataset": "domain" if r.get("type") == "answerable" else "adversarial",
+                            "correct": bool(r.get("correct")),
+                            "rouge": r.get("rouge_lcs_f1"),
+                            "valid_json": not str(r.get("status", "")).startswith("error"),
+                            "latency_ms": float(r.get("latency_ms", 0.0)),
+                            "failed": not bool(r.get("correct")),
+                        })
+
+                def _agg(sub: list[dict], include_rouge: bool = True) -> dict:
+                    n = len(sub)
+                    if n == 0:
+                        return {"n": 0, "acc": 0.0, "correct": 0, "rouge": None, "json": 0.0, "p50": 0.0, "fails": 0}
+                    lats = sorted(x["latency_ms"] for x in sub)
+                    r_vals = [x["rouge"] for x in sub if x["rouge"] is not None]
+                    return {
+                        "n": n,
+                        "acc": 100.0 * sum(x["correct"] for x in sub) / n,
+                        "correct": sum(x["correct"] for x in sub),
+                        "rouge": (sum(r_vals) / len(r_vals)) if (include_rouge and r_vals) else None,
+                        "json": 100.0 * sum(x["valid_json"] for x in sub) / n,
+                        "p50": lats[n // 2],
+                        "fails": sum(x["failed"] for x in sub),
+                    }
+
+                compact_styles = {
+                    "Week": "white-space:nowrap; font-weight:600;",
+                    "Strategy": "white-space:nowrap; font-weight:600;",
+                    "Decision Accuracy": "white-space:nowrap;",
+                    "Avg Decision Accuracy": "white-space:nowrap;",
+                    "Best Strategy Accuracy": "white-space:nowrap;",
+                    "ROUGE-LCS F1 (Mean)": "white-space:nowrap; text-align:right;",
+                    "Avg ROUGE-LCS F1": "white-space:nowrap; text-align:right;",
+                    "Valid JSON (%)": "white-space:nowrap; text-align:right;",
+                    "Avg Valid JSON (%)": "white-space:nowrap; text-align:right;",
+                    "p50 Latency (ms)": "white-space:nowrap; text-align:right;",
+                    "Avg p50 Latency (ms)": "white-space:nowrap; text-align:right;",
+                    "Total Failures": "white-space:nowrap; text-align:right;",
+                }
+
+                # Option A: Strategy-Level Summary (8 rows)
+                st.markdown("#### Option A — Strategy-Level Summary")
+                opt_a_rows = []
+                for wk, res_obj in (("Week 1", w1_res), ("Week 3", w3_res)):
+                    for st_name in res_obj.get("strategies", {}):
+                        st_rows = [x for x in norm_rows if x["week"] == wk and x["strategy"] == st_name]
+                        m = _agg(st_rows, include_rouge=True)
+                        opt_a_rows.append({
+                            "Week": wk,
+                            "Strategy": st_name,
+                            "Decision Accuracy": f"{m['acc']:.1f}% ({m['correct']}/{m['n']})",
+                            "ROUGE-LCS F1 (Mean)": f"{m['rouge']:.4f}" if m["rouge"] is not None else "—",
+                            "Valid JSON (%)": f"{m['json']:.1f}%",
+                            "p50 Latency (ms)": f"{m['p50']:.0f}",
+                            "Total Failures": m["fails"],
+                        })
+                _render_wrapped_table(opt_a_rows, compact_styles)
+
+                # Option B: Week-Level Rollup + Delta
+                st.markdown("#### Option B — Week-Level Rollup & Delta (Week 3 vs Week 1)")
+                wk_stats = {}
+                for wk, res_obj in (("Week 1", w1_res), ("Week 3", w3_res)):
+                    strat_aggs = [
+                        _agg([x for x in norm_rows if x["week"] == wk and x["strategy"] == s])
+                        for s in res_obj.get("strategies", {})
+                    ]
+                    strat_aggs = [a for a in strat_aggs if a["n"] > 0]
+                    if strat_aggs:
+                        r_list = [a["rouge"] for a in strat_aggs if a["rouge"] is not None]
+                        wk_stats[wk] = {
+                            "avg_acc": sum(a["acc"] for a in strat_aggs) / len(strat_aggs),
+                            "best_acc": max(a["acc"] for a in strat_aggs),
+                            "avg_rouge": (sum(r_list) / len(r_list)) if r_list else None,
+                            "avg_json": sum(a["json"] for a in strat_aggs) / len(strat_aggs),
+                            "avg_p50": sum(a["p50"] for a in strat_aggs) / len(strat_aggs),
+                            "tot_fails": sum(a["fails"] for a in strat_aggs),
+                        }
+                opt_b_rows = []
+                for wk in ("Week 1", "Week 3"):
+                    if wk in wk_stats:
+                        s = wk_stats[wk]
+                        opt_b_rows.append({
+                            "Week": wk,
+                            "Avg Decision Accuracy": f"{s['avg_acc']:.1f}%",
+                            "Best Strategy Accuracy": f"{s['best_acc']:.1f}%",
+                            "Avg ROUGE-LCS F1": f"{s['avg_rouge']:.4f}" if s["avg_rouge"] is not None else "—",
+                            "Avg Valid JSON (%)": f"{s['avg_json']:.1f}%",
+                            "Avg p50 Latency (ms)": f"{s['avg_p50']:.0f}",
+                            "Total Failures": s["tot_fails"],
+                        })
+                if "Week 1" in wk_stats and "Week 3" in wk_stats:
+                    s1, s3 = wk_stats["Week 1"], wk_stats["Week 3"]
+                    r_delta = (
+                        f"{s3['avg_rouge'] - s1['avg_rouge']:+.4f}"
+                        if (s1["avg_rouge"] is not None and s3["avg_rouge"] is not None)
+                        else "—"
+                    )
+                    opt_b_rows.append({
+                        "Week": "Δ (Week 3 - Week 1)",
+                        "Avg Decision Accuracy": f"{s3['avg_acc'] - s1['avg_acc']:+.1f}%",
+                        "Best Strategy Accuracy": f"{s3['best_acc'] - s1['best_acc']:+.1f}%",
+                        "Avg ROUGE-LCS F1": r_delta,
+                        "Avg Valid JSON (%)": f"{s3['avg_json'] - s1['avg_json']:+.1f}%",
+                        "Avg p50 Latency (ms)": f"{s3['avg_p50'] - s1['avg_p50']:+.0f}",
+                        "Total Failures": f"{s3['tot_fails'] - s1['tot_fails']:+d}",
+                    })
+                _render_wrapped_table(opt_b_rows, compact_styles)
+
+                # Option C: Split by Query Type (Domain vs Adversarial)
+                st.markdown("#### Option C — Split by Query Type (Domain vs Adversarial)")
+                dom_rows = [x for x in norm_rows if x["dataset"] == "domain"]
+                adv_rows = [x for x in norm_rows if x["dataset"] == "adversarial"]
+                if dom_rows:
+                    st.caption("Domain Queries (with ROUGE-LCS F1)")
+                    opt_c_dom = []
+                    for wk, res_obj in (("Week 1", w1_res), ("Week 3", w3_res)):
+                        for st_name in res_obj.get("strategies", {}):
+                            m = _agg([x for x in dom_rows if x["week"] == wk and x["strategy"] == st_name], include_rouge=True)
+                            if m["n"] > 0:
+                                opt_c_dom.append({
+                                    "Week": wk,
+                                    "Strategy": st_name,
+                                    "Decision Accuracy": f"{m['acc']:.1f}% ({m['correct']}/{m['n']})",
+                                    "ROUGE-LCS F1 (Mean)": f"{m['rouge']:.4f}" if m["rouge"] is not None else "—",
+                                    "Valid JSON (%)": f"{m['json']:.1f}%",
+                                    "p50 Latency (ms)": f"{m['p50']:.0f}",
+                                    "Total Failures": m["fails"],
+                                })
+                    _render_wrapped_table(opt_c_dom, compact_styles)
+                if adv_rows:
+                    st.caption("Adversarial Queries (without ROUGE-LCS F1)")
+                    opt_c_adv = []
+                    for wk, res_obj in (("Week 1", w1_res), ("Week 3", w3_res)):
+                        for st_name in res_obj.get("strategies", {}):
+                            m = _agg([x for x in adv_rows if x["week"] == wk and x["strategy"] == st_name], include_rouge=False)
+                            if m["n"] > 0:
+                                opt_c_adv.append({
+                                    "Week": wk,
+                                    "Strategy": st_name,
+                                    "Decision Accuracy": f"{m['acc']:.1f}% ({m['correct']}/{m['n']})",
+                                    "Valid JSON (%)": f"{m['json']:.1f}%",
+                                    "p50 Latency (ms)": f"{m['p50']:.0f}",
+                                    "Total Failures": m["fails"],
+                                })
+                    _render_wrapped_table(opt_c_adv, compact_styles)
+
             def _format_w4_grid(rows: list[dict]) -> list[dict]:
                 return [
                     {
@@ -1321,6 +1485,11 @@ def main() -> None:
                         st.session_state.get("last_eval_results", {}).get("week1")
                         and st.session_state.get("last_eval_results", {}).get("week3")
                     ):
+                        with st.expander("📊 Week 1 vs Week 3 Average Summary (Options A, B, C)", expanded=True):
+                            _render_w1_w3_summaries(
+                                st.session_state["last_eval_results"]["week1"],
+                                st.session_state["last_eval_results"]["week3"],
+                            )
                         with st.expander("⚖️ Week 1 vs Week 3 Detailed Comparison", expanded=True):
                             _render_w1_w3_comparison(
                                 st.session_state["last_eval_results"]["week1"],
