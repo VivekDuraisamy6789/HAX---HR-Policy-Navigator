@@ -957,3 +957,24 @@ def generate_week_wise_report(
         "- **ROUGE-LCS F1 Note:** Macro ROUGE-LCS F1 on concise 1-sentence answers against composite multi-sentence gold references is mathematically bounded (~0.18–0.22) even at 100% factual accuracy.",
     ])
     return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    s = Settings()
+    dom, adv = load_eval_datasets()
+    print(f"Running full Evaluation Runner on {len(dom)} domain + {len(adv)} adversarial queries...")
+    res = {
+        "week1": run_week1_eval(dom, adv, s, use_mock=False, progress_cb=print),
+        "week2": run_week2_eval(dom, s, chunkings=["heading_cap", "fixed_500", "fixed_200", "heading"], progress_cb=print),
+        "week3": run_week3_eval(dom, adv, s, use_mock=False, strategies=["baseline", "structured", "selfconsistency", "decomposition"], progress_cb=print),
+        "week4": run_week4_eval(s, use_mock=False, progress_cb=print),
+    }
+    model_lbl = s.model if s.has_model else "mock"
+    md = generate_week_wise_report(res, len(dom), len(adv), model_lbl)
+    out_dir = ROOT / "eval_runs"
+    out_dir.mkdir(exist_ok=True)
+    out_md = out_dir / "full_84_week_wise_report.md"
+    out_json = out_dir / "full_84_eval_results.json"
+    out_md.write_text(md, encoding="utf-8")
+    out_json.write_text(json.dumps(res, indent=1), encoding="utf-8")
+    print(f"Saved full report to {out_md} and raw results to {out_json}")

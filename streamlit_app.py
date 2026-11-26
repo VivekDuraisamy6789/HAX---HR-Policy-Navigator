@@ -1146,13 +1146,13 @@ def main() -> None:
             with cfg_col1:
                 n_domain = st.number_input(
                     f"Domain queries (max {max_domain})",
-                    min_value=0, max_value=max_domain, value=min(10, max_domain), step=1,
+                    min_value=0, max_value=max_domain, value=max_domain, step=1,
                     key="eval_n_domain",
                 )
             with cfg_col2:
                 n_adv = st.number_input(
                     f"Adversarial queries (max {max_adv})",
-                    min_value=0, max_value=max_adv, value=min(5, max_adv), step=1,
+                    min_value=0, max_value=max_adv, value=max_adv, step=1,
                     key="eval_n_adv",
                 )
             with cfg_col3:
@@ -1173,14 +1173,14 @@ def main() -> None:
                 w3_strats = st.multiselect(
                     "Week 3 Strategies",
                     ["baseline", "structured", "selfconsistency", "decomposition"],
-                    default=["decomposition"],
+                    default=["baseline", "structured", "selfconsistency", "decomposition"],
                     key="eval_w3_strats",
                 )
             with opt_col2:
                 w2_chunks = st.multiselect(
                     "Week 2 Chunking",
                     ["heading_cap", "fixed_500", "fixed_200", "heading"],
-                    default=["heading_cap"],
+                    default=["heading_cap", "fixed_500", "fixed_200", "heading"],
                     key="eval_w2_chunks",
                 )
 
