@@ -246,3 +246,38 @@ Suppose we evaluate **3 queries** where the first gold document appears at **Ran
 | **Doc Recall@5** | Average of $\frac{\|\text{gold} \cap \text{top}_5\|}{\|\text{gold}\|}$ per query | `(1/1 + 1/1 + 0/1) / 3` | **0.667** |
 | **MRR** | Average of $\frac{1}{\text{first\_gold\_rank}}$ *(0 if not found)* | `(1/1 + 1/4 + 1/7) / 3` | **0.464** |
 | **Hit@5 95% CI** | 95% CI of `Hit@5` via **theme-clustered bootstrap** (1,000 resamples of topic themes) | e.g., across 11 themes on 55 queries | e.g., **`[0.782, 0.982]`** |
+
+---
+
+# Multi-Agent Strategies Explained (`baseline`, `structured`, `selfconsistency`, `decomposition`)
+
+> **Live Example Query:** *"Are US full-time teammates eligible for health benefits on their date of hire, and how many days do they have to enroll?"*
+
+## 1. `baseline` — *Single-Shot RAG (No Planner, No Few-Shot, No Critic)*
+* **Pipeline:** Raw Query $\to$ `search_policy` $\to$ Single LLM Call (no examples) $\to$ Finalize.
+* **Code Behavior (`hr_policy_navigator/agent.py`):** Skips `_plan()`, skips few-shot JSON demonstrations (`ANSWER_SHOTS`), and **skips `_critic()`** (`all_ok=True`).
+* **On the Live Example:** Runs 1 search with the raw question and dumps chunks into `Qwen/Qwen3-8B`, making it prone to schema errors (`JSON Repairs`), missed citations, or dropping half of a compound question.
+
+## 2. `structured` — *Planner + Few-Shot Grounded Generation + Critic*
+* **Pipeline:** `_plan()` $\to$ `_execute()` $\to$ `_answer_once(few-shot)` $\to$ **`_critic()`**.
+* **Code Behavior:** `_plan()` classifies intent and rewrites pronouns; `_answer_once()` includes few-shot JSON examples teaching `[S1]`/`[S2]` citation format; **`_critic()`** checks $\ge 60\%$ token overlap per claim + exact number/date matching, triggering 1 revision pass if needed.
+* **On the Live Example:** Retrieves `benefits.md#0` and `#3`, cites `[S1]`/`[S2]` cleanly, and Critic verifies `"date of hire"` and `"30 days"` appear in the evidence.
+
+## 3. `selfconsistency` — *$k=3$ Sampling + Majority Vote + Critic*
+* **Pipeline:** `_plan()` $\to$ `_execute()` $\to$ **3× `_answer_once(temp=0.7)`** $\to$ `_vote()` $\to$ `_critic()`.
+* **Code Behavior:** Samples 3 candidate answers at `temperature=0.7`; `_vote()` takes the majority vote on `answerable` and picks the candidate with the highest average `claim_support()`.
+* **On the Live Example:** Generates 3 variations and votes on the best-supported answer—at ~3× the LLM calls and token cost.
+
+## 4. `decomposition` — *Forced Sub-Query Split + Sub-Answer Synthesis + Critic*
+* **Pipeline:** `_plan(force_decompose=True)` $\to$ Multi-Query `_execute()` $\to$ Per-Sub-Query `_answer_once()` $\to$ Synthesis `_answer_once()` $\to$ `_critic()`.
+* **Code Behavior:** Forces the Planner to split into 1–3 atomic `sub_queries`, searches each separately, answers each sub-question individually, synthesizes the cited notes, and runs `_critic()`.
+* **On the Live Example:** Splits into *"US full-time teammates health benefits eligibility date of hire"* (`[S1]`) and *"US new hires health benefits enrollment deadline days"* (`[S2]`), then synthesizes both verified facts into one concise reply.
+
+## Quick Tradeoff Summary
+
+| Strategy | Planner | Few-Shot | Critic | LLM Calls | Best Use Case |
+|---|---|---|---|---|---|
+| **`baseline`** | No | No | No | Low (~2) | Speed baseline / ablation control |
+| **`structured`** | Yes | Yes | Yes | Medium (~3.5) | Single-fact lookups |
+| **`selfconsistency`** | Yes | Yes | Yes | High (~5.5) | Variance check (expensive on `<8B`) |
+| **`decomposition`** | Yes (forced split) | Yes | Yes | Low-Med (2–4) | **Best overall** — prevents `<8B` attention dilution on multi-part questions |

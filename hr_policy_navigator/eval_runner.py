@@ -736,7 +736,17 @@ def generate_week_wise_report(
             by_t = ", ".join(f"`{k}`: {v}" for k, v in m["accuracy_by_type"].items())
             lines.append(f"- **{strat}**: {by_t}")
 
-        lines.extend(["", "---", ""])
+        lines.extend([
+            "",
+            "### Multi-Agent Strategies Explained (Live Example: *\"Are US full-time teammates eligible for health benefits on their date of hire, and how many days do they have to enroll?\"*)",
+            "- **`baseline` (Single-Shot RAG):** Skips `_plan()`, few-shot examples, and `_critic()`. Runs 1 search on the raw query and passes chunks directly to `Qwen/Qwen3-8B`.",
+            "- **`structured` (Planner + Few-Shot + Critic):** `_plan()` classifies intent & rewrites pronouns; `_answer_once()` uses few-shot JSON `[S#]` examples; `_critic()` verifies $\\ge 60\\%$ token overlap and exact numbers/dates.",
+            "- **`selfconsistency` ($k=3$ Majority Vote + Critic):** Samples 3 candidate answers at `temperature=0.7`, takes majority vote on `answerable` via `_vote()`, and picks the highest `claim_support()` candidate (~3x token cost).",
+            "- **`decomposition` (Forced Sub-Query Split + Synthesis + Critic):** `_plan(force_decompose=True)` splits compound questions into 1–3 atomic sub-queries (e.g., *eligibility on date of hire* `[S1]` + *30-day enrollment deadline* `[S2]`), answers each separately, synthesizes, and verifies via `_critic()`.",
+            "",
+            "---",
+            "",
+        ])
 
     # Week 4 Section
     if "week4" in eval_results:
