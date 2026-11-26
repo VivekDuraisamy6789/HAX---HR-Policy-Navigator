@@ -1,0 +1,58 @@
+hash,date,author,subject
+9cef4a8,2026-11-26T22:33:44+05:30,Amit Bhardwaj,"feat(eval-ui): add Week 1/3 strategy selectors, Question Type columns, sticky nav, and methodology notes"
+df73221,2026-11-26T20:33:24+05:30,Amit Bhardwaj,Redesign Streamlit UI to light-slate editorial SaaS workspace
+17c7aad,2026-11-26T20:28:04+05:30,Amit Bhardwaj,docs(eval): add full 84-query Week 1-4 Evaluation Runner report and results
+4aeffd7,2026-11-26T17:43:34+05:30,Amit Bhardwaj,feat(eval): default Evaluation Runner to full 84 queries (all weeks/strategies) and add CLI runner
+4081b55,2026-11-26T17:38:23+05:30,Amit Bhardwaj,"docs,chore: update .env.example, README, STARTUP_GUIDE, .gitignore, and my_learning.md for capstone submission"
+b805d94,2026-11-26T15:59:14+05:30,Amit Bhardwaj,fix(tracing): support Langfuse v5+ OpenTelemetry observation API alongside v2
+82021eb,2026-11-26T12:55:43+05:30,Amit Bhardwaj,feat(eval-ui): make 5.2 Week 1 vs Week 3 Detailed Comparison collapsible
+4e7a1c4,2026-11-26T12:45:14+05:30,Amit Bhardwaj,feat(eval): move Option C summary and W1 vs W3 detailed comparison into Week-Wise Report
+2c039f1,2026-11-26T12:24:48+05:30,Amit Bhardwaj,"feat(eval-ui): add all 3 Week 1 vs Week 3 average summary options (A, B, C)"
+ed7eb39,2026-11-26T12:19:46+05:30,Amit Bhardwaj,"feat(eval-ui): rename Evaluation Runner tab, add W1 vs W3 detailed grid, and add Bird's Eye View tab"
+3fe5c41,2026-11-26T12:01:43+05:30,Amit Bhardwaj,feat(eval-ui): add Week 3 Strategy Grids & Multi-Agent E2E detailed table
+5a5f97e,2026-11-26T11:47:31+05:30,Amit Bhardwaj,chore(eval-ui): remove Mock Model (Offline) toggle from eval_run tab
+19ac948,2026-11-26T11:40:57+05:30,Amit Bhardwaj,feat(eval-ui): add Week 4 Attack Vectors definition and detailed Injection Defense grid
+7deeed5,2026-11-26T11:06:59+05:30,Amit Bhardwaj,docs(eval): add Week 3 multi-agent strategies explanation to report and my_learning.md
+c72bb5d,2026-11-26T09:41:40+05:30,Amit Bhardwaj,feat(eval-ui): add Week 2 Strategy Grids & Retrieval Evaluation table and p50 latency
+472021b,2026-11-26T04:41:56+05:30,Amit Bhardwaj,docs(eval): add retrieval modes and metrics explanations to Week 2 report and my_learning.md
+5f6d6e4,2026-11-26T04:30:04+05:30,Amit Bhardwaj,"docs(eval): add max_words rationale and fixed_500, fixed_200, heading definitions to Week 2 report"
+433526c,2026-11-26T04:14:19+05:30,Amit Bhardwaj,docs(eval): add heading_cap definition with sample chunks to Week 2 report and my_learning.md
+d5731e2,2026-11-26T03:32:37+05:30,Amit Bhardwaj,fix(eval-ui): clear stale previous eval results before starting new run
+e189833,2026-11-26T03:21:11+05:30,Amit Bhardwaj,revert(eval-ui): restore st.code for strategy system prompts
+7d9e8ba,2026-11-26T03:15:27+05:30,Amit Bhardwaj,feat(eval-ui): word-wrap system prompts and replace dataset filenames with domain/adversarial queries
+52fab4a,2026-11-26T03:10:20+05:30,Amit Bhardwaj,"feat(eval-ui): word-wrap strategy grids, remove inner scroll box, and deduplicate status output"
+408edcd,2026-11-26T03:05:27+05:30,Amit Bhardwaj,feat(eval-ui): add Question column to per-strategy evaluation grids
+18bb5b5,2026-11-26T02:57:52+05:30,Amit Bhardwaj,"feat(ui,eval): enable Enter login submit, scrollable eval grids with system prompts, and split Week 1 domain/adversarial tables"
+35052f7,2026-11-25T16:16:48+05:30,Amit Bhardwaj,feat(eval): add sys_admin superuser login and eval_run tab with week-wise report
+ecf4efc,2026-11-23T11:06:59+05:30,Amit Bhardwaj,"chore(docker): update Dockerfile with Linux audio/TTS deps, non-root user, and docker-compose healthcheck"
+dd66317,2026-11-23T11:05:28+05:30,Amit Bhardwaj,"feat(ui): add system menu options, chat rename, session limit, RBAC filtering, and UI fixes"
+8d9e379,2026-11-23T10:41:00+05:30,Amit Bhardwaj,chore(ui): replace use_container_width with width='stretch' on st.dataframe to eliminate deprecation logs
+28f1492,2026-11-23T00:14:13+05:30,Amit Bhardwaj,"fix(voice): prevent rerun loop on audio recording, add HR phonetic post-processing"
+a033829,2026-11-22T23:59:37+05:30,Amit Bhardwaj,"fix(ui): remove external help links, fix voice input widget, add defensive agent.run handling"
+df0da4c,2026-11-22T23:45:37+05:30,Amit Bhardwaj,"feat(sprint4): 12-page technical report, 10-min live demo script, journey tab, and readme overhaul"
+c256749,2026-11-22T23:38:56+05:30,Amit Bhardwaj,"feat(sprint3): voice input, offline read aloud TTS, and RLHF feedback analytics"
+70961cc,2026-11-22T23:30:45+05:30,Amit Bhardwaj,"feat(sprint2): role-based persona answers, tenure personalization, HITL state machine"
+8205318,2026-11-22T23:22:20+05:30,Amit Bhardwaj,"feat(sprint1): login screen, role-aware UI, persistent chat history, startup guide"
+0acd714,2026-11-22T22:56:11+05:30,Amit Bhardwaj,"docs: add comprehensive session handoff context, mentor analysis, and pending submission priorities"
+977079e,2026-11-22T22:23:57+05:30,Amit Bhardwaj,feat(eval): add ROUGE-LCS F1 metric and update strategy comparison report per mentor feedback
+b92eea5,2026-11-22T21:15:51+05:30,Amit Bhardwaj,chore(deploy): package certs directory in Dockerfile and docker-compose for containerized SSL support
+0206db3,2026-11-22T20:56:48+05:30,Amit Bhardwaj,Clarify Phase 1 architecture downselection ablation (8 queries) vs Phase 2 full benchmark (84 queries) in Week 3 mentor email
+41cb9a2,2026-11-22T20:48:47+05:30,Amit Bhardwaj,Update Week 3 mentor email to reflect full 84-query (55 domain + 29 adversarial) benchmark run
+01edc42,2026-11-22T19:41:57+05:30,Amit Bhardwaj,Add full 84-query evaluation benchmark results for Week 3 Decomposition Agent
+30b1e90,2026-11-22T18:55:49+05:30,Amit Bhardwaj,Clean up temporary query diagnostic test script
+ba4d597,2026-11-22T18:28:49+05:30,Amit Bhardwaj,Testing Does a teammate need permission to step away during the workday?
+24ebd54,2026-11-22T17:59:04+05:30,Amit Bhardwaj,Week2 Email
+c7b22b5,2026-11-22T17:53:27+05:30,Amit Bhardwaj,"Add hard miss case studies (Q04-02, Q10-02, Q07-04) to Week 2 retrieval report and mentor email"
+164c46d,2026-11-22T17:16:43+05:30,Amit Bhardwaj,"Update Week 2 deliverables: chunking experiments, retrieval diagnostic analysis, and synthetic corpus neural metrics"
+dda9d84,2026-11-22T17:13:00+05:30,bhardwaj-amit79,Week 1 Mentor email PDF
+e515db5,2026-11-22T16:50:32+05:30,Amit Bhardwaj,"Add Week 2-4 mentor emails, real neural retrieval results, and evaluation artifacts"
+53e2f15,2026-11-22T16:41:38+05:30,Amit Bhardwaj,Fix artifact links in Week 1 mentor email
+9b8dfed,2026-11-22T16:36:45+05:30,Amit Bhardwaj,"Enhance Week 1 baseline report: align Task Decomposition with email, explain accuracy paradox, add Mentor Q&A guide"
+51706c6,2026-11-22T16:30:28+05:30,Amit Bhardwaj,Explain Zero-Shot vs Few-Shot accuracy paradox in Week 1 email
+163c80b,2026-11-22T16:26:38+05:30,Amit Bhardwaj,"Update Week 1 mentor email to explicitly detail Task Decomposition, refusal boundaries, and correct answer definition"
+aefbb70,2026-11-22T16:16:57+05:30,Amit Bhardwaj,"Add Week 1 deliverables: mentor email, baseline report, and prompt benchmark data"
+3f0bbc4,2026-11-22T14:49:44+05:30,Amit Bhardwaj,Added API details and Summary
+47240bb,2026-11-16T23:23:27+05:30,Vivek Duraisamy,week 1 + week 2 deliverable
+4eef33b,2026-11-15T20:13:19+05:30,Vivek Duraisamy,Initial commit
+84c830b,2026-11-15T20:08:41+05:30,Vivek Duraisamy,Initial commit
+3522c73,2026-11-15T18:57:02+05:30,VivekDuraisamy6789,Initial commit

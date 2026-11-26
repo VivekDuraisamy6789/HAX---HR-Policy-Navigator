@@ -1,9 +1,9 @@
 # HR Policy Navigator — Multi-Agent Operations Copilot (Track B)
 
 [![Test Suite](https://img.shields.io/badge/Unit%20Tests-64%2F64%20Passing-brightgreen)](tests)
-[![Evaluation Benchmark](https://img.shields.io/badge/Frozen%20Benchmark-84%20Queries%20(100%25%20Completion)-blue)](eval_runs/summary.json)
-[![Adversarial Safety](https://img.shields.io/badge/Adversarial%20Refusal-96.6%25-success)](eval_runs/summary.json)
-[![Prompt Injection Defense](https://img.shields.io/badge/Injection%20Defense-87.5%25-success)](eval_runs/injection.json)
+[![Evaluation Benchmark](https://img.shields.io/badge/Frozen%20Benchmark-84%20Queries%20(98.8%25%E2%80%93100%25%20Completion)-blue)](eval_runs/full_84_eval_results.json)
+[![Adversarial Safety](https://img.shields.io/badge/Adversarial%20Safety-93.1%25%20(0%20Hallucinations)-success)](eval_runs/full_84_eval_results.json)
+[![Prompt Injection Defense](https://img.shields.io/badge/Injection%20Defense-87.5%25-success)](eval_runs/full_84_eval_results.json)
 [![Branch](https://img.shields.io/badge/Active%20Branch-main%20%7C%20Amit--Enhanced-orange)](https://github.com/bhardwaj-amit79/HR-Policy-Navigator)
 
 **Course:** Executive Post Graduate Programme in Generative AI and Agentic AI  
@@ -70,20 +70,21 @@
 
 ## 🏆 Verified Empirical Achievements
 
-Evaluated on the frozen 84-query benchmark (55 domain queries across 11 policy themes + 29 adversarial/safety probes) and 64 unit tests:
+Evaluated on the unified 84-query frozen benchmark (55 domain queries across 11 policy themes + 29 adversarial/safety probes), the 8-attack Week 4 indirect injection suite, and 64 unit tests:
 
 | Metric | Result | Description / Significance |
 |---|---|---|
-| **Unit Test Suite** | **64 / 64 Passed** (100%) | Complete regression suite running in ~27s |
-| **Task Completion Rate** | **100.0%** (84 / 84) | Zero unhandled crashes, infinite loops, or JSON decode breaks |
-| **Adversarial Refusal** | **96.6%** (28 / 29) | Refuses consequential actions (6/6), private data (4/4), injections (4/4) |
-| **Gold Citation Rate** | **78.2%** (43 / 55) | Cites the exact gold policy file in context |
-| **Generation Success** | **94.5%** (52 / 55) | Generates grounded policy answers on valid queries |
-| **Indirect Injection Defense** | **87.5%** (7 / 8) | Defends against poisoned document context attacks |
-| **Retrieval Hit@1 / Hit@5** | **0.709 / 0.891** | Hybrid BM25 + Dense (`bge-small`) + Lexical Reranker |
-| **Retrieval MRR** | **0.793** | 95% bootstrap confidence interval: [0.782, 0.982] |
-| **Median Latency ($p_{50}$)** | **5.94s** | Fast end-to-end multi-agent resolution |
-| **Average Cost / Query** | **~$0.00019 USD** | Microscopic token footprint on edge-class inference |
+| **Unit Test Suite** | **64 / 64 Passed** (100%) | Complete regression suite across 4 test modules (`pytest -q tests`) |
+| **Task Completion Rate** | **98.8% – 100.0%** | `100.0%` on `structured` & `selfconsistency`, `98.8%` on `decomposition`, `0` crashes |
+| **Hallucinations (Week 3)** | **0 / 84 Queries** | Zero ungrounded claims across all 4 Week 3 strategies (`SUPPORT_THRESHOLD=0.60`) |
+| **Adversarial Safety** | **93.1% (27 / 29)** | `decomposition` blocks unanswerable (`5/5`), consequential (`6/6`), private (`4/4`), legal (`2/2`), injection (`4/4`) |
+| **Gold Citation Rate** | **76.4% – 78.2%** | Exact gold handbook sources cited (`42/55` decomp, `43/55` selfconsistency) |
+| **Domain ROUGE-LCS F1** | **0.1968** (`0.1933` all) | Concise grounded 1-sentence answers evaluated vs 65-word composite theme summaries |
+| **Indirect Injection Defense** | **87.5% (7 / 8)** | Neutralises poisoned document directives on isolated Week 4 corpus |
+| **Retrieval Hit@1 / Hit@5** | **0.709 / 0.891** | `heading_cap` (`3,686` chunks) + Hybrid BM25/Dense RRF (`k=60`) + Lexical Reranker |
+| **Retrieval MRR / Recall** | **0.787 MRR · 0.800 DocRec@5** | Theme-clustered 95% bootstrap CI: `[0.782, 0.982]` (`15.2 ms` $p_{50}$) |
+| **Median Latency ($p_{50}$)** | **5.38 s** | Sub-6s end-to-end `decomposition` latency (`3,398` avg tokens) |
+| **Average Cost / Query** | **~$0.000186 USD** | Edge-class API cost under `Qwen/Qwen3-8B` (`$0.05/1M in`, `$0.10/1M out`) |
 
 ---
 
@@ -91,8 +92,8 @@ Evaluated on the frozen 84-query benchmark (55 domain queries across 11 policy t
 
 Beyond baseline Week 4 requirements, `Amit-Enhanced` introduces enterprise-grade platform features:
 
-1. **🔐 Multi-Persona Authentication:**
-   * Login screen supporting 4 enterprise personas: `hr_admin` (HR Ops), `mgr_alice` (People Manager), `emp_bob` (New Hire Associate), `emp_carol` (Tenured Associate).
+1. **🔐 Multi-Persona Authentication (5 RBAC Roles):**
+   * Login screen supporting 5 enterprise personas: `sys_admin` (System Administrator), `hr_admin` (HR Ops), `mgr_alice` (People Manager), `emp_bob` (New Hire Associate), `emp_carol` (Tenured Associate).
 2. **👥 Role & Tenure Personalization (Prompt-Engineered):**
    * *New Hire (<1 yr):* Step-by-step instructions, acronym expansions, onboarding quick tips.
    * *Tenured (3+ yr):* Direct 1–2 sentence answers without navigation steps.

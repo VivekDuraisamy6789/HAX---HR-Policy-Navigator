@@ -1,0 +1,57 @@
+* 9cef4a8 (HEAD -> Amit-Enhanced, public/main, public/Amit-Enhanced, origin/main, origin/HEAD, origin/Amit-Enhanced, main) feat(eval-ui): add Week 1/3 strategy selectors, Question Type columns, sticky nav, and methodology notes
+* df73221 (priorities_review_session) Redesign Streamlit UI to light-slate editorial SaaS workspace
+* 17c7aad docs(eval): add full 84-query Week 1-4 Evaluation Runner report and results
+* 4aeffd7 feat(eval): default Evaluation Runner to full 84 queries (all weeks/strategies) and add CLI runner
+* 4081b55 docs,chore: update .env.example, README, STARTUP_GUIDE, .gitignore, and my_learning.md for capstone submission
+* b805d94 fix(tracing): support Langfuse v5+ OpenTelemetry observation API alongside v2
+* 82021eb feat(eval-ui): make 5.2 Week 1 vs Week 3 Detailed Comparison collapsible
+* 4e7a1c4 feat(eval): move Option C summary and W1 vs W3 detailed comparison into Week-Wise Report
+* 2c039f1 feat(eval-ui): add all 3 Week 1 vs Week 3 average summary options (A, B, C)
+* ed7eb39 feat(eval-ui): rename Evaluation Runner tab, add W1 vs W3 detailed grid, and add Bird's Eye View tab
+* 3fe5c41 feat(eval-ui): add Week 3 Strategy Grids & Multi-Agent E2E detailed table
+* 5a5f97e chore(eval-ui): remove Mock Model (Offline) toggle from eval_run tab
+* 19ac948 feat(eval-ui): add Week 4 Attack Vectors definition and detailed Injection Defense grid
+* 7deeed5 docs(eval): add Week 3 multi-agent strategies explanation to report and my_learning.md
+* c72bb5d feat(eval-ui): add Week 2 Strategy Grids & Retrieval Evaluation table and p50 latency
+* 472021b docs(eval): add retrieval modes and metrics explanations to Week 2 report and my_learning.md
+* 5f6d6e4 docs(eval): add max_words rationale and fixed_500, fixed_200, heading definitions to Week 2 report
+* 433526c docs(eval): add heading_cap definition with sample chunks to Week 2 report and my_learning.md
+* d5731e2 fix(eval-ui): clear stale previous eval results before starting new run
+* e189833 revert(eval-ui): restore st.code for strategy system prompts
+* 7d9e8ba feat(eval-ui): word-wrap system prompts and replace dataset filenames with domain/adversarial queries
+* 52fab4a feat(eval-ui): word-wrap strategy grids, remove inner scroll box, and deduplicate status output
+* 408edcd feat(eval-ui): add Question column to per-strategy evaluation grids
+* 18bb5b5 feat(ui,eval): enable Enter login submit, scrollable eval grids with system prompts, and split Week 1 domain/adversarial tables
+* 35052f7 feat(eval): add sys_admin superuser login and eval_run tab with week-wise report
+* ecf4efc chore(docker): update Dockerfile with Linux audio/TTS deps, non-root user, and docker-compose healthcheck
+* dd66317 feat(ui): add system menu options, chat rename, session limit, RBAC filtering, and UI fixes
+* 8d9e379 chore(ui): replace use_container_width with width='stretch' on st.dataframe to eliminate deprecation logs
+* 28f1492 fix(voice): prevent rerun loop on audio recording, add HR phonetic post-processing
+* a033829 fix(ui): remove external help links, fix voice input widget, add defensive agent.run handling
+* df0da4c feat(sprint4): 12-page technical report, 10-min live demo script, journey tab, and readme overhaul
+* c256749 feat(sprint3): voice input, offline read aloud TTS, and RLHF feedback analytics
+* 70961cc feat(sprint2): role-based persona answers, tenure personalization, HITL state machine
+* 8205318 feat(sprint1): login screen, role-aware UI, persistent chat history, startup guide
+* 0acd714 (origin/Amit, session_context_docs, Amit) docs: add comprehensive session handoff context, mentor analysis, and pending submission priorities
+* 977079e feat(eval): add ROUGE-LCS F1 metric and update strategy comparison report per mentor feedback
+* b92eea5 chore(deploy): package certs directory in Dockerfile and docker-compose for containerized SSL support
+* 0206db3 Clarify Phase 1 architecture downselection ablation (8 queries) vs Phase 2 full benchmark (84 queries) in Week 3 mentor email
+* 41cb9a2 Update Week 3 mentor email to reflect full 84-query (55 domain + 29 adversarial) benchmark run
+* 01edc42 Add full 84-query evaluation benchmark results for Week 3 Decomposition Agent
+* 30b1e90 Clean up temporary query diagnostic test script
+* ba4d597 Testing Does a teammate need permission to step away during the workday?
+* 24ebd54 Week2 Email
+* c7b22b5 Add hard miss case studies (Q04-02, Q10-02, Q07-04) to Week 2 retrieval report and mentor email
+* 164c46d Update Week 2 deliverables: chunking experiments, retrieval diagnostic analysis, and synthetic corpus neural metrics
+* dda9d84 Week 1 Mentor email PDF
+* e515db5 Add Week 2-4 mentor emails, real neural retrieval results, and evaluation artifacts
+* 53e2f15 Fix artifact links in Week 1 mentor email
+* 9b8dfed Enhance Week 1 baseline report: align Task Decomposition with email, explain accuracy paradox, add Mentor Q&A guide
+* 51706c6 Explain Zero-Shot vs Few-Shot accuracy paradox in Week 1 email
+* 163c80b Update Week 1 mentor email to explicitly detail Task Decomposition, refusal boundaries, and correct answer definition
+* aefbb70 Add Week 1 deliverables: mentor email, baseline report, and prompt benchmark data
+* 3f0bbc4 Added API details and Summary
+* 47240bb week 1 + week 2 deliverable
+* 4eef33b Initial commit
+* 84c830b Initial commit
+* 3522c73 Initial commit
