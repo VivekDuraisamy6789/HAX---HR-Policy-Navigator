@@ -182,6 +182,37 @@ def render(res: dict, idx: int = 0, feedback_store: FeedbackStore = None,
                     st.rerun()
 
 
+def _render_wrapped_table(grid_rows: list[dict], col_styles: dict[str, str]) -> None:
+    """Render a responsive, word-wrapped HTML table with horizontal scroll fallback."""
+    import html as _html
+
+    if not grid_rows:
+        return
+    headers = list(grid_rows[0].keys())
+    ths = "".join(
+        f"<th style='padding:8px 10px; border-bottom:2px solid rgba(128,128,128,0.35); "
+        f"text-align:left; white-space:nowrap; background:rgba(128,128,128,0.1);'>{_html.escape(h)}</th>"
+        for h in headers
+    )
+    trs = []
+    for row in grid_rows:
+        tds = "".join(
+            f"<td style='padding:8px 10px; border-bottom:1px solid rgba(128,128,128,0.2); "
+            f"vertical-align:top; {col_styles.get(h, '')}'>{_html.escape(str(row[h]))}</td>"
+            for h in headers
+        )
+        trs.append(f"<tr>{tds}</tr>")
+    table_html = (
+        "<div style='overflow-x:auto; width:100%; border:1px solid rgba(128,128,128,0.25); "
+        "border-radius:6px; margin-bottom:16px;'>"
+        "<table style='width:100%; border-collapse:collapse; font-size:0.84rem; line-height:1.45;'>"
+        f"<thead><tr>{ths}</tr></thead>"
+        f"<tbody>{''.join(trs)}</tbody>"
+        "</table></div>"
+    )
+    st.markdown(table_html, unsafe_allow_html=True)
+
+
 # ---------------------------------------------------------------------------
 # Login screen
 # ---------------------------------------------------------------------------
@@ -407,15 +438,17 @@ def main() -> None:
     if user.role in ("hr_ops", "manager", "sys_admin"):
         tab_labels.append("🧑‍💼 Human Review Queue")
     if user.role == "sys_admin":
-        tab_labels.append("🧪 eval_run")
+        tab_labels.append("🧪 Evaluation Runner")
+        tab_labels.append("🦅 Bird's Eye View")
 
     tabs = st.tabs(tab_labels)
-    tab_chat     = tabs[0]
-    tab_traces   = tabs[1]
-    tab_fb       = tabs[2]
-    tab_journey  = None
-    tab_review   = None
-    tab_eval_run = None
+    tab_chat      = tabs[0]
+    tab_traces    = tabs[1]
+    tab_fb        = tabs[2]
+    tab_journey   = None
+    tab_review    = None
+    tab_eval_run  = None
+    tab_birds_eye = None
     _tab_i = 3
     if user.role in ("hr_ops", "sys_admin"):
         tab_journey = tabs[_tab_i]
@@ -425,6 +458,7 @@ def main() -> None:
         _tab_i += 1
     if user.role == "sys_admin":
         tab_eval_run = tabs[_tab_i]
+        tab_birds_eye = tabs[_tab_i + 1]
 
     # ==================================================================
     # E6: Voice Input helpers (rendered inside chat tab)
@@ -965,35 +999,6 @@ def main() -> None:
                     for r in rows
                 ]
 
-            def _render_wrapped_table(grid_rows: list[dict], col_styles: dict[str, str]) -> None:
-                import html as _html
-
-                if not grid_rows:
-                    return
-                headers = list(grid_rows[0].keys())
-                ths = "".join(
-                    f"<th style='padding:8px 10px; border-bottom:2px solid rgba(128,128,128,0.35); "
-                    f"text-align:left; white-space:nowrap; background:rgba(128,128,128,0.1);'>{_html.escape(h)}</th>"
-                    for h in headers
-                )
-                trs = []
-                for row in grid_rows:
-                    tds = "".join(
-                        f"<td style='padding:8px 10px; border-bottom:1px solid rgba(128,128,128,0.2); "
-                        f"vertical-align:top; {col_styles.get(h, '')}'>{_html.escape(str(row[h]))}</td>"
-                        for h in headers
-                    )
-                    trs.append(f"<tr>{tds}</tr>")
-                table_html = (
-                    "<div style='overflow-x:auto; width:100%; border:1px solid rgba(128,128,128,0.25); "
-                    "border-radius:6px; margin-bottom:16px;'>"
-                    "<table style='width:100%; border-collapse:collapse; font-size:0.84rem; line-height:1.45;'>"
-                    f"<thead><tr>{ths}</tr></thead>"
-                    f"<tbody>{''.join(trs)}</tbody>"
-                    "</table></div>"
-                )
-                st.markdown(table_html, unsafe_allow_html=True)
-
             def _render_w1_grids(w1_res: dict) -> None:
                 col_styles = {
                     "ID": "white-space:nowrap; font-weight:600;",
@@ -1096,6 +1101,55 @@ def main() -> None:
                 for strat_name, strat_data in w3_res.get("strategies", {}).items():
                     st.markdown(f"#### `{strat_name}`")
                     _render_wrapped_table(_format_w3_grid(strat_name, strat_data), col_styles)
+
+            def _render_w1_w3_comparison(w1_res: dict, w3_res: dict) -> None:
+                rows: list[dict] = []
+                for strat_name, strat_data in w1_res.get("strategies", {}).items():
+                    for r in strat_data.get("rows", []):
+                        rows.append({
+                            "ID": r["id"],
+                            "Question": r.get("question", ""),
+                            "Gold Answer": r.get("gold_answer") or f"[{r.get('type', '')} · expect {r.get('expected_status', 'abstained')}]",
+                            "Model Answer": r.get("model_answer", ""),
+                            "Week": "Week 1",
+                            "Strategy": strat_name,
+                            "Decision Accuracy": "✅ Pass" if r.get("correct") else "❌ Fail",
+                            "ROUGE-LCS F1": f"{r['rouge_lcs_f1']:.4f}" if r.get("rouge_lcs_f1") is not None else "—",
+                            "Valid JSON": "✅" if r.get("json_valid") else "❌",
+                            "Latency (ms)": r.get("latency_ms", 0.0),
+                            "Primary Failures": r.get("failure") or "—",
+                        })
+                for strat_name, strat_data in w3_res.get("strategies", {}).items():
+                    for r in strat_data.get("rows", []):
+                        valid_json = not str(r.get("status", "")).startswith("error")
+                        rows.append({
+                            "ID": r["id"],
+                            "Question": r.get("question", ""),
+                            "Gold Answer": r.get("gold_answer") or f"[{r.get('type', '')} · expect {r.get('expected_status', 'abstained')}]",
+                            "Model Answer": r.get("model_answer", ""),
+                            "Week": "Week 3",
+                            "Strategy": strat_name,
+                            "Decision Accuracy": "✅ Pass" if r.get("correct") else "❌ Fail",
+                            "ROUGE-LCS F1": f"{r['rouge_lcs_f1']:.4f}" if r.get("rouge_lcs_f1") is not None else "—",
+                            "Valid JSON": "✅" if valid_json else "❌",
+                            "Latency (ms)": r.get("latency_ms", 0.0),
+                            "Primary Failures": r.get("failure") or "—",
+                        })
+                rows.sort(key=lambda x: (x["ID"], x["Week"], x["Strategy"]))
+                col_styles = {
+                    "ID": "white-space:nowrap; font-weight:600;",
+                    "Question": "min-width:170px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Gold Answer": "min-width:220px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Model Answer": "min-width:220px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                    "Week": "white-space:nowrap; font-weight:600;",
+                    "Strategy": "white-space:nowrap;",
+                    "Decision Accuracy": "white-space:nowrap;",
+                    "ROUGE-LCS F1": "white-space:nowrap; text-align:right;",
+                    "Valid JSON": "white-space:nowrap; text-align:center;",
+                    "Latency (ms)": "white-space:nowrap; text-align:right;",
+                    "Primary Failures": "min-width:130px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                }
+                _render_wrapped_table(rows, col_styles)
 
             def _format_w4_grid(rows: list[dict]) -> list[dict]:
                 return [
@@ -1263,6 +1317,16 @@ def main() -> None:
                         with st.expander("📋 Strategy Grids & Multi-Agent E2E (Week 3)", expanded=True):
                             _render_w3_grids(st.session_state["last_eval_results"]["week3"])
 
+                    if (
+                        st.session_state.get("last_eval_results", {}).get("week1")
+                        and st.session_state.get("last_eval_results", {}).get("week3")
+                    ):
+                        with st.expander("⚖️ Week 1 vs Week 3 Detailed Comparison", expanded=True):
+                            _render_w1_w3_comparison(
+                                st.session_state["last_eval_results"]["week1"],
+                                st.session_state["last_eval_results"]["week3"],
+                            )
+
                     if st.session_state.get("last_eval_results", {}).get("week4"):
                         with st.expander("📋 Strategy Grids & Injection Defense (Week 4)", expanded=True):
                             _render_w4_grids(st.session_state["last_eval_results"]["week4"])
@@ -1281,6 +1345,152 @@ def main() -> None:
                                 use_container_width=True,
                             )
                         st.markdown(st.session_state["last_eval_report"])
+
+    # ==================================================================
+    # Bird's Eye View Tab (sys_admin only)
+    # ==================================================================
+    if tab_birds_eye is not None:
+        with tab_birds_eye:
+            from hr_policy_navigator.eval_runner import (
+                load_eval_datasets,
+                run_week1_eval,
+                run_week3_eval,
+            )
+
+            st.markdown("### 🦅 Bird's Eye View — Single-Query Week 1 vs Week 3 Comparison")
+            st.caption(
+                "Test any custom question or pick a benchmark query from Domain / Adversarial sets, "
+                "and compare all Week 1 and Week 3 strategies side-by-side."
+            )
+
+            be_domain, be_adv = load_eval_datasets()
+            q_source = st.radio(
+                "Question Source",
+                ["✍️ Write Custom Question", "📘 Pick from Domain Queries", "🛡️ Pick from Adversarial Queries"],
+                horizontal=True,
+                key="be_q_source",
+            )
+
+            selected_item: dict = {}
+            source_kind = "custom"
+            if q_source == "✍️ Write Custom Question":
+                custom_q = st.text_input(
+                    "Enter your HR policy question",
+                    placeholder="e.g. How many PTO days do I get?",
+                    key="be_custom_q",
+                )
+                if custom_q.strip():
+                    selected_item = {
+                        "id": "CUSTOM",
+                        "type": "custom",
+                        "question": custom_q.strip(),
+                        "gold_answer": "",
+                        "expected_sources": [],
+                        "expected_status": "custom",
+                    }
+            elif q_source == "📘 Pick from Domain Queries":
+                source_kind = "domain"
+                dom_map = {
+                    f"[{it['id']}] ({it.get('theme', '')}) {it['question']}": it
+                    for it in be_domain
+                }
+                picked_dom = st.selectbox("Select Domain Query", list(dom_map.keys()), key="be_dom_select")
+                selected_item = dom_map[picked_dom]
+            else:
+                source_kind = "adversarial"
+                adv_map = {
+                    f"[{it['id']}] ({it.get('type', '')}) {it['question']}": it
+                    for it in be_adv
+                }
+                picked_adv = st.selectbox("Select Adversarial Query", list(adv_map.keys()), key="be_adv_select")
+                selected_item = adv_map[picked_adv]
+
+            be_run_clicked = st.button("🚀 Run Evaluation", type="primary", key="btn_birds_eye_run")
+            be_status_ph = st.empty()
+            be_res_ph = st.empty()
+
+            if be_run_clicked:
+                if not selected_item.get("question"):
+                    st.warning("Please enter or select a question first.")
+                else:
+                    st.session_state.pop("birds_eye_result", None)
+                    be_res_ph.empty()
+                    dom_in = [selected_item] if source_kind in ("domain", "custom") else []
+                    adv_in = [selected_item] if source_kind == "adversarial" else []
+
+                    with be_status_ph.status("Running Week 1 & Week 3 across all strategies…", expanded=True) as be_box:
+                        be_box.write("▶ Running Week 1 (zero_shot, structured_fewshot, chain_of_thought, decomposition)…")
+                        w1_single = run_week1_eval(
+                            dom_in, adv_in, S, use_mock=False,
+                            strategies=["zero_shot", "structured_fewshot", "chain_of_thought", "decomposition"],
+                            progress_cb=lambda m: be_box.write(m),
+                        )
+                        be_box.write("▶ Running Week 3 (baseline, structured, selfconsistency, decomposition)…")
+                        w3_single = run_week3_eval(
+                            dom_in, adv_in, S, use_mock=False,
+                            strategies=["baseline", "structured", "selfconsistency", "decomposition"],
+                            progress_cb=lambda m: be_box.write(m),
+                        )
+                        st.session_state["birds_eye_result"] = {
+                            "item": selected_item,
+                            "source_kind": source_kind,
+                            "week1": w1_single,
+                            "week3": w3_single,
+                        }
+                        be_box.update(label="✅ Bird's Eye evaluation complete!", state="complete", expanded=False)
+
+            if st.session_state.get("birds_eye_result"):
+                be_data = st.session_state["birds_eye_result"]
+                it = be_data["item"]
+                sk = be_data["source_kind"]
+                with be_res_ph.container():
+                    with st.container(border=True):
+                        st.markdown(f"**Question:** {it['question']}")
+                        if sk == "domain":
+                            st.markdown(f"**ID:** `{it.get('id', '')}` &nbsp;·&nbsp; **Theme:** `{it.get('theme', '—')}`")
+                            st.markdown(f"**Gold Answer:** {it.get('gold_answer', '—')}")
+                            st.markdown(f"**Expected Sources:** `{', '.join(it.get('expected_sources', [])) or '—'}`")
+                        elif sk == "adversarial":
+                            st.markdown(
+                                f"**ID:** `{it.get('id', '')}` &nbsp;·&nbsp; **Type:** `{it.get('type', '—')}` "
+                                f"&nbsp;·&nbsp; **Expected Status:** `{it.get('expected_status', '—')}`"
+                            )
+                            if it.get("gold_answer"):
+                                st.markdown(f"**Gold Answer:** {it['gold_answer']}")
+                            if it.get("expected_sources"):
+                                st.markdown(f"**Expected Sources:** `{', '.join(it['expected_sources'])}`")
+
+                    be_rows: list[dict] = []
+                    for s_name, s_payload in be_data["week1"].get("strategies", {}).items():
+                        for r in s_payload.get("rows", []):
+                            be_rows.append({
+                                "Week": "Week 1",
+                                "Strategy": s_name,
+                                "Response": r.get("model_answer", ""),
+                                "Accuracy": "—" if sk == "custom" else ("✅ Pass" if r.get("correct") else "❌ Fail"),
+                                "ROUGE-LCS": f"{r['rouge_lcs_f1']:.4f}" if (sk != "custom" and r.get("rouge_lcs_f1") is not None) else "—",
+                                "Latency (ms)": r.get("latency_ms", 0.0),
+                            })
+                    for s_name, s_payload in be_data["week3"].get("strategies", {}).items():
+                        for r in s_payload.get("rows", []):
+                            be_rows.append({
+                                "Week": "Week 3",
+                                "Strategy": s_name,
+                                "Response": r.get("model_answer", ""),
+                                "Accuracy": "—" if sk == "custom" else ("✅ Pass" if r.get("correct") else "❌ Fail"),
+                                "ROUGE-LCS": f"{r['rouge_lcs_f1']:.4f}" if (sk != "custom" and r.get("rouge_lcs_f1") is not None) else "—",
+                                "Latency (ms)": r.get("latency_ms", 0.0),
+                            })
+
+                    be_col_styles = {
+                        "Week": "white-space:nowrap; font-weight:600;",
+                        "Strategy": "white-space:nowrap; font-weight:600;",
+                        "Response": "min-width:340px; white-space:normal; word-wrap:break-word; overflow-wrap:anywhere;",
+                        "Accuracy": "white-space:nowrap;",
+                        "ROUGE-LCS": "white-space:nowrap; text-align:right;",
+                        "Latency (ms)": "white-space:nowrap; text-align:right;",
+                    }
+                    _render_wrapped_table(be_rows, be_col_styles)
 
 
 # ---------------------------------------------------------------------------
